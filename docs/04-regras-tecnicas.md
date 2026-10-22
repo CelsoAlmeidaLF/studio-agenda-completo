@@ -63,7 +63,7 @@
 ## 4. Frontend (PoC)
 
 - **RT-17 · HTML + CSS + JS sem framework obrigatório**, em módulos ES. PWA com `manifest.json` e service worker (cache-first para o shell, network-first para dados).
-- **RT-18 · Design system:** tokens CSS (cores, tipografia, espaçamento) em um único arquivo. O visual segue o padrão aprovado no protótipo de telas (cabeçalho cinza, cartões brancos, uma cor de destaque).
+- **RT-18 · Design system:** tokens CSS (cores, tipografia, espaçamento) em um único arquivo. O visual segue o padrão aprovado no protótipo de telas (cabeçalho cinza, cartões brancos, uma cor de destaque). Desde 22/10/2026 esse visual é o template **Studio Claro** (`FINANC/.designers/templates/studio-claro`), com SCSS, vitrine, guia e `starter/` para projetos novos.
 - **RT-19 · Grade da agenda:** posicionamento absoluto por `(inicio − abertura) / intervalo × alturaLinha`. Só a área da grade rola na horizontal, com a coluna de horas e o cabeçalho fixos.
 - **RT-20 · Validação dupla:** a UI valida para dar resposta rápida e o caso de uso valida de novo (fonte da verdade).
 - **RT-21 · Sem `alert/confirm/prompt`:** confirmações destrutivas usam o padrão "toque de novo para confirmar" ou um modal próprio.
