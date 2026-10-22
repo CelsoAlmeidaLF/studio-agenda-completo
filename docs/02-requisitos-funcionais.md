@@ -1,6 +1,6 @@
 # Studio Agenda — Requisitos Funcionais
 
-> Versão 0.1 · 22/10/2026 · Prioridade MoSCoW: **M** = obrigatório no MVP, **S** = deveria ter, **C** = poderia ter, **W** = fora desta versão.
+> Versão 0.2 · 22/10/2026 · Prioridade MoSCoW: **M** = obrigatório no MVP, **S** = deveria ter, **C** = poderia ter, **W** = fora desta versão.
 > A coluna **Tela** remete ao número da tela no protótipo; a coluna **RN** remete às regras de negócio.
 > No status, **MVP** quer dizer que já está no `agenda-studio.html`.
 
@@ -24,7 +24,7 @@
 |---|---|---|---|---|---|
 | RF-10 | Buscar cliente por nome ou celular, com destaque do trecho digitado. | 21, 22 | RN-11 | M | Protótipo |
 | RF-11 | Criar cliente com o nome digitado ou seguir como cliente avulso. | 22 | RN-12 | M | Protótipo |
-| RF-12 | Adicionar à comanda um serviço, produto ou pacote, com data, hora, profissional e notas internas. | 5, 23 | RN-17 | M | Parcial (serviço) |
+| RF-12 | Adicionar à comanda um serviço (data, hora, profissional) ou um produto (quantidade, vendedor), com notas internas. | 5, 23, P4 | RN-17, RN-57 | M | PWA v1.1 |
 | RF-13 | Escolher o profissional agrupado por área, com busca. | 6 | — | M | Protótipo |
 | RF-14 | Escolher o serviço agrupado por categoria, filtrando pelos serviços do profissional. | 7 | RN-09 | M | Protótipo |
 | RF-15 | Marcar o profissional como favorito do cliente. | 23 | RN-10 | C | Protótipo |
@@ -83,7 +83,7 @@
 | RF-43 | Faturamento do mês, atendimentos, ticket médio e comissões. | — | M | MVP |
 | RF-44 | Evolução do faturamento mensal (6 meses). | — | M | MVP |
 | RF-45 | Comissão por profissional. | RN-28 | M | MVP |
-| RF-46 | Serviços mais vendidos. | — | M | MVP |
+| RF-46 | Serviços mais vendidos e produtos mais vendidos (quantidade e valor). | RN-60 | M | PWA v1.1 |
 | RF-47 | Clientes do mês (atendidos e novos). | — | S | MVP |
 | RF-48 | Baixar relatórios em CSV (conforme permissão). | — | C | Pendente |
 
@@ -95,8 +95,8 @@
 | RF-50 | Horário de funcionamento por dia, com vários intervalos. | 27 | RN-04 | M | Parcial (horário único) |
 | RF-51 | Configurar o uso de fechamento de caixa (Sim/Não). | 28 | RN-33 | S | Protótipo |
 | RF-52 | Cadastro de serviços (nome, categoria, duração, preço, profissionais que executam). | 24 | RN-47 | M | MVP (sem categoria) |
-| RF-53 | Cadastro de descontos pré-definidos. | 24 | RN-20 | C | Pendente |
-| RF-54 | Produtos: lista, linhas, marcas, fornecedores e estoque. | 24 | — | W | Pendente |
+| RF-53 | Cadastro de descontos pré-definidos. | 24 | RN-20 | W | Fora do escopo |
+| RF-54 | Produtos: ver a seção 12. Linhas, marcas, fornecedores e estoque estão fora do escopo. | 24 | RN-54 | M | PWA v1.1 |
 | RF-55 | Permissões por profissional nas 8 áreas. | 29 | RN-40–44 | M | Protótipo |
 
 ## 9. Notificações
@@ -122,6 +122,22 @@
 | RF-62 | Login por profissional (e-mail/celular e senha) e encerramento de sessão. | M | Pendente |
 | RF-63 | Menu lateral com o perfil, o estabelecimento e as áreas permitidas. | M | Protótipo |
 | RF-64 | Recuperação de senha. | S | Pendente |
+
+---
+
+## 12. Produtos
+
+Telas P1 a P4: lista de produtos, ficha do produto, comissões de venda e aba Produto na comanda.
+
+| ID | Requisito | Tela | RN | Prior. | Status |
+|---|---|---|---|---|---|
+| RF-65 | Lista de produtos agrupada por categoria, com contagem, busca por nome/categoria/código e ícone de carrinho nos produtos à venda. | P1 | RN-54 | M | PWA v1.1 |
+| RF-66 | Cadastrar produto (nome e categoria) e abrir a ficha. | P1, P2 | RN-54 | M | PWA v1.1 |
+| RF-67 | Ficha do produto com seções recolhíveis: Informações básicas, Consumo e Venda, cada uma com Editar; rodapé com código, criação e última alteração (data e autor). | P2 | RN-54, RN-55, RN-56 | M | PWA v1.1 |
+| RF-68 | Desativar e reativar o produto. | P2 | RN-54 | M | PWA v1.1 |
+| RF-69 | Comissões de venda: preço de venda em destaque e profissionais agrupados por área, com "Sem comissão" ou o percentual; tocar abre a edição do percentual. | P3 | RN-58 | M | PWA v1.1 |
+| RF-70 | Aba Produto em "Adicionar à comanda": produto agrupado por categoria, quantidade, vendedor, aviso da comissão, total; editar e excluir antes do fechamento. | P4 | RN-56, RN-57, RN-59 | M | PWA v1.1 |
+| RF-71 | Produto vendido aparece na comanda, no fechamento (com desconto) e na lista de comandas, mas não na grade da agenda nem nos lembretes. | 3 | RN-56 | M | PWA v1.1 |
 
 ---
 
@@ -151,3 +167,29 @@ então vê o nome, mas o telefone, o e-mail e os botões de WhatsApp e ligação
 Dado que o fechamento de caixa está ativo e o caixa de hoje não tem valor inicial,
 quando tento receber um pagamento,
 então o sistema pede o valor inicial antes de concluir.
+
+**CA-06 · Venda de produto com comissão (RF-70, RN-58)**
+Dado o produto Gel de sobrancelha a R$ 20,00 com comissão de venda de 10% para Camila,
+quando adiciono 2 unidades vendidas por Camila na comanda e fecho com pagamento em Pix,
+então o caixa recebe o valor do fechamento, Camila recebe +R$ 4,00 em "Comissão de venda", o relatório mostra 2 un. em "Produtos mais vendidos" e a grade da agenda não mostra o produto.
+
+**CA-07 · Venda inativa (RN-56)**
+Dado um produto com venda inativa ou sem preço,
+quando tento ativar a venda sem preço,
+então o sistema recusa com "Informe o preço de venda para ativar a venda." e o produto não aparece na aba Produto.
+
+## 13. Escopo fechado (decisão de 22/10/2026)
+
+As telas mapeadas no protótipo são o escopo completo do produto. **O que não foi mapeado não será construído.** Ficam fora:
+
+| Fora do escopo | Observação |
+|---|---|
+| Pacotes de serviços | A aba "Pacote" em "Adicionar à comanda" não existe. |
+| Estoque (entradas, saídas, posição, inventário) | O produto tem só os preços de consumo como referência de custo; não há controle de quantidade. |
+| Linhas, marcas e fornecedores de produtos | Produto tem apenas nome e categoria. |
+| Configurações gerais de produtos | — |
+| Anamnese | A área de permissão "Anamnese" não é usada. |
+| Recorrência de agendamento | Cada agendamento é criado individualmente. |
+| Descontos pré-definidos | O desconto é digitado no fechamento, item a item. |
+| Dados pessoais / perfil do usuário | O profissional é editado em Gestão › Profissionais. |
+| Vendas online, maquininha integrada e SMS/e-mail automático | O lembrete continua por link de WhatsApp. |

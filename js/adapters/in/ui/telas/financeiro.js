@@ -62,12 +62,13 @@ export function registerFinanceiro(app) {
     const mi = input({ type: 'month', value: ym, 'aria-label': 'Mês', onchange: (e) => e.target.value && go('relatorios', { m: e.target.value }) });
     const max = Math.max(1, ...r.meses.map((x) => x.v));
     const maxS = Math.max(1, ...r.porSrv.map(([, v]) => v.n));
+    const maxP = Math.max(1, ...r.porProd.map((v) => v.n));
     const kpi = (t, v) => h('div', { class: 'card pad kpi' }, h('small', null, t), h('b', null, v));
     return {
       title: 'Relatórios', back: 'financeiro', layout: 'largo',
       // Tela larga: indicadores numa linha e os quadros em duas colunas.
       body: h('div', { class: 'duo' }, h('div', { class: 'row-end span-2' }, mi),
-        h('div', { class: 'kpis span-2' }, kpi('Faturamento', money(r.fat)), kpi('Atendimentos', String(r.n)), kpi('Ticket médio', money(r.ticket)), kpi('Comissões', money(r.com))),
+        h('div', { class: 'kpis span-2' }, kpi('Faturamento', money(r.fat)), kpi('Atendimentos', String(r.n)), kpi('Ticket médio', money(r.ticket)), kpi('Comissões', money(r.com)), kpi('Produtos vendidos', `${r.nProd} · ${money(r.fatProd)}`)),
         h('div', { class: 'card pad' }, h('h3', { class: 'ch' }, 'Evolução do faturamento'),
           h('div', { class: 'bars', role: 'img', 'aria-label': 'Faturamento dos últimos 6 meses: ' + r.meses.map((x) => `${x.label} ${money(x.v)}`).join(', ') },
             r.meses.map((x) => h('div', { class: 'bar-c' + (x.key === ym ? ' cur' : '') }, h('small', null, x.v ? money(x.v).replace(',00', '') : '—'), h('i', { style: { height: Math.round((x.v / max) * 120) + 'px' } }), h('span', null, x.label))))),
@@ -75,6 +76,8 @@ export function registerFinanceiro(app) {
           r.porProf.size ? [...r.porProf].map(([pid, v]) => h('div', { class: 'kv' }, h('span', { class: 'acts-row' }, avatar(S.prof(pid), 24), `${S.nomeProf(pid)} · ${v.n} atend. · ${money(v.fat)}`), h('b', null, money(v.com)))) : h('p', { class: 'muted' }, 'Sem fechamentos no mês.')),
         h('div', { class: 'card pad' }, h('h3', { class: 'ch' }, 'Serviços mais vendidos'),
           r.porSrv.length ? r.porSrv.slice(0, 10).map(([n, v]) => h('div', { class: 'hb' }, h('div', { class: 'kv' }, h('span', null, n), h('small', null, `${v.n}× · ${money(v.fat)}`)), h('div', { class: 'track' }, h('i', { style: { width: Math.round((v.n / maxS) * 100) + '%' } })))) : h('p', { class: 'muted' }, 'Sem vendas no mês.')),
+        h('div', { class: 'card pad' }, h('h3', { class: 'ch' }, 'Produtos mais vendidos'),
+          r.porProd.length ? r.porProd.slice(0, 10).map((v) => h('div', { class: 'hb' }, h('div', { class: 'kv' }, h('span', null, v.nome), h('small', null, `${v.n} un. · ${money(v.fat)}`)), h('div', { class: 'track' }, h('i', { style: { width: Math.round((v.n / maxP) * 100) + '%' } })))) : h('p', { class: 'muted' }, 'Nenhum produto vendido no mês.')),
         h('div', { class: 'card pad' }, h('h3', { class: 'ch' }, 'Recebido por forma de pagamento'),
           r.porForma.size ? [...r.porForma].map(([f, v]) => h('div', { class: 'kv' }, h('span', null, FORMAS[f]), h('b', null, money(v)))) : h('p', { class: 'muted' }, 'Sem pagamentos no mês.')),
         h('div', { class: 'card pad kv span-2' }, h('span', null, 'Clientes atendidos / novos cadastros'), h('b', null, `${r.clientes} / ${r.novos}`))),

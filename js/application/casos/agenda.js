@@ -58,6 +58,7 @@ export function casosAgenda(ctx, d) {
       need('agenda.editar', { profId: prof.id }, `Você não pode criar agendamentos para ${prof.nome}.`);
       const atual = input.itemId ? exigeItem(input.itemId) : null;
       if (atual) {
+        if (atual.tipo === 'produto') throw new Error('Este item é um produto. Edite pela aba Produto.');
         need('agenda.editar', { profId: atual.profId });
         if (atual.status === 'pago') throw new Error('Este item já foi pago. Anule o fechamento para editar.');
       }
@@ -112,6 +113,7 @@ export function casosAgenda(ctx, d) {
 
     async mudarStatus(itemId, status) {
       const it = exigeItem(itemId);
+      if (it.tipo === 'produto') throw new Error('Produtos não têm status de atendimento.');
       need('agenda.editar', { profId: it.profId });
       if (!nextStatuses(it.status).includes(status)) throw new Error('Mudança de status não permitida.');
       if (R.get('comanda', it.comandaId)?.status !== 'aberta') throw new Error('A comanda deste item já foi fechada. Anule o fechamento para mudar o status.');
@@ -124,9 +126,10 @@ export function casosAgenda(ctx, d) {
 
     async removerItem(itemId) {
       const it = exigeItem(itemId);
-      need('agenda.editar', { profId: it.profId });
+      if (it.tipo === 'produto') need('produto.vender', { profId: it.profId }, 'Você não pode alterar este produto na comanda.');
+      else need('agenda.editar', { profId: it.profId });
       if (it.status === 'pago') throw new Error('Item pago não pode ser excluído. Anule o fechamento primeiro.');
-      const ops = [{ del: 'item', id: it.id }, audit('Excluiu agendamento', it.nome, `${it.data} ${it.hora}`)];
+      const ops = [{ del: 'item', id: it.id }, audit(it.tipo === 'produto' ? 'Removeu produto da comanda' : 'Excluiu agendamento', it.nome, `${it.data} ${it.hora}`)];
       if (!d.itensDaComanda(it.comandaId).some((i) => i.id !== it.id)) ops.push({ del: 'comanda', id: it.comandaId });
       await R.commit(ops);
     },

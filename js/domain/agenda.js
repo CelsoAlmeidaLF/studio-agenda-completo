@@ -22,6 +22,7 @@ const TRANS = {
 };
 export const nextStatuses = (s) => TRANS[s] || [];
 export const isActive = (it) => it.status !== 'cancelado';
+export const ehProduto = (it) => it?.tipo === 'produto';
 
 // ---------- Horário de funcionamento (RN-03, RN-04) ----------
 export const DEFAULT_HORARIO = { 0: [], 1: [], 2: [['08:00', '19:00']], 3: [['08:00', '19:00']], 4: [['08:00', '19:00']], 5: [['08:00', '19:00']], 6: [['08:00', '18:00']] };
@@ -53,7 +54,8 @@ export function scheduleProblem({ est, items, bloqueios, item, nomeDe }) {
     if (overlap(s, e, toMin(b.inicio), toMin(b.fim))) return `${nomeDe(item.profId)} tem um bloqueio (${b.motivo || 'ausência'}) das ${b.inicio} às ${b.fim}.`;
   }
   for (const o of items) {
-    if (o.id === item.id || o.profId !== item.profId || o.data !== item.data || !isActive(o)) continue;
+    // Produto vendido não ocupa horário (RN-56).
+    if (o.tipo === 'produto' || o.id === item.id || o.profId !== item.profId || o.data !== item.data || !isActive(o)) continue;
     const os = toMin(o.hora), oe = os + o.duracao;
     if (overlap(s, e, os, oe)) return `${nomeDe(item.profId)} já tem um atendimento às ${o.hora} (até ${fromMin(oe)}).`;
   }
