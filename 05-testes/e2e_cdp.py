@@ -11,7 +11,7 @@ import websockets
 
 AQUI = Path(__file__).resolve().parent
 APP = AQUI.parent / '04-pwa'
-OUT = AQUI / 'capturas' / 'v1.2.0'
+OUT = AQUI / 'capturas' / 'v1.3.0'
 PORTA_APP, PORTA_CDP = 8123, 9333
 CHROME = os.environ.get('CHROME') or shutil.which('google-chrome') or shutil.which('chromium')
 PIN = '482916'
