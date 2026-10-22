@@ -1,4 +1,4 @@
-# Studio Agenda — PWA (v1.2.0)
+# Studio Agenda — PWA (v1.3.0)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
@@ -53,7 +53,7 @@ A aplicação recebe os adaptadores por injeção e não é exportada por nenhum
 ## Visual (template Studio Claro)
 
 O visual deste app é o template **`studio-claro`** em `FINANC/.designers/templates/studio-claro/`, mantido como padrão pelo Celso em 22/10/2026. Lá ficam a fonte em SCSS, a vitrine com todos os componentes, o guia de uso (README) e um `starter/` para projetos novos.
-O `css/app.css` daqui é a origem conferida pelo `npm run check` (em `.designers`). Para mudar o visual: edite o SCSS do template, rode `npm run build` e `npm run check`, copie o dist para `css/app.css` e troque a versão do cache no `sw.js`.
+Na v1.3.0, o visual recebeu o acabamento do Studio Claro 1.1: cantos e sombras suaves, transições e foco rosa, com a mesma fonte e as mesmas cores. O `css/app.css` daqui é a origem conferida pelo `npm run check` (em `.designers`). Para mudar o visual: edite o SCSS do template, rode `npm run build` e `npm run check`, copie o dist para `css/app.css` e troque a versão do cache no `sw.js`.
 
 ## Testes
 
