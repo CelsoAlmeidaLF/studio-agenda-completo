@@ -1,6 +1,6 @@
 // Service worker: guarda só os arquivos do app (shell) para funcionar offline.
 // Os dados NUNCA passam por aqui: ficam no IndexedDB, criptografados.
-const VERSION = 'studio-agenda-v1.1.0';
+const VERSION = 'studio-agenda-v1.2.0';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/adapters/in/ui/base.js',

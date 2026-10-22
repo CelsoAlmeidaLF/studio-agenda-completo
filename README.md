@@ -1,4 +1,4 @@
-# Studio Agenda — PWA (v1.1.0)
+# Studio Agenda — PWA (v1.2.0)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
@@ -55,7 +55,7 @@ A aplicação recebe os adaptadores por injeção e não é exportada por nenhum
 Rodar a partir da pasta `studio-agenda-completo`:
 
 ```bash
-node --test 05-testes/unit/          # 14 testes de domínio, aplicação e cofre (Node 20+, sem navegador)
+node --test 05-testes/unit/          # 19 testes de domínio, aplicação, cofre e dinheiro (Node 20+, sem navegador)
 python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP, com a CSP ativa
 ```
 
@@ -68,14 +68,14 @@ python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP,
 | Agendar / Vender | Busca por nome ou celular, novo cliente, cliente avulso, favoritos, filtro de serviços do profissional, validação de conflito e de horário de funcionamento |
 | Comanda | Itens do cliente no dia, status (Marcado, Confirmado, Em espera, Iniciado, Atrasado, Cancelado), notas internas, WhatsApp e ligação |
 | Fechamento | Preço (com permissão), desconto por item, gorjeta, data de fechamento, numeração sequencial |
-| Pagamento | Pix, dinheiro, débito, crédito e crédito do cliente, divisão entre formas, "continuar sem pagamento" (vira débito do cliente) |
+| Pagamento | Pix, dinheiro, débito, crédito e crédito do cliente, divisão entre formas, pagamento parcial ou "continuar sem pagamento" (o que falta vira débito do cliente) |
 | Clientes | Lista, ficha com visão geral, conta corrente, agendamentos e fechamentos |
 | Equipe | Saldo por profissional, conta corrente (comissões, gorjetas, recibos, adiantamentos), comissões pendentes |
-| Financeiro | Caixa do dia com valor inicial, entradas/saídas e categorias; relatórios do mês e evolução de 6 meses |
+| Financeiro | Caixa do dia com valor inicial, entradas/saídas, categorias e dinheiro na gaveta; relatórios do mês e evolução de 6 meses |
 | Gestão | Estabelecimento, horário com vários intervalos, intervalo da agenda, fechamento de caixa, serviços, profissionais, PIN, permissões |
 | Segurança | Meu PIN, bloqueio automático, armazenamento persistente, backup criptografado, restauração, auditoria, apagar dados |
 
-## Testado (v1.1.0)
+## Testado (v1.2.0)
 
 - **Unitários (`05-testes/unit/`):**
   - a aplicação não expõe o cofre;
@@ -90,12 +90,19 @@ python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP,
   - tipo de registro autenticado;
   - uma tentativa de PIN por vez e bloqueio;
   - backup só com PIN e sem registros adulterados;
-  - troca da chave dos dados.
+  - troca da chave dos dados;
+  - "1.500" lido como R$ 1.500,00;
+  - pagamento parcial com o resto pendente;
+  - item cancelado não volta a ativo em comanda fechada;
+  - estorno só com o caixa do dia aberto.
 - **E2E (`05-testes/e2e_cdp.py`, celular de 390 px):**
   - configuração inicial com PIN fraco recusado;
   - PIN errado;
   - agenda;
-  - favorito, comanda, fechamento e pagamento com abertura do caixa;
+  - favorito e comanda;
+  - item incluído depois de abrir o fechamento entra no total;
+  - pagamento parcial com o resto pendente e abertura do caixa;
+  - entrada de "1.500" no caixa e dinheiro na gaveta;
   - nenhum caractere usado como ícone;
   - console sem acesso à sessão;
   - tela de segurança;

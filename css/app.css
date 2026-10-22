@@ -113,6 +113,7 @@ textarea.inp { resize: vertical; }
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 56px; padding: 0 18px; border-radius: 8px; border: 0; background: #e3e4e7; font-size: 17px; font-weight: 900; color: var(--fg); }
 .bar.pri { background: var(--accent); color: #fff; }
 .bar.okbar { background: #e7f4ec; color: var(--ok); }
+.bar.okbar.pend { background: #fdeee4; color: var(--warn); }
 .bar b { font-size: 20px; }
 .pill { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 13px; font-weight: 900; color: #fff; background: var(--sc); }
 .av { display: inline-grid; place-items: center; flex: none; border-radius: 50%; background: var(--c); color: #fff; font-weight: 900; }
@@ -341,3 +342,4 @@ textarea.inp { resize: vertical; }
 .sw input:checked + i { outline: 3px solid var(--fg); outline-offset: 2px; }
 .sw input:focus-visible + i { outline: 3px solid var(--link); outline-offset: 2px; }
 .hb .kv { padding: 4px 0; }
+.kv.gaveta { border-top: 1px solid var(--line-2); margin-top: 10px; padding-top: 10px; }
