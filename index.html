@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Política de segurança: só código e estilos do próprio app; nenhuma conexão externa; sem scripts inline. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#c2255c">
+  <meta name="description" content="Agenda, comandas, caixa e comissões para salões e estúdios. Funciona offline, com dados criptografados no aparelho.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Studio Agenda">
+  <title>Studio Agenda</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./css/app.css">
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <div id="app" aria-live="polite"></div>
+  <noscript>O Studio Agenda precisa de JavaScript ativado.</noscript>
+</body>
+</html>
