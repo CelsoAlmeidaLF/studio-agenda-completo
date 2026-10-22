@@ -60,7 +60,7 @@
 - **RN-20** Desconto pode ser em valor ou percentual, aplicado ao item ou à comanda, e nunca pode deixar o total negativo.
 - **RN-21** A **gorjeta** vai integralmente para o profissional indicado e não entra na base de comissão.
 - **RN-22** A **data de fechamento** padrão é hoje. Pode ser outra (ex.: fechar ontem); essa data define em que dia o valor entra no caixa e em que mês entra no faturamento.
-- **RN-23** O pagamento pode ser dividido entre várias formas (ex.: R$ 50 Pix + R$ 85 crédito). A soma tem que ser igual ao total. "Continuar sem pagamento" deixa a comanda **fechada com saldo pendente**, lançado como débito na conta corrente do cliente.
+- **RN-23** O pagamento pode ser dividido entre várias formas (ex.: R$ 50 Pix + R$ 85 crédito). A soma tem que ser igual ao total. "Continuar sem pagamento" deixa a comanda **fechada com saldo pendente**, lançado como débito na conta corrente do cliente. Se parte já foi paga, essa parte entra no caixa e só o restante vira débito.
 - **RN-24** Anular um fechamento estorna o caixa, as comissões e os movimentos de conta corrente gerados por ele. Exige a permissão "Realizar e anular fechamentos" e registra quem e quando.
 - **RN-25** Pagar com **crédito do cliente** só é possível até o saldo disponível na conta corrente do cliente.
 - **RN-26** Todo fechamento recebe um número sequencial único por estabelecimento (ex.: nº 000521).

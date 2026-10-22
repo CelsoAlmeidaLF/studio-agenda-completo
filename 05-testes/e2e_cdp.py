@@ -11,7 +11,7 @@ import websockets
 
 AQUI = Path(__file__).resolve().parent
 APP = AQUI.parent / '04-pwa'
-OUT = AQUI / 'capturas' / 'v1.1.0'
+OUT = AQUI / 'capturas' / 'v1.2.0'
 PORTA_APP, PORTA_CDP = 8123, 9333
 CHROME = os.environ.get('CHROME') or shutil.which('google-chrome') or shutil.which('chromium')
 PIN = '482916'
@@ -158,17 +158,49 @@ async def principal():
     assert tel == 'tel:+5511900001234', tel
     assert await p.js("!!document.querySelector('.stbtn svg.ic')"), 'seta do status deve ser SVG'
     await p.foto('04-comanda.png')
+    # Abre o fechamento, volta e inclui outro item: o fechamento acompanha a comanda
     await p.clicar('.bar.pri', 'Fechamento')
     await p.esperar("location.hash.startsWith('#/fechamento')")
+    await p.js("history.back()")
+    await p.esperar("location.hash.startsWith('#/comanda')")
+    await p.clicar('.fab')
+    await p.esperar("document.querySelector('form.stack select')")
+    await p.js("""(() => { const s = document.querySelectorAll('form.stack select')[0];
+      s.value = [...s.options].find(o => o.textContent.includes('Camila')).value; s.dispatchEvent(new Event('change')); })()""")
+    await p.preencher('form.stack input[type=time]', '13:00')
+    await p.js("document.querySelector('form.stack').requestSubmit()")
+    await p.esperar("location.hash.startsWith('#/comanda') && document.querySelectorAll('.card.item').length === 2")
+    await p.clicar('.bar.pri', 'Fechamento')
+    await p.esperar("document.querySelectorAll('.fl').length === 2")
     await p.clicar('.bar.pri', 'Pagamento')
     await p.esperar("document.querySelector('.payrow.pix')")
-    await p.clicar('.payrow.pix .payname')
-    await p.clicar('.bar.pri', 'Confirmar')
+    total = await p.js("document.querySelector('.paytot b').textContent")
+    assert total == '280,00', total
+
+    # Pagamento parcial: R$ 100 no Pix e o resto pendente na conta do cliente
+    await p.preencher('.payrow.pix input', '100')
+    await p.esperar("document.querySelector('.foot .bar:not(.pri)').textContent.includes('180,00 pendente')")
+    await p.clicar('.foot .bar:not(.pri)')
     await p.esperar("document.querySelector('.sheet-root')")
     await p.preencher('.sheet-root input', '0,00')
     await p.clicar('.sheet-root .btn.pri', 'Abrir')
     await p.esperar("document.querySelector('.okbar')", 20)
+    ok = await p.js("document.querySelector('.okbar').textContent")
+    assert 'Pendente' in ok and '180,00' in ok, ok
     await p.foto('05-pago.png')
+
+    # Caixa: "1.500" é mil e quinhentos reais
+    await p.js("location.hash = '#/caixa'"); await p.esperar("document.querySelector('.fab')")
+    await p.clicar('.fab'); await p.esperar("document.querySelector('.sheet-root')")
+    await p.js("(() => { const s = document.querySelector('.sheet-root select'); s.value = 'entrada'; s.dispatchEvent(new Event('change')); })()")
+    await p.preencher('.sheet-root input.inp', '1.500', 0)
+    await p.clicar('.sheet-root .btn.pri', 'Lançar')
+    await p.esperar("!document.querySelector('.sheet-root')")
+    saldo = await p.js("document.querySelector('.ok-t').textContent")
+    assert '1.600,00' in saldo, saldo  # 100 do Pix + 1.500 de entrada
+    gaveta = await p.js("document.querySelector('.kv.gaveta b').textContent")
+    assert '1.500,00' in gaveta, gaveta
+    await p.foto('09-caixa.png')
 
     # Todas as telas abrem para o administrador, sem erro
     await p.js("location.hash = '#/clientes'"); await p.esperar("document.querySelector('.clirow')")

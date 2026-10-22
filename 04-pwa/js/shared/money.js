@@ -5,9 +5,11 @@ export function parseMoney(str) {
   if (typeof str === 'number') return Math.round(str * 100);
   const s = String(str || '').replace(/[^\d,.-]/g, '').trim();
   if (!s) return 0;
-  // "1.234,56" ou "1234.56" ou "12,5"
+  // Padrão brasileiro: "1.234,56", "12,5" e também "1.500" (ponto como separador de milhar).
+  // Sem vírgula, ponto seguido de exatamente 3 dígitos é milhar; caso contrário vale como decimal ("12.5").
   let n;
   if (s.includes(',')) n = Number(s.replace(/\./g, '').replace(',', '.'));
+  else if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) n = Number(s.replace(/\./g, ''));
   else n = Number(s);
   if (!Number.isFinite(n)) return NaN;
   return Math.round(n * 100);

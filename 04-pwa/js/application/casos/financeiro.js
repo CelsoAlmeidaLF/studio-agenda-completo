@@ -70,22 +70,23 @@ export function casosFinanceiro(ctx, d) {
         if (!isPositivo(p.valor)) throw new Error('Valor de pagamento inválido.');
       }
       const pago = pags.reduce((s, p) => s + p.valor, 0);
-      if (!semPagamento) {
-        if (pago < t.total) throw new Error(`Faltam ${money(t.total - pago)} para fechar o pagamento.`);
-        if (pago > t.total) throw new Error(`O pagamento passou ${money(pago - t.total)} do total.`);
-      }
+      // "Sem pagamento" aceita um pagamento parcial: o que foi pago entra no caixa e só o resto vira débito do cliente (RN-23).
+      if (pago > t.total) throw new Error(`O pagamento passou ${money(pago - t.total)} do total.`);
+      if (!semPagamento && pago < t.total) throw new Error(`Faltam ${money(t.total - pago)} para fechar o pagamento.`);
+      if (semPagamento && pago === t.total) throw new Error('O valor já está completo. Use Confirmar pagamento.');
+      const pendente = t.total - pago;
       const usaCreditoCli = pags.filter((p) => p.forma === 'credito_cliente').reduce((s, p) => s + p.valor, 0);
-      if (usaCreditoCli && !semPagamento) {
+      if (usaCreditoCli) {
         if (!comanda.cliId) throw new Error('Cliente avulso não tem crédito.');
         if (usaCreditoCli > d.saldo('cli:' + comanda.cliId)) throw new Error(`O crédito do cliente é ${money(Math.max(0, d.saldo('cli:' + comanda.cliId)))}.`);
       }
       if (semPagamento && !comanda.cliId) throw new Error('Cliente avulso precisa pagar no fechamento.');
-      const precisaCaixa = semPagamento ? false : pags.some((p) => p.forma !== 'credito_cliente');
+      const precisaCaixa = pags.some((p) => p.forma !== 'credito_cliente');
       if (precisaCaixa && !d.caixaAberto(data)) throw new NeedCaixa(data);
 
       const seq = (e.seqFech || 0) + 1;
       const nomeCli = d.nomeCliente(comanda);
-      const fech = { id: uid(), numero: seq, comandaId, cliId: comanda.cliId, avulso: comanda.avulso, data, linhas: ls, gorjeta: g, bruto: t.bruto, desconto: t.desc, total: t.total, pagamentos: semPagamento ? [] : pags.map((p) => ({ forma: p.forma, valor: p.valor })), pendente: semPagamento ? t.total : 0, autor: R.userId(), em: agoraISO(), anulado: null };
+      const fech = { id: uid(), numero: seq, comandaId, cliId: comanda.cliId, avulso: comanda.avulso, data, linhas: ls, gorjeta: g, bruto: t.bruto, desconto: t.desc, total: t.total, pagamentos: pags.map((p) => ({ forma: p.forma, valor: p.valor })), pendente, autor: R.userId(), em: agoraISO(), anulado: null };
       const numero = String(seq).padStart(6, '0');
       const ops = [{ put: 'fech', obj: fech }, { put: 'est', obj: { ...e, seqFech: seq } }, { put: 'comanda', obj: { ...comanda, status: 'fechada', fechId: fech.id } }];
       for (const it of itens) ops.push({ put: 'item', obj: { ...it, status: 'pago', preco: ls.find((l) => l.itemId === it.id).preco } });
@@ -93,10 +94,10 @@ export function casosFinanceiro(ctx, d) {
         if (p.forma === 'credito_cliente') ops.push(lanc({ conta: 'cli:' + comanda.cliId, data, cat: 'Pagamento com crédito do cliente', valor: -p.valor, forma: p.forma, desc: `Fechamento nº ${numero}`, origem: fech.id }));
         else ops.push(lanc({ conta: 'caixa', data, cat: 'Fechamento', valor: p.valor, forma: p.forma, desc: `Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
       }
-      if (semPagamento) ops.push(lanc({ conta: 'cli:' + comanda.cliId, data, cat: 'Fechamento pendente', valor: -t.total, desc: `Fechamento nº ${numero}`, origem: fech.id }));
+      if (pendente) ops.push(lanc({ conta: 'cli:' + comanda.cliId, data, cat: 'Fechamento pendente', valor: -pendente, desc: `Fechamento nº ${numero}`, origem: fech.id }));
       for (const l of ls) if (l.comissao > 0) ops.push(lanc({ conta: 'prof:' + l.profId, data, cat: 'Comissão', valor: l.comissao, desc: `${l.nome} · Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
       if (g) ops.push(lanc({ conta: 'prof:' + g.profId, data, cat: 'Gorjeta', valor: g.valor, desc: `Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
-      ops.push(audit('Fechou comanda', `Fechamento nº ${numero}`, `${nomeCli} · ${money(t.total)}${semPagamento ? ' · sem pagamento' : ''}`));
+      ops.push(audit('Fechou comanda', `Fechamento nº ${numero}`, `${nomeCli} · ${money(t.total)}${pendente ? ` · pendente ${money(pendente)}` : ''}`));
       await R.commit(ops);
       return fech;
     },
@@ -106,11 +107,14 @@ export function casosFinanceiro(ctx, d) {
       const f = R.get('fech', fechId);
       if (!f || f.anulado) throw new Error('Este fechamento já foi anulado.');
       const numero = String(f.numero).padStart(6, '0');
+      const origem = R.all('lanc').filter((x) => x.origem === fechId);
+      const hoje = ctx.hoje();
+      if (origem.some((l) => l.conta === 'caixa') && !d.caixaAberto(hoje)) throw new NeedCaixa(hoje);
       const ops = [{ put: 'fech', obj: { ...f, anulado: { por: R.userId(), em: agoraISO() } } }];
       const c = R.get('comanda', f.comandaId);
       if (c) ops.push({ put: 'comanda', obj: { ...c, status: 'aberta', fechId: null } });
       for (const l of f.linhas) { const it = R.get('item', l.itemId); if (it) ops.push({ put: 'item', obj: { ...it, status: 'confirmado' } }); }
-      for (const l of R.all('lanc').filter((x) => x.origem === fechId)) ops.push(lanc({ conta: l.conta, data: ctx.hoje(), cat: 'Estorno', valor: -l.valor, forma: l.forma, desc: `Anulação do fechamento nº ${numero}`, origem: fechId }));
+      for (const l of origem) ops.push(lanc({ conta: l.conta, data: hoje, cat: 'Estorno', valor: -l.valor, forma: l.forma, desc: `Anulação do fechamento nº ${numero}`, origem: fechId }));
       ops.push(audit('Anulou fechamento', `Fechamento nº ${numero}`, money(f.total)));
       await R.commit(ops);
     },

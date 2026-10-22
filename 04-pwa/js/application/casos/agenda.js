@@ -114,6 +114,7 @@ export function casosAgenda(ctx, d) {
       const it = exigeItem(itemId);
       need('agenda.editar', { profId: it.profId });
       if (!nextStatuses(it.status).includes(status)) throw new Error('Mudança de status não permitida.');
+      if (R.get('comanda', it.comandaId)?.status !== 'aberta') throw new Error('A comanda deste item já foi fechada. Anule o fechamento para mudar o status.');
       if (status === 'marcado' && it.status === 'cancelado') {
         const p = scheduleProblem({ est: est(), items: R.all('item'), bloqueios: R.all('bloq'), item: { ...it, status }, nomeDe: nomeProf });
         if (p) throw new Error(p);

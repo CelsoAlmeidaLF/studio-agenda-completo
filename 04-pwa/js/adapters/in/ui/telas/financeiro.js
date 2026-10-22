@@ -37,7 +37,9 @@ export function registerFinanceiro(app) {
           e.usaCaixa && !cx && can(me, 'caixa.abrir') ? h('button', { class: 'btn sm', onclick: () => abrirCaixaSheet(d, rerender) }, 'Abrir') : null))),
       h('div', { class: 'row2' },
         h('div', null, h('small', { class: 'in-t' }, `Entradas | ${ent.length}`), h('div', null, money(ent.reduce((a, l) => a + l.valor, 0)))),
-        h('div', null, h('small', { class: 'out-t' }, `Saídas | ${sai.length}`), h('div', null, money(sai.reduce((a, l) => a + l.valor, 0))))));
+        h('div', null, h('small', { class: 'out-t' }, `Saídas | ${sai.length}`), h('div', null, money(sai.reduce((a, l) => a + l.valor, 0))))),
+      // O saldo final soma todas as formas; para conferir a gaveta vale só o dinheiro.
+      h('div', { class: 'kv gaveta' }, h('span', null, 'Dinheiro na gaveta'), h('b', null, money((cx?.inicial || 0) + ls.filter((l) => l.forma === 'dinheiro').reduce((a, l) => a + l.valor, 0)))));
     return {
       title: 'Caixa', sub: 'Financeiro', back: 'financeiro',
       body: h('div', { class: 'stack' },
