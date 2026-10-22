@@ -1,7 +1,7 @@
 // Consultas para a interface. A visibilidade (RN-42, RN-43) é aplicada aqui, na aplicação, e não só na tela.
 import { can } from '../../domain/permissoes.js';
 import { isActive } from '../../domain/agenda.js';
-import { comissao } from '../../domain/financeiro.js';
+import { comissao, pctComissao } from '../../domain/financeiro.js';
 import { norm, onlyDigits } from '../../shared/texto.js';
 import { Denied } from '../erros.js';
 
@@ -27,6 +27,9 @@ export function consultas(ctx, d) {
     prof: (id) => R.get('prof', id),
     servicos: (incluirInativos = false) => R.all('srv').filter((s) => incluirInativos || s.ativo !== false).sort((a, b) => (a.categoria || '').localeCompare(b.categoria || '') || a.nome.localeCompare(b.nome)),
     servico: (id) => R.get('srv', id),
+    produtos: (incluirInativos = false) => R.all('prod').filter((p) => incluirInativos || p.ativo !== false).sort((a, b) => (a.categoria || '').localeCompare(b.categoria || '') || a.nome.localeCompare(b.nome)),
+    produtosAVenda: () => R.all('prod').filter((p) => p.ativo !== false && p.venda?.ativo && p.venda.preco > 0).sort((a, b) => (a.categoria || '').localeCompare(b.categoria || '') || a.nome.localeCompare(b.nome)),
+    produto: (id) => R.get('prod', id),
     clientes,
     cliente: (id) => R.get('cli', id),
     buscarClientes(q) {
@@ -76,7 +79,7 @@ export function consultas(ctx, d) {
       const p = R.get('prof', profId);
       return R.all('item').filter((i) => i.profId === profId && i.data <= ctx.hoje() && ['confirmado', 'iniciado', 'marcado', 'atrasado', 'espera'].includes(i.status))
         .sort((a, b) => b.data.localeCompare(a.data))
-        .map((i) => ({ ...i, comissaoPrevista: comissao({ preco: i.preco, desconto: 0 }, p?.comissao || 0) }));
+        .map((i) => ({ ...i, comissaoPrevista: comissao({ preco: i.preco, desconto: 0 }, pctComissao(i, p, i.tipo === 'produto' ? R.get('prod', i.prodId) : null)) }));
     },
 
     // ---------- Segurança ----------

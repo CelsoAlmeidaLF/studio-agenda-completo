@@ -1,6 +1,6 @@
 # Studio Agenda — Regras de Negócio
 
-> Versão 0.1 · 22/10/2026 · Fonte: protótipo de telas (34 telas) e MVP `agenda-studio.html`
+> Versão 0.2 · 22/10/2026 · Fonte: protótipo de telas (34 telas + 4 telas de produtos), MVP `agenda-studio.html` e PWA v1.1.0
 > Itens marcados **[A CONFIRMAR]** são decisões propostas que dependem do dono do produto.
 
 ## Glossário
@@ -10,7 +10,7 @@
 | Estabelecimento | O salão/clínica que assina o sistema. Todo dado pertence a um estabelecimento. |
 | Profissional | Pessoa da equipe que atende ou opera o sistema (inclui Recepção e Gerência). |
 | Cliente | Pessoa atendida. Pode ser **cadastrado** ou **avulso** (passante, sem cadastro). |
-| Item de comanda | Um serviço, produto ou pacote vendido, com profissional, horário e preço. |
+| Item de comanda | Um serviço ou produto vendido, com profissional, horário e preço. |
 | Comanda | Conjunto de itens de **um cliente em um dia**. É a unidade de fechamento. |
 | Fechamento | Encerramento da comanda: soma, desconto, gorjeta e data de fechamento. |
 | Pagamento | Registro de como o fechamento foi pago (Pix, dinheiro, débito, crédito, crédito do cliente). |
@@ -54,7 +54,7 @@
 
 ## 3. Comanda, fechamento e pagamento
 
-- **RN-17** A comanda agrupa todos os itens do mesmo cliente na mesma data. Pode receber serviços, produtos e pacotes.
+- **RN-17** A comanda agrupa todos os itens do mesmo cliente na mesma data. Pode receber serviços e produtos.
 - **RN-18** Total da comanda = Σ preço dos itens − descontos + gorjeta.
 - **RN-19** O preço do item vem do cadastro do serviço no momento do agendamento. Alterar o preço exige a permissão "Editar o preço de todos os agendamentos" (ou dos próprios).
 - **RN-20** Desconto pode ser em valor ou percentual, aplicado ao item ou à comanda, e nunca pode deixar o total negativo.
@@ -67,7 +67,7 @@
 
 ## 4. Comissões e conta corrente da equipe
 
-- **RN-27** Cada profissional tem um percentual de comissão padrão; um serviço pode ter percentual próprio, que prevalece. **[A CONFIRMAR]**
+- **RN-27** Cada profissional tem um percentual de comissão padrão, usado nos **serviços**. Nos **produtos** vale a comissão de venda definida no próprio produto para cada profissional (RN-58). **[A CONFIRMAR: percentual próprio por serviço]**
 - **RN-28** Base de comissão = valor do item após desconto, sem gorjeta. Comissão = base × percentual, arredondada a 2 casas.
 - **RN-29** A comissão é gerada **no fechamento** (não no agendamento) e lançada como crédito na conta corrente do profissional.
 - **RN-30** Com fechamento sem pagamento, a comissão fica em **Comissões pendentes** até o pagamento. **[A CONFIRMAR]**
@@ -89,7 +89,7 @@
 
 ## 7. Permissões
 
-- **RN-40** Permissões são **por profissional**, organizadas em 8 áreas: Agenda, Estoque, Clientes, Anamnese, Contas e comissões, Financeiro, Relatórios e Gestão do estabelecimento.
+- **RN-40** Permissões são **por profissional**, organizadas nas áreas: Agenda (incluindo "Gestão dos produtos nos agendamentos"), Clientes, Contas e comissões, Financeiro, Relatórios, Gestão do estabelecimento e Segurança. Estoque e Anamnese estão fora do escopo (seção 11).
 - **RN-41** Em cada grupo vale uma única opção (do menor ao maior acesso). As opções extras (caixas de marcar) só valem quando a opção que as contém está escolhida.
 - **RN-42** "Apenas os seus próprios" quer dizer itens em que o profissional é o executante.
 - **RN-43** Sem a permissão de contatos, o profissional vê o nome do cliente, mas não o telefone nem o e-mail.
@@ -109,3 +109,29 @@
 - **RN-51** Status de nota de cobrança: Em aberto, Paga, Grátis (valor zero) e Vencida.
 - **RN-52** Nota vencida há mais de X dias deixa o sistema em **modo somente leitura** até a quitação. **[A CONFIRMAR X]**
 - **RN-53** Valores, taxas e limites do plano mostrados nas telas são **exemplos** até a definição comercial. **[A CONFIRMAR]**
+
+## 10. Produtos
+
+- **RN-54** O produto tem nome, categoria, código sequencial (#1, #2…) e situação Ativo/Inativo. Produto inativo não aparece para venda, mas continua nos fechamentos e relatórios antigos. Produto não é excluído, só inativado.
+- **RN-55** **Consumo:** unidade de consumo (Unidades, Mililitros ou Gramas), preço para uso interno (custo do produto usado nos serviços) e preço para profissionais (valor cobrado quando o profissional compra para si). São valores de referência; não movimentam caixa nem estoque.
+- **RN-56** **Venda:** o produto só pode ser lançado na comanda se a venda estiver **ativa** e com preço maior que zero. Produto vendido **não ocupa horário** na agenda e não entra no controle de conflitos.
+- **RN-57** Na comanda, o produto entra pela aba **Produto** de "Adicionar à comanda", com quantidade (1 a 99) e o profissional que vendeu. Valor do item = preço de venda × quantidade, com o preço do momento da venda.
+- **RN-58** **Comissão de venda** é definida por produto e por profissional (0% = sem comissão, que é o padrão). Base = valor do item depois do desconto. É lançada no fechamento, na conta do vendedor, na categoria "Comissão de venda", e estornada na anulação.
+- **RN-59** Lançar produtos exige a permissão "Gestão dos produtos nos agendamentos" (sem acesso, apenas os seus próprios, ou todos). Cadastrar e editar produtos exige "Configurações dos itens (serviços e produtos)".
+- **RN-60** Os relatórios separam **atendimentos** (só serviços) de **produtos vendidos** (soma das quantidades).
+
+## 11. Escopo fechado (decisão de 22/10/2026)
+
+As telas mapeadas no protótipo são o escopo completo do produto. **O que não foi mapeado não será construído.** Ficam fora:
+
+| Fora do escopo | Observação |
+|---|---|
+| Pacotes de serviços | A aba "Pacote" em "Adicionar à comanda" não existe. |
+| Estoque (entradas, saídas, posição, inventário) | O produto tem só os preços de consumo como referência de custo; não há controle de quantidade. |
+| Linhas, marcas e fornecedores de produtos | Produto tem apenas nome e categoria. |
+| Configurações gerais de produtos | — |
+| Anamnese | A área de permissão "Anamnese" não é usada. |
+| Recorrência de agendamento | Cada agendamento é criado individualmente. |
+| Descontos pré-definidos | O desconto é digitado no fechamento, item a item. |
+| Dados pessoais / perfil do usuário | O profissional é editado em Gestão › Profissionais. |
+| Vendas online, maquininha integrada e SMS/e-mail automático | O lembrete continua por link de WhatsApp. |

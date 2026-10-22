@@ -1,6 +1,6 @@
 // Casos de uso financeiros: caixa, fechamento, pagamento, anulação, contas correntes e relatórios (RN-17 a RN-36).
 import { isActive } from '../../domain/agenda.js';
-import { comandaTotals, comissao, FORMAS, FORMAS_CAIXA, TIPOS_LANC_CAIXA, TIPOS_LANC_CLIENTE, TIPOS_LANC_PROF } from '../../domain/financeiro.js';
+import { comandaTotals, comissao, pctComissao, FORMAS, FORMAS_CAIXA, TIPOS_LANC_CAIXA, TIPOS_LANC_CLIENTE, TIPOS_LANC_PROF } from '../../domain/financeiro.js';
 import { isData, isMes, isCentavos, isPositivo } from '../../domain/validacao.js';
 import { clip } from '../../shared/texto.js';
 import { money } from '../../shared/money.js';
@@ -35,7 +35,7 @@ export function casosFinanceiro(ctx, d) {
 
     // ---------- Fechamento e pagamento ----------
     previaFechamento(comandaId) {
-      return d.itensDaComanda(comandaId).filter(isActive).map((i) => ({ itemId: i.id, nome: i.nome, profId: i.profId, preco: i.preco, desconto: 0 }));
+      return d.itensDaComanda(comandaId).filter(isActive).map((i) => ({ itemId: i.id, tipo: i.tipo || 'servico', prodId: i.prodId || null, nome: i.tipo === 'produto' ? `${i.qtd}× ${i.nome}` : i.nome, profId: i.profId, preco: i.preco, desconto: 0 }));
     },
     async fechar(comandaId, { linhas, gorjeta, data, pagamentos, semPagamento }) {
       const comanda = R.get('comanda', comandaId);
@@ -53,8 +53,10 @@ export function casosFinanceiro(ctx, d) {
         const desconto = l.desconto || 0;
         if (!(isCentavos(desconto) && desconto <= l.preco)) throw new Error(`O desconto de ${it.nome} não pode ser maior que o preço.`);
         const prof = R.get('prof', it.profId);
-        const linha = { itemId: it.id, nome: it.nome, profId: it.profId, preco: l.preco, desconto };
-        linha.comissao = comissao(linha, prof?.comissao || 0);
+        const produto = it.tipo === 'produto';
+        const linha = { itemId: it.id, tipo: it.tipo || 'servico', prodId: it.prodId || null, qtd: it.qtd || 1, nome: produto ? `${it.qtd}× ${it.nome}` : it.nome, profId: it.profId, preco: l.preco, desconto };
+        linha.pct = pctComissao(it, prof, produto ? R.get('prod', it.prodId) : null);
+        linha.comissao = comissao(linha, linha.pct);
         return linha;
       });
       let g = null;
@@ -95,7 +97,7 @@ export function casosFinanceiro(ctx, d) {
         else ops.push(lanc({ conta: 'caixa', data, cat: 'Fechamento', valor: p.valor, forma: p.forma, desc: `Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
       }
       if (pendente) ops.push(lanc({ conta: 'cli:' + comanda.cliId, data, cat: 'Fechamento pendente', valor: -pendente, desc: `Fechamento nº ${numero}`, origem: fech.id }));
-      for (const l of ls) if (l.comissao > 0) ops.push(lanc({ conta: 'prof:' + l.profId, data, cat: 'Comissão', valor: l.comissao, desc: `${l.nome} · Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
+      for (const l of ls) if (l.comissao > 0) ops.push(lanc({ conta: 'prof:' + l.profId, data, cat: l.tipo === 'produto' ? 'Comissão de venda' : 'Comissão', valor: l.comissao, desc: `${l.nome} · Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
       if (g) ops.push(lanc({ conta: 'prof:' + g.profId, data, cat: 'Gorjeta', valor: g.valor, desc: `Fechamento nº ${numero} · ${nomeCli}`, origem: fech.id }));
       ops.push(audit('Fechou comanda', `Fechamento nº ${numero}`, `${nomeCli} · ${money(t.total)}${pendente ? ` · pendente ${money(pendente)}` : ''}`));
       await R.commit(ops);
@@ -171,10 +173,12 @@ export function casosFinanceiro(ctx, d) {
       const fs = validos.filter((f) => f.data.startsWith(ym));
       const fat = fs.reduce((s, f) => s + f.total - (f.gorjeta?.valor || 0), 0);
       const linhas = fs.flatMap((f) => f.linhas);
-      const porProf = new Map(), porSrv = new Map(), porForma = new Map(), cli = new Set();
+      // RN-60: atendimentos contam só serviços; produtos somam as quantidades vendidas.
+      const porProf = new Map(), porSrv = new Map(), porProd = new Map(), porForma = new Map(), cli = new Set();
       for (const l of linhas) {
-        const a = porProf.get(l.profId) || { fat: 0, com: 0, n: 0 }; a.fat += l.preco - l.desconto; a.com += l.comissao; a.n++; porProf.set(l.profId, a);
-        const b = porSrv.get(l.nome) || { n: 0, fat: 0 }; b.n++; b.fat += l.preco - l.desconto; porSrv.set(l.nome, b);
+        const a = porProf.get(l.profId) || { fat: 0, com: 0, n: 0 }; a.fat += l.preco - l.desconto; a.com += l.comissao; if (l.tipo !== 'produto') a.n++; porProf.set(l.profId, a);
+        if (l.tipo === 'produto') { const k = l.prodId || l.nome; const c = porProd.get(k) || { nome: R.get('prod', l.prodId)?.nome || l.nome.replace(/^\d+× /, ''), n: 0, fat: 0 }; c.n += l.qtd || 1; c.fat += l.preco - l.desconto; porProd.set(k, c); }
+        else { const b = porSrv.get(l.nome) || { n: 0, fat: 0 }; b.n++; b.fat += l.preco - l.desconto; porSrv.set(l.nome, b); }
       }
       for (const f of fs) { for (const p of f.pagamentos) porForma.set(p.forma, (porForma.get(p.forma) || 0) + p.valor); if (f.cliId) cli.add(f.cliId); }
       const meses = [];
@@ -186,7 +190,8 @@ export function casosFinanceiro(ctx, d) {
         meses.push({ key, label: dt.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''), v });
       }
       const novos = R.all('cli').filter((c) => c.ativo !== false && (c.criadoEm || '').startsWith(ym)).length;
-      return { fat, n: linhas.length, ticket: fs.length ? Math.round(fat / fs.length) : 0, com: linhas.reduce((s, l) => s + l.comissao, 0), porProf, porSrv: [...porSrv.entries()].sort((a, b) => b[1].n - a[1].n), porForma, clientes: cli.size, novos, meses };
+      const prodLinhas = linhas.filter((l) => l.tipo === 'produto');
+      return { fat, n: linhas.length - prodLinhas.length, nProd: prodLinhas.reduce((s, l) => s + (l.qtd || 1), 0), fatProd: [...porProd.values()].reduce((s, x) => s + x.fat, 0), porProd: [...porProd.values()].sort((a, b) => b.n - a.n || b.fat - a.fat), ticket: fs.length ? Math.round(fat / fs.length) : 0, com: linhas.reduce((s, l) => s + l.comissao, 0), porProf, porSrv: [...porSrv.entries()].sort((a, b) => b[1].n - a[1].n), porForma, clientes: cli.size, novos, meses };
     },
   };
 }

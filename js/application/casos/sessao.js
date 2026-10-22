@@ -36,6 +36,12 @@ export function casosSessao(ctx) {
         ['Unhas', 'Mão', 30, 4000, [p2.id]], ['Unhas', 'Pé', 30, 4500, [p2.id]], ['Unhas', 'Esmaltação tradicional', 30, 2500, [p2.id]], ['Unhas', 'Mão & Pé - COMBO', 90, 7500, [p2.id]],
       ];
       for (const [categoria, nome, duracao, preco, profIds] of srv) recs.push({ type: 'srv', obj: { id: uid(), categoria, nome, duracao, preco, profs: profIds, ativo: true } });
+      const prods = [
+        ['Maquiagem', 'Gel de sobrancelha', 1500, 2000, 2000, { [p1.id]: 10 }], ['Saúde e bem-estar', 'Colágeno', 6000, 7500, 8900, {}],
+        ['Saúde e bem-estar', 'Creme hidratante', 2800, 3500, 4500, { [p2.id]: 5 }], ['Unhas', 'Óleo de cutícula', 900, 1200, 1800, { [p2.id]: 10 }],
+      ];
+      prods.forEach(([categoria, nome, precoInterno, precoProf, preco, comissoes], i) => recs.push({ type: 'prod', obj: { id: uid(), codigo: i + 1, categoria, nome, ativo: true, consumo: { unidade: 'Unidades', precoInterno, precoProf }, venda: { ativo: true, preco }, comissoes, criadoEm: agoraISO(), criadoPor: admin.id, alteradoEm: agoraISO(), alteradoPor: admin.id } }));
+      recs[0].obj.seqProd = prods.length;
       for (const [nome, cel] of [['Renata Oliveira', '11900001234'], ['Mariana Luz', '11900000102'], ['Ana Paula Prado', '11900000103']])
         recs.push({ type: 'cli', obj: { id: uid(), nome, cel, email: '', obs: '', ativo: true, criadoEm: agoraISO(), favoritos: [] } });
     }

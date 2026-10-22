@@ -39,8 +39,9 @@
   | Profissional | id, nome, sigla, cor, area, comissaoPct, ativo, permissoes{}, favoritoDe[] |
   | Cliente | id, nome, celular (único), email?, obs, ativo, criadoEm |
   | Servico | id, nome, categoria, duracaoMin, precoCentavos, comissaoPct?, profissionais[], ativo |
+  | Produto | id, codigo (seq.), nome, categoria, ativo, consumo{unidade, precoInterno, precoProf}, venda{ativo, preco}, comissoes{profissionalId: pct}, criadoEm/Por, alteradoEm/Por |
   | Comanda | id, clienteId \| avulsoNome, data, status (aberta/fechada/anulada), fechamentoId? |
-  | ItemComanda | id, comandaId, tipo (servico/produto/pacote), refId, profissionalId, inicio, fimCalc, precoCentavos, descontoCentavos, status, notaInterna, notificado |
+  | ItemComanda | id, comandaId, tipo (servico/produto), refId (srvId ou prodId), qtd, precoUnit, profissionalId, inicio, fimCalc, precoCentavos, descontoCentavos, status, notaInterna, notificado |
   | Fechamento | id, numero (seq.), comandaId, dataFechamento, totalCentavos, gorjetas[], pagamentos[], criadoPor, anuladoPor? |
   | Lancamento | id, conta (caixa \| cliente:{id} \| profissional:{id}), tipo, valorCentavos (+/−), origem (fechamentoId…), data, autor |
   | Bloqueio | id, profissionalId, inicio, fim, motivo |

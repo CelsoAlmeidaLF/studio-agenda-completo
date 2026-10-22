@@ -5,7 +5,7 @@ import { STATUS, nextStatuses, isActive } from '../../../../domain/agenda.js';
 import { FORMAS, comandaTotals } from '../../../../domain/financeiro.js';
 import { isCelular } from '../../../../domain/validacao.js';
 import { NeedCaixa } from '../../../../application/erros.js';
-import { route, go, sheet, closeSheet, toast, run, field, input, select, avatar, emptyState, dangerBtn, rerender } from '../kit.js';
+import { route, go, sheet, closeSheet, toast, run, field, input, select, avatar, pill, emptyState, dangerBtn, rerender } from '../kit.js';
 import { dayTitle, waLink, telLink } from './agenda.js';
 
 let S; // aplicação (casos de uso), injetada pela raiz de composição
@@ -57,11 +57,12 @@ export function registerComanda(app) {
   });
 
   // ---------- Adicionar à comanda ----------
-  route('adicionar', ({ d = today(), h: hora, p, item: itemId }) => {
+  route('adicionar', ({ d = today(), h: hora, p, item: itemId, tab }) => {
     const me = S.me();
     const atual = itemId ? S.item(itemId) : null;
     if (atual) selecao = atual.cliId ? { cliId: atual.cliId } : { avulso: atual.avulso };
     if (!selecao) { go('novo', { d }); return { title: '', body: h('div') }; }
+    if (tab === 'produto' || atual?.tipo === 'produto') return produtoForm({ d, p, atual });
     const cli = selecao.cliId ? S.cliente(selecao.cliId) : null;
     const nomeCli = cli?.nome || selecao.novoNome || selecao.avulso;
     const favs = new Set(cli?.favoritos || []);
@@ -107,7 +108,7 @@ export function registerComanda(app) {
     return {
       title: atual ? 'Editar item' : 'Adicionar à comanda…', sub: nomeCli, back: true,
       body: h('form', { class: 'stack', onsubmit: (e) => { e.preventDefault(); salvar().catch(() => {}); } },
-        h('div', { class: 'seg' }, h('button', { type: 'button', class: 'on' }, icon('scissors', 18), 'Serviço'), h('button', { type: 'button', disabled: true, title: 'Em breve' }, 'Produto'), h('button', { type: 'button', disabled: true, title: 'Em breve' }, 'Pacote')),
+        atual ? null : segTabs('servico', { d, h: hora, p }),
         h('div', { class: 'card pad row2' }, field('Data', di), field('Hora', hi)),
         h('div', { class: 'row-end' }, field('Profissional', ps), fav),
         h('label', { class: 'chk', for: 'sdp' }, soDoProf, h('span', null, 'Mostrar só os serviços executados por este profissional')),
@@ -135,6 +136,7 @@ export function registerComanda(app) {
         h('a', { class: 'circ wa', href: waLink(cli.cel, `Olá, ${cli.nome.split(' ')[0]}!`), target: '_blank', rel: 'noopener noreferrer', 'aria-label': 'Abrir WhatsApp' }, icon('whats', 22)),
         h('a', { class: 'circ tel', href: telLink(cli.cel), 'aria-label': 'Ligar' }, icon('phone', 22))) : null);
     const cards = itens.map((it) => {
+      if (it.tipo === 'produto') return produtoCard(it, c, id);
       const podeEd = can(me, 'agenda.editar', { profId: it.profId });
       return h('div', { class: 'card item' + (it.nota ? ' hl' : '') + (it.status === 'cancelado' ? ' off' : '') },
         h('div', { class: 'item-h' }, h('span', { class: 'hr' }, it.hora, h('small', null, ` - ${fromMin(toMin(it.hora) + it.duracao)}`)),
@@ -175,7 +177,7 @@ export function registerComanda(app) {
       const de = input({ inputmode: 'decimal', value: l.desconto ? centsToInput(l.desconto) : '', placeholder: '0,00', 'aria-label': `Desconto em ${l.nome}` });
       pi.addEventListener('input', () => { const v = parseMoney(pi.value); if (v >= 0) { l.preco = v; upd(); } });
       de.addEventListener('input', () => { const v = parseMoney(de.value); l.desconto = v >= 0 ? v : 0; upd(); });
-      return h('div', { class: 'fl' }, h('div', { class: 'fl-n' }, icon('scissors', 18), h('span', null, h('b', null, l.nome), h('small', null, S.nomeProf(l.profId)))),
+      return h('div', { class: 'fl' }, h('div', { class: 'fl-n' }, icon(l.tipo === 'produto' ? 'cart' : 'scissors', 18), h('span', null, h('b', null, l.nome), h('small', null, S.nomeProf(l.profId)))),
         h('div', { class: 'fl-v' }, field('Preço', pi), field('Desconto', de)));
     });
     const gp = select([['', 'Sem gorjeta'], ...[...new Set(r.linhas.map((l) => l.profId))].map((pid) => [pid, S.nomeProf(pid)])], r.gorjeta.profId);
@@ -255,6 +257,66 @@ export function abrirCaixaSheet(data, then) {
   const v = input({ inputmode: 'decimal', placeholder: '0,00', 'aria-label': 'Valor inicial do caixa' });
   sheet('Abrir o caixa', h('div', { class: 'stack' }, h('p', null, `O caixa de ${fmtDate(data)} ainda não foi aberto. Informe o valor em dinheiro na gaveta.`), field('Valor inicial (R$)', v)),
     h('button', { class: 'btn pri', onclick: async () => { const c = parseMoney(v.value || '0'); try { await S.abrirCaixa(data, c); closeSheet(); toast('Caixa aberto', true); then?.(); } catch (e) { toast(e.message); } } }, 'Abrir caixa'));
+}
+
+// Produto vendido na comanda: sem horário de atendimento e sem status (RN-56).
+function produtoCard(it, c, id) {
+  const podeEd = can(S.me(), 'produto.vender', { profId: it.profId }) && it.status !== 'pago';
+  return h('div', { class: 'card item prod' + (it.nota ? ' hl' : '') },
+    h('div', { class: 'item-h' }, h('span', { class: 'hr' }, it.hora, h('small', null, ' · venda')), it.status === 'pago' ? pill('Pago', STATUS.pago.cor) : pill('Produto', 'var(--prod)')),
+    h('div', { class: 'item-r' }, icon('cart', 20), h('b', null, `${it.qtd}× ${it.nome}`), h('span', { class: 'muted' }, money(it.preco))),
+    h('div', { class: 'item-r' }, avatar(S.prof(it.profId), 24), h('span', null, 'Vendido por ' + S.nomeProf(it.profId))),
+    it.nota ? h('div', { class: 'item-r note-i' }, icon('edit', 18), h('i', null, it.nota)) : null,
+    podeEd ? h('div', { class: 'acts-row end' },
+      h('button', { class: 'btn sm', onclick: () => go('adicionar', { item: it.id }) }, icon('edit', 16), 'Editar'),
+      dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Produto removido').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))), 'btn sm danger')) : null);
+}
+
+// ---------- Abas Serviço / Produto de "Adicionar à comanda" ----------
+function segTabs(on, params) {
+  const me = S.me();
+  const podeProd = S.profs().some((x) => can(me, 'produto.vender', { profId: x.id }));
+  return h('div', { class: 'seg', role: 'tablist' },
+    h('button', { type: 'button', role: 'tab', 'aria-selected': String(on === 'servico'), class: on === 'servico' ? 'on' : '', onclick: () => on !== 'servico' && go('adicionar', { ...params, tab: '' }) }, icon('scissors', 18), 'Serviço'),
+    podeProd ? h('button', { type: 'button', role: 'tab', 'aria-selected': String(on === 'produto'), class: on === 'produto' ? 'on' : '', onclick: () => on !== 'produto' && go('adicionar', { ...params, tab: 'produto' }) }, icon('cart', 18), 'Produto') : null);
+}
+
+function produtoForm({ d, p, atual }) {
+  const me = S.me();
+  const cli = selecao.cliId ? S.cliente(selecao.cliId) : null;
+  const nomeCli = cli?.nome || selecao.novoNome || selecao.avulso;
+  const vendedores = S.profs().filter((x) => can(me, 'produto.vender', { profId: x.id }));
+  const lista = S.produtosAVenda();
+  const topo = atual ? null : segTabs('produto', { d, p });
+  if (!vendedores.length) return { title: 'Adicionar à comanda…', sub: nomeCli, back: true, body: h('div', { class: 'stack' }, topo, emptyState('lock', 'Sem permissão para lançar produtos', 'Peça ao gestor para liberar "Gestão dos produtos nos agendamentos".')) };
+  if (!lista.length) return { title: 'Adicionar à comanda…', sub: nomeCli, back: true, body: h('div', { class: 'stack' }, topo, emptyState('cart', 'Nenhum produto à venda', 'Cadastre produtos e ative a venda em Gestão › Lista de produtos.')) };
+  const groups = new Map();
+  for (const x of lista) { if (!groups.has(x.categoria)) groups.set(x.categoria, []); groups.get(x.categoria).push(x); }
+  const ps = h('select', { class: 'inp' }, [...groups].map(([cat, xs]) => h('optgroup', { label: cat }, xs.map((x) => h('option', { value: x.id, selected: atual?.prodId === x.id }, `${x.nome} · ${money(x.venda.preco)}`)))));
+  const qtd = input({ type: 'number', min: 1, max: 99, step: 1, value: atual?.qtd || 1, inputmode: 'numeric' });
+  const vend = select(vendedores.map((x) => [x.id, `${x.nome} · ${x.area}`]), atual?.profId || p || (vendedores.find((x) => x.id === me.id) || vendedores[0]).id);
+  const nota = h('textarea', { class: 'inp', maxlength: 300, rows: 2, placeholder: 'Notas internas (opcional)' }, atual?.nota || '');
+  const resumo = h('p', { class: 'totrow' });
+  const hint = h('p', { class: 'muted small' });
+  const upd = () => {
+    const pr = S.produto(ps.value), q = Math.max(0, parseInt(qtd.value, 10) || 0);
+    const pct = Number(pr?.comissoes?.[vend.value] || 0);
+    resumo.replaceChildren(h('span', null, `${q} × ${money(pr?.venda.preco || 0)}`), h('b', null, money((pr?.venda.preco || 0) * q)));
+    hint.textContent = pct ? `Comissão de venda para ${S.nomeProf(vend.value)}: ${pct}%` : `${S.nomeProf(vend.value)} não tem comissão neste produto.`;
+  };
+  [ps, qtd, vend].forEach((el) => el.addEventListener('input', upd));
+  upd();
+  const salvar = async () => {
+    const it = await run(() => S.venderProduto({ itemId: atual?.id, ...selecao, data: atual?.data || d, prodId: ps.value, qtd: Number(qtd.value), profId: vend.value, nota: nota.value }), atual ? 'Produto atualizado' : 'Produto adicionado à comanda');
+    selecao = null; go('comanda', { id: it.comandaId });
+  };
+  return {
+    title: atual ? 'Editar produto' : 'Adicionar à comanda…', sub: nomeCli, back: true,
+    body: h('form', { class: 'stack', onsubmit: (e) => { e.preventDefault(); salvar().catch(() => {}); } },
+      topo,
+      field('Produto', ps), h('div', { class: 'row2' }, field('Quantidade', qtd), field('Vendido por', vend)), hint, resumo, field('Notas internas', nota),
+      h('button', { class: 'btn pri block', type: 'submit' }, atual ? 'Salvar alterações' : 'Salvar na comanda')),
+  };
 }
 
 function statusSheet(it) {

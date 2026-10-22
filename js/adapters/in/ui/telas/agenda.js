@@ -30,7 +30,7 @@ export function visibleProfs() {
 }
 
 function pendentesLembrete(d) {
-  return S.itensDoDia(d).filter((i) => !i.notificado && ['marcado', 'confirmado'].includes(i.status) && can(S.me(), 'agenda.notificar', { profId: i.profId }));
+  return S.itensDoDia(d).filter((i) => i.tipo !== 'produto' && !i.notificado && ['marcado', 'confirmado'].includes(i.status) && can(S.me(), 'agenda.notificar', { profId: i.profId }));
 }
 function headerActions(name, d) {
   const n = pendentesLembrete(d).length + pendentesLembrete(addDays(d, 1)).length;
@@ -56,7 +56,7 @@ export function registerAgenda(app) {
     const slot = e.slot || 30;
     const start = Math.floor(ini / 60) * 60, end = Math.ceil(fim / 60) * 60;
     const nSlots = (end - start) / slot;
-    const itens = S.itensDoDia(d).filter((i) => i.status !== 'cancelado');
+    const itens = S.itensDoDia(d).filter((i) => i.status !== 'cancelado' && i.tipo !== 'produto'); // produto não ocupa horário (RN-56)
     const blqs = S.bloqueiosDoDia(d);
     const ivs = intervalsOf(e, d);
     const gaps = []; // períodos fechados para hachurar
@@ -111,19 +111,20 @@ export function registerAgenda(app) {
     const me = S.me();
     if (!can(me, 'agenda.ver', { profId: me.id })) return { title: 'Comandas', body: emptyState('lock', 'Sem acesso à agenda', '') };
     const vis = new Set(visibleProfs().map((p) => p.id));
-    const cs = S.comandasDoDia(d).map((c) => ({ c, itens: S.itensDaComanda(c.id).filter((i) => vis.has(i.profId) && i.status !== 'cancelado') })).filter((x) => x.itens.length)
-      .sort((a, b) => a.itens[0].hora.localeCompare(b.itens[0].hora));
+    // O horário da comanda vem dos serviços; uma comanda só de produtos usa a hora da venda.
+    const cs = S.comandasDoDia(d).map((c) => { const itens = S.itensDaComanda(c.id).filter((i) => vis.has(i.profId) && i.status !== 'cancelado'); const srv = itens.filter((i) => i.tipo !== 'produto'); return { c, itens, tempo: srv.length ? srv : itens }; }).filter((x) => x.itens.length)
+      .sort((a, b) => a.tempo[0].hora.localeCompare(b.tempo[0].hora));
     const byHour = new Map();
-    for (const x of cs) { const k = x.itens[0].hora.slice(0, 2) + ':00'; if (!byHour.has(k)) byHour.set(k, []); byHour.get(k).push(x); }
+    for (const x of cs) { const k = x.tempo[0].hora.slice(0, 2) + ':00'; if (!byHour.has(k)) byHour.set(k, []); byHour.get(k).push(x); }
     return {
       title: dayTitle(d), sub: `Comandas · ${cs.length}`, actions: headerActions('comandas', d), layout: 'largo',
       body: h('div', null, dateBar('comandas', d),
         cs.length ? [...byHour].map(([hr, list]) => h('div', null, h('h3', { class: 'hour' }, hr), h('div', { class: 'grade-cmd' },
-          list.map(({ c, itens }) => {
-            const last = itens[itens.length - 1];
+          list.map(({ c, itens, tempo }) => {
+            const last = tempo[tempo.length - 1];
             return h('button', { class: 'card cmd', onclick: () => go('comanda', { id: c.id }) },
-              h('div', { class: 'cmd-h' }, h('b', null, S.nomeCliente(c)), h('span', null, h('b', null, itens[0].hora), ` - ${fromMin(toMin(last.hora) + last.duracao)}`)),
-              itens.map((i) => h('div', { class: 'cmd-i' }, h('i', { class: 'dot', style: { '--sc': STATUS[i.status].cor } }), h('span', null, i.nome), avatar(S.prof(i.profId), 24))),
+              h('div', { class: 'cmd-h' }, h('b', null, S.nomeCliente(c)), h('span', null, h('b', null, tempo[0].hora), ` - ${fromMin(toMin(last.hora) + last.duracao)}`)),
+              itens.map((i) => h('div', { class: 'cmd-i' }, i.tipo === 'produto' ? icon('cart', 14) : h('i', { class: 'dot', style: { '--sc': STATUS[i.status].cor } }), h('span', null, i.tipo === 'produto' ? `${i.qtd}× ${i.nome}` : i.nome), avatar(S.prof(i.profId), 24))),
               c.status === 'fechada' ? pill('Pago', STATUS.pago.cor) : null);
           })))) : emptyState('agenda', 'Nenhuma comanda neste dia', 'Toque em + para agendar ou vender.')),
       fab: { label: 'Agendar ou vender', onclick: () => go('novo', { d }) },

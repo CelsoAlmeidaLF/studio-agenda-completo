@@ -17,8 +17,9 @@ import { registerClientes } from './adapters/in/ui/telas/clientes.js';
 import { registerEquipe } from './adapters/in/ui/telas/equipe.js';
 import { registerFinanceiro } from './adapters/in/ui/telas/financeiro.js';
 import { registerGestao } from './adapters/in/ui/telas/gestao.js';
+import { registerProdutos } from './adapters/in/ui/telas/produtos.js';
 
-const VERSAO = '1.5.1';
+const VERSAO = '1.6.0';
 const PUBLIC = new Set(['setup', 'login']);
 
 const app = createApp({ cofre: createCofreCifrado({ db }), relogio: relogioDoSistema, ids: idsAleatorios, biometria: createBiometriaWebAuthn({ nomeApp: 'Studio Agenda' }) });
@@ -27,7 +28,7 @@ const app = createApp({ cofre: createCofreCifrado({ db }), relogio: relogioDoSis
 function bloquear() { app.bloquear(); location.reload(); }
 
 registerAuth(app, { onLogin: () => { startIdleLock(); const r = current(); go(PUBLIC.has(r.name) ? 'agenda' : r.name, PUBLIC.has(r.name) ? {} : r.params); } });
-registerAgenda(app); registerComanda(app); registerClientes(app); registerEquipe(app); registerFinanceiro(app); registerGestao(app);
+registerAgenda(app); registerComanda(app); registerClientes(app); registerEquipe(app); registerFinanceiro(app); registerGestao(app); registerProdutos(app);
 
 setNav(() => {
   if (!app.desbloqueado()) return null;

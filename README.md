@@ -1,4 +1,4 @@
-# Studio Agenda — PWA (v1.5.1)
+# Studio Agenda — PWA (v1.6.0)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
@@ -46,7 +46,7 @@ js/
     ports.js               contrato das portas: Cofre, Biometria (opcional), Relogio, GeradorId
     app.js                 createApp(portas): junta consultas e casos de uso num objeto congelado
     contexto.js · erros.js
-    casos/                 consultas, sessao, gestao, agenda, financeiro (+ dados internos)
+    casos/                 consultas, sessao, gestao, agenda, financeiro, produtos (+ dados internos)
   adapters/
     out/                   webcrypto, indexeddb, cofre-cifrado (sessão + repositório cifrado), biometria-webauthn, relogio
     in/ui/                 dom (DOM seguro + ícones SVG), kit (roteador e componentes), telas/
@@ -66,7 +66,7 @@ Na v1.3.0, o visual recebeu o acabamento do Studio Claro 1.1: cantos e sombras s
 Rodar a partir da pasta `studio-agenda-completo`:
 
 ```bash
-node --test 05-testes/unit/          # 25 testes de domínio, aplicação, cofre, dinheiro e biometria (Node 20+, sem navegador)
+node --test 05-testes/unit/          # 31 testes de domínio, aplicação, cofre, dinheiro, biometria e produtos (Node 20+, sem navegador)
 python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP, com a CSP ativa
 ```
 
@@ -91,6 +91,7 @@ As regras ficam no template Studio Claro 1.3 (parte `12-telas-e-orientacao`).
 | Entrada | Configuração inicial, escolha do profissional, teclado de PIN, **entrada com biometria** (digital ou rosto, WebAuthn PRF), bloqueio após erros, "Esqueci o PIN" (restaurar backup ou apagar) |
 | Agenda | Grade por profissional, horários fechados hachurados, linha da hora atual, bloqueios (almoço/ausência), lista de comandas do dia |
 | Agendar / Vender | Busca por nome ou celular, novo cliente, cliente avulso, favoritos, filtro de serviços do profissional, validação de conflito e de horário de funcionamento |
+| Produtos | Lista por categoria com busca (nome, categoria ou código), ficha com informações, consumo (unidade, preço de uso interno e para profissionais) e venda; ativar/desativar; comissão de venda por profissional. Venda na comanda pela aba **Produto** (quantidade e vendedor), sem ocupar horário na agenda. Relatório de produtos vendidos |
 | Comanda | Itens do cliente no dia, status (Marcado, Confirmado, Em espera, Iniciado, Atrasado, Cancelado), notas internas, WhatsApp e ligação |
 | Fechamento | Preço (com permissão), desconto por item, gorjeta, data de fechamento, numeração sequencial |
 | Pagamento | Pix, dinheiro, débito, crédito e crédito do cliente, divisão entre formas, pagamento parcial ou "continuar sem pagamento" (o que falta vira débito do cliente) |
@@ -100,7 +101,7 @@ As regras ficam no template Studio Claro 1.3 (parte `12-telas-e-orientacao`).
 | Gestão | Estabelecimento, horário com vários intervalos, intervalo da agenda, fechamento de caixa, serviços, profissionais, PIN, permissões |
 | Segurança | Meu PIN e biometria, bloqueio automático, armazenamento persistente, backup criptografado, restauração, auditoria, apagar dados |
 
-## Testado (v1.5.0)
+## Testado (v1.6.0)
 
 - **Unitários (`05-testes/unit/`):**
   - a aplicação não expõe o cofre;
@@ -120,12 +121,14 @@ As regras ficam no template Studio Claro 1.3 (parte `12-telas-e-orientacao`).
   - pagamento parcial com o resto pendente;
   - item cancelado não volta a ativo em comanda fechada;
   - estorno só com o caixa do dia aberto;
+  - produtos: CA-06 (venda com comissão, caixa, relatório e estorno), CA-07 (venda sem preço recusada), validações, permissões e convivência com serviços na mesma comanda;
   - biometria: ativar com PIN, entrar sem PIN, segredo errado, cancelamento, troca de PIN, PIN do gestor, desativação, backup e troca da chave.
 - **E2E (`05-testes/e2e_cdp.py`, celular de 390 px):**
   - configuração inicial com PIN fraco recusado;
   - PIN errado;
   - agenda;
   - favorito e comanda;
+  - venda de produto pela aba Produto (2 unidades, comissão de 10% mostrada), cartão na comanda, agenda sem o produto, lista e ficha de produtos;
   - item incluído depois de abrir o fechamento entra no total;
   - pagamento parcial com o resto pendente e abertura do caixa;
   - entrada de "1.500" no caixa e dinheiro na gaveta;

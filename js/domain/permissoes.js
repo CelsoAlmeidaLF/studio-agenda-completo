@@ -5,6 +5,7 @@ export const PERM_CATALOG = [
   { area: 'Agenda', grupos: [
     { k: 'agenda', t: 'Gestão dos agendamentos', ops: ['Sem acesso.', 'Apenas consulta os seus próprios agendamentos.', 'Criar e editar os seus próprios agendamentos.', 'Criar e editar todos os agendamentos, incluindo os da equipe.'],
       extras: { 3: [['ag_notif', 'Permitir envio de notificações aos clientes na criação ou alteração de agendamentos.'], ['ag_bloq', 'Permitir criar e editar todos os bloqueios de agenda, incluindo os da equipe.'], ['ag_fech', 'Permitir realizar e anular fechamentos de todas as comandas.'], ['ag_preco', 'Permitir editar o preço de todos os agendamentos.']] } },
+    { k: 'ag_prod', t: 'Gestão dos produtos nos agendamentos', ops: ['Apenas consultar produtos nas comandas.', 'Permitir adicionar e editar a quantidade de produtos apenas dos seus agendamentos.', 'Permitir adicionar e editar a quantidade de produtos de todos os agendamentos, incluindo os da equipe.'] },
   ] },
   { area: 'Clientes', grupos: [
     { k: 'cli_contatos', t: 'Contatos dos clientes', ops: ['Sem acesso, ver apenas o nome dos clientes.', 'Ver e editar os contatos dos seus clientes, mas ver apenas o nome dos clientes dos outros profissionais.', 'Ver e editar os contatos de todos os clientes do estabelecimento.'] },
@@ -22,24 +23,24 @@ export const PERM_CATALOG = [
   ] },
   { area: 'Gestão do estabelecimento', grupos: [
     { k: 'gestao_est', t: 'Configurações do estabelecimento (geral, horário e caixa)', ops: ['Sem acesso.', 'Criação e edição de dados.'] },
-    { k: 'gestao_itens', t: 'Configurações dos itens (serviços)', ops: ['Sem acesso.', 'Criação e edição de dados.'] },
+    { k: 'gestao_itens', t: 'Configurações dos itens (serviços e produtos)', ops: ['Sem acesso.', 'Criação e edição de dados.'] },
     { k: 'gestao_equipe', t: 'Configurações da equipe', ops: ['Sem acesso.', 'Criação e edição de dados.'], extras: { 1: [['gestao_perm', 'Permitir gestão das permissões.']] } },
     { k: 'seguranca', t: 'Segurança (auditoria, backup e exclusão de dados)', ops: ['Sem acesso.', 'Permitir acesso.'] },
   ] },
 ];
 
 export const PERM_ADMIN = {
-  agenda: 3, ag_notif: true, ag_bloq: true, ag_fech: true, ag_preco: true,
+  agenda: 3, ag_notif: true, ag_bloq: true, ag_fech: true, ag_preco: true, ag_prod: 2,
   cli_contatos: 2, cli_conta: 2, cli_lanc: true, equipe_conta: 1, eq_mov: true, eq_recibo: true, minha_conta: 2,
   caixa: 2, caixa_abrir: true, relatorios: 1, gestao_est: 1, gestao_itens: 1, gestao_equipe: 1, gestao_perm: true, seguranca: 1,
 };
 export const PERM_PROFISSIONAL = {
-  agenda: 2, ag_notif: true, ag_bloq: false, ag_fech: false, ag_preco: false,
+  agenda: 2, ag_notif: true, ag_bloq: false, ag_fech: false, ag_preco: false, ag_prod: 1,
   cli_contatos: 1, cli_conta: 1, cli_lanc: false, equipe_conta: 0, eq_mov: false, eq_recibo: false, minha_conta: 2,
   caixa: 0, caixa_abrir: false, relatorios: 0, gestao_est: 0, gestao_itens: 0, gestao_equipe: 0, gestao_perm: false, seguranca: 0,
 };
 export const PERM_RECEPCAO = {
-  ...PERM_PROFISSIONAL, agenda: 3, ag_bloq: true, ag_fech: true, cli_contatos: 2, cli_conta: 2, cli_lanc: true, caixa: 2, caixa_abrir: true, minha_conta: 0,
+  ...PERM_PROFISSIONAL, agenda: 3, ag_prod: 2, ag_bloq: true, ag_fech: true, cli_contatos: 2, cli_conta: 2, cli_lanc: true, caixa: 2, caixa_abrir: true, minha_conta: 0,
 };
 
 // Política única de autorização usada pelos casos de uso (e, por conveniência, pela UI).
@@ -56,6 +57,9 @@ export function can(user, action, ctx = {}) {
     case 'comanda.fechar': return (p.agenda === 3 && p.ag_fech) || (p.agenda >= 2 && ctx.soProprios);
     case 'comanda.anular': return p.agenda === 3 && p.ag_fech;
     case 'preco.editar': return p.agenda === 3 && p.ag_preco;
+    // RN-59: lançar produtos na comanda (os próprios ou de todos).
+    // Cadastros anteriores aos produtos não têm ag_prod: vale o mesmo alcance da agenda (todos, os próprios ou nenhum).
+    case 'produto.vender': { const n = p.ag_prod ?? (p.agenda === 3 ? 2 : p.agenda === 2 ? 1 : 0); return n === 2 || (n === 1 && own); }
     case 'cliente.criar': return p.agenda >= 2;
     case 'cliente.editar': return p.agenda === 3 || (p.agenda === 2 && !!ctx.ehMeuCliente);
     case 'cliente.contatos': return p.cli_contatos === 2 || (p.cli_contatos === 1 && !!ctx.ehMeuCliente);
