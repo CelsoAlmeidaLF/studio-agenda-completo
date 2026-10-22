@@ -18,6 +18,7 @@ export function registerGestao(app) {
       h('p', { class: 'divider span-2' }, 'OPERAÇÃO'),
       grp('Estabelecimento', can(me, 'gestao.est') && navRow('Geral', () => go('estabelecimento')), can(me, 'gestao.est') && navRow('Horário de funcionamento', () => go('horario')), can(me, 'gestao.est') && navRow('Agenda e caixa', () => go('preferencias'))),
       grp('Serviços', can(me, 'gestao.itens') && navRow('Lista de serviços', () => go('servicos'))),
+      grp('Produtos', can(me, 'gestao.itens') && navRow('Lista de produtos', () => go('produtos'))),
       grp('Equipe', can(me, 'gestao.equipe') && navRow('Lista de profissionais', () => go('profissionais'))),
       h('p', { class: 'divider span-2' }, 'SISTEMA'),
       grp('Segurança', navRow('Meu PIN e biometria', () => go('meupin')), can(me, 'seguranca') && navRow('Bloqueio, backup e dados', () => go('seguranca')), can(me, 'seguranca') && navRow('Auditoria', () => go('auditoria'))));

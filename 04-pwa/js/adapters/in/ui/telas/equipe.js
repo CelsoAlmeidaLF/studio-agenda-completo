@@ -31,7 +31,7 @@ export function registerEquipe(app) {
       // Atendimentos já realizados que ainda não foram fechados: comissão prevista.
       const pend = S.comissoesPrevistas(p.id);
       body = pend.length ? h('div', { class: 'card' }, pend.map((i) => h('button', { class: 'mov', onclick: () => go('comanda', { id: i.comandaId }) },
-        h('div', { class: 'mov-c' }, h('small', { class: 'muted' }, `${fmtDate(i.data)} · ${i.hora}`), h('b', null, i.nome), h('span', null, 'Cliente: ' + S.nomeCliente(i))),
+        h('div', { class: 'mov-c' }, h('small', { class: 'muted' }, `${fmtDate(i.data)} · ${i.hora}`), h('b', null, i.tipo === 'produto' ? `${i.qtd}× ${i.nome} (venda)` : i.nome), h('span', null, 'Cliente: ' + S.nomeCliente(i))),
         h('div', { class: 'mov-r' }, h('b', null, money(i.comissaoPrevista)), h('small', { class: 'muted' }, 'prevista')))))
         : emptyState('chart', 'Sem resultados', 'Não existem comissões pendentes.');
     } else {

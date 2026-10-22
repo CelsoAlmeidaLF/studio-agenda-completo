@@ -11,7 +11,7 @@ import websockets
 
 AQUI = Path(__file__).resolve().parent
 APP = AQUI.parent / '04-pwa'
-OUT = AQUI / 'capturas' / 'v1.5.0'
+OUT = AQUI / 'capturas' / 'v1.6.0'
 PORTA_APP, PORTA_CDP = 8123, 9333
 CHROME = os.environ.get('CHROME') or shutil.which('google-chrome') or shutil.which('chromium')
 PIN = '482916'
@@ -209,12 +209,34 @@ async def principal():
     assert '1.500,00' in gaveta, gaveta
     await p.foto('09-caixa.png')
 
+    # Produtos: vender pela aba Produto, cartão na comanda, agenda sem o produto, lista e ficha
+    await p.js("location.hash = '#/novo'"); await p.esperar("document.querySelector('.searchbar input')")
+    await p.preencher('.searchbar input', 'Mari'); await p.esperar("document.querySelector('.clirow')"); await p.clicar('.clirow', 'Mariana')
+    await p.esperar("document.querySelector('.seg [role=tab]')")
+    await p.clicar('.seg [role=tab]', 'Produto')
+    await p.esperar("location.hash.includes('tab=produto') && document.querySelector('form.stack select')")
+    await p.js("""(() => { const sels = document.querySelectorAll('form.stack select');
+      sels[0].value = [...sels[0].options].find(o => o.textContent.includes('Gel de sobrancelha')).value; sels[0].dispatchEvent(new Event('input'));
+      sels[1].value = [...sels[1].options].find(o => o.textContent.includes('Camila')).value; sels[1].dispatchEvent(new Event('input')); })()""")
+    await p.preencher('form.stack input[type=number]', '2')
+    await p.esperar("document.querySelector('.totrow b').textContent.includes('40,00') && document.body.innerText.includes('Comissão de venda para Camila Rocha: 10%')")
+    await p.foto('12-vender-produto.png')
+    await p.js("document.querySelector('form.stack').requestSubmit()")
+    await p.esperar("location.hash.startsWith('#/comanda') && document.querySelector('.card.item.prod')")
+    assert '2× Gel de sobrancelha' in await p.js("document.querySelector('.card.item.prod').innerText")
+    await p.foto('13-comanda-produto.png')
+    await p.js("location.hash = '#/agenda'"); await p.esperar("document.querySelector('.grid')")
+    assert not await p.js("document.querySelector('.grid').innerText.includes('Gel de sobrancelha')"), 'produto não ocupa a agenda'
+    await p.js("location.hash = '#/produtos'"); await p.esperar("document.querySelectorAll('.srow').length === 4")
+    await p.clicar('.srow', 'Gel de sobrancelha'); await p.esperar("document.querySelector('.prod-head') && document.body.innerText.includes('Comissões de venda')")
+    await p.foto('14-ficha-produto.png')
+
     # Todas as telas abrem para o administrador, sem erro
     await p.js("location.hash = '#/clientes'"); await p.esperar("document.querySelector('.clirow')")
     await p.clicar('.clirow', 'Renata'); await p.esperar("location.hash.startsWith('#/cliente?')")
     cli_hash = await p.js("location.hash")
     rotas = [cli_hash, cli_hash + '&t=conta', cli_hash + '&t=agend', cli_hash + '&t=fech', '#/equipe', '#/profissional', '#/profissional?t=pend',
-             '#/estabelecimento', '#/horario', '#/preferencias', '#/servicos', '#/profissionais', '#/meupin', '#/auditoria', '#/financeiro', '#/comandas']
+             '#/estabelecimento', '#/horario', '#/preferencias', '#/servicos', '#/profissionais', '#/meupin', '#/auditoria', '#/financeiro', '#/comandas', '#/produtos']
     for rota in rotas:
         await p.js(f"location.hash = {json.dumps(rota)}")
         await asyncio.sleep(0.4)
@@ -228,7 +250,7 @@ async def principal():
     assert not p.erros, p.erros
 
     # Nenhum caractere usado como ícone na interface
-    for rota in ['#/agenda', '#/comanda', '#/clientes', '#/gestao']:
+    for rota in ['#/agenda', '#/comanda', '#/clientes', '#/gestao', '#/produtos']:
         await p.js(f"location.hash = '{rota}'")
         await asyncio.sleep(0.4)
     glifos = await p.js("(() => { const t = document.body.innerText; return ['♥','☎','▾','‹','✏','🗑'].filter(g => t.includes(g)); })()")
@@ -262,7 +284,7 @@ async def principal():
     print('biometria: entrou sem PIN')
 
     # Sem rolagem horizontal no celular
-    for rota in ['#/agenda', '#/comandas', '#/clientes', '#/gestao', '#/seguranca', '#/caixa', '#/relatorios']:
+    for rota in ['#/agenda', '#/comandas', '#/clientes', '#/gestao', '#/seguranca', '#/caixa', '#/relatorios', '#/produtos']:
         await p.js(f"location.hash = '{rota}'")
         await asyncio.sleep(0.35)
         larg = await p.js("[document.documentElement.scrollWidth, innerWidth]")
@@ -287,7 +309,7 @@ async def principal():
 
     erros = [e for e in p.erros + p2.erros if e and 'favicon' not in e]
     assert not erros, erros
-    print('E2E OK: setup, PIN, agenda, comanda, pagamento, ícones SVG, console sem acesso, segurança, biometria, layout tablet/notebook, aba única, sem rolagem horizontal')
+    print('E2E OK: setup, PIN, agenda, comanda, pagamento, ícones SVG, console sem acesso, produtos, segurança, biometria, layout tablet/notebook, aba única, sem rolagem horizontal')
 
 
 def main():

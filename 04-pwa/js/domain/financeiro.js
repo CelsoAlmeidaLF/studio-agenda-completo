@@ -13,6 +13,12 @@ export function comandaTotals(linhas, gorjeta = 0) {
   return { bruto, desc, gorjeta, total: bruto - desc + gorjeta };
 }
 export const comissao = (linha, pctProf) => pct(Math.max(0, linha.preco - (linha.desconto || 0)), pctProf);
+// Serviço: % padrão do profissional. Produto: % de venda definido no produto para aquele profissional, 0% por padrão (RN-58).
+export const pctComissao = (item, prof, prod) => (item.tipo === 'produto' ? Number(prod?.comissoes?.[item.profId] || 0) : Number(prof?.comissao || 0));
+
+// ---------- Produtos (RN-54 a RN-60) ----------
+export const UNIDADES_CONSUMO = ['Unidades', 'Mililitros', 'Gramas'];
+export const QTD_MAX_PRODUTO = 99;
 
 export const TIPOS_LANC_CAIXA = ['entrada', 'saida'];
 export const TIPOS_LANC_CLIENTE = ['credito', 'debito'];
