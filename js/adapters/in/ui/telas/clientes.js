@@ -4,7 +4,7 @@ import { can } from '../../../../domain/permissoes.js';
 import { STATUS } from '../../../../domain/agenda.js';
 import { FORMAS, FORMAS_CAIXA } from '../../../../domain/financeiro.js';
 import { NeedCaixa } from '../../../../application/erros.js';
-import { route, go, sheet, closeSheet, toast, run, field, input, select, avatar, pill, emptyState, tabs, rerender, dangerBtn } from '../kit.js';
+import { route, go, sheet, closeSheet, toast, run, field, input, select, avatar, pill, emptyState, tabs, rerender, dangerBtn, telaLarga } from '../kit.js';
 import { waLink, telLink } from './agenda.js';
 import { abrirCaixaSheet } from './comanda.js';
 
@@ -13,32 +13,12 @@ let S; // aplicação (casos de uso), injetada pela raiz de composição
 export function registerClientes(app) {
   S = app;
   route('clientes', ({ q = '' }) => {
-    const qi = input({ value: q, placeholder: 'Procurar cliente', 'aria-label': 'Procurar cliente', class: 'inp search' });
-    const list = h('div');
     const me = S.me();
-    const ultimo = S.ultimaVisitaPorCliente();
-    const draw = () => {
-      const t = norm(qi.value), d = onlyDigits(qi.value);
-      const cs = S.clientes().filter((c) => !t || norm(c.nome).includes(t) || (d.length >= 2 && onlyDigits(c.cel).includes(d)));
-      list.replaceChildren();
-      if (!cs.length) { list.append(emptyState('clientes', 'Nenhum cliente encontrado', 'Toque em + para cadastrar.')); return; }
-      const groups = new Map();
-      for (const c of cs.sort((a, b) => (ultimo.get(b.id) || '').localeCompare(ultimo.get(a.id) || '') || a.nome.localeCompare(b.nome))) {
-        const k = ultimo.get(c.id) || 'Sem agendamentos';
-        if (!groups.has(k)) groups.set(k, []); groups.get(k).push(c);
-      }
-      for (const [k, arr] of groups) {
-        list.append(h('div', { class: 'gh-row' }, h('b', null, k === 'Sem agendamentos' ? k : fmtDate(k, { day: 'numeric', month: 'long', year: 'numeric' })), h('span', null, `${arr.length} cliente${arr.length > 1 ? 's' : ''}`)));
-        for (const c of arr) {
-          const vis = can(me, 'cliente.contatos', { ehMeuCliente: S.ehMeuCliente(c.id) });
-          list.append(h('button', { class: 'clirow block', onclick: () => go('cliente', { id: c.id }) }, h('span', { class: 'cn' }, c.nome), h('small', null, vis && c.cel ? fmtPhone(c.cel) : ''), c.obs ? h('i', { class: 'muted small' }, c.obs) : null));
-        }
-      }
-    };
-    qi.addEventListener('input', draw);
-    draw();
-    return { title: 'Clientes', body: h('div', null, h('div', { class: 'searchbar' }, icon('search', 20), qi), h('p', { class: 'muted small padx' }, 'Clientes dos últimos agendamentos (sem clientes avulsos):'), list),
-      fab: can(me, 'cliente.criar') ? { label: 'Novo cliente', onclick: () => editarCliente(null) } : null };
+    const fab = can(me, 'cliente.criar') ? { label: 'Novo cliente', onclick: () => editarCliente(null) } : null;
+    // Tela larga: lista à esquerda e a ficha escolhida à direita.
+    if (telaLarga()) return { title: 'Clientes', layout: 'largo', fab,
+      body: h('div', { class: 'split' }, h('div', { class: 'mestre' }, listaClientes(q, null)), h('div', { class: 'card' }, emptyState('clientes', 'Escolha um cliente', 'A ficha aparece aqui, ao lado da lista.'))) };
+    return { title: 'Clientes', body: listaClientes(q, null), fab };
   });
 
   route('cliente', ({ id, t = 'visao' }) => {
@@ -61,9 +41,40 @@ export function registerClientes(app) {
     else if (t === 'agend') body = agendamentosCliente(c);
     else if (t === 'fech') body = fechamentosCliente(c);
     else body = visaoCliente(c, podeContato);
-    return { title: 'Ficha de cliente', back: 'clientes', body: h('div', { class: 'stack' }, head, tb, body),
-      fab: t === 'agend' ? { label: 'Agendar', onclick: () => go('novo', {}) } : null };
+    const ficha = h('div', { class: 'stack' }, head, tb, body);
+    const fab = t === 'agend' ? { label: 'Agendar', onclick: () => go('novo', {}) } : null;
+    if (telaLarga()) return { title: 'Clientes', sub: c.nome, layout: 'largo', fab, body: h('div', { class: 'split' }, h('div', { class: 'mestre' }, listaClientes('', c.id)), h('div', { class: 'detalhe' }, ficha)) };
+    return { title: 'Ficha de cliente', back: 'clientes', body: ficha, fab };
   });
+}
+
+// Lista de clientes agrupada pela data do último agendamento. "sel" destaca o cliente aberto (tela larga).
+function listaClientes(q, sel) {
+  const qi = input({ value: q, placeholder: 'Procurar cliente', 'aria-label': 'Procurar cliente', class: 'inp search' });
+  const list = h('div');
+  const me = S.me();
+  const ultimo = S.ultimaVisitaPorCliente();
+  const draw = () => {
+    const t = norm(qi.value), d = onlyDigits(qi.value);
+    const cs = S.clientes().filter((c) => !t || norm(c.nome).includes(t) || (d.length >= 2 && onlyDigits(c.cel).includes(d)));
+    list.replaceChildren();
+    if (!cs.length) { list.append(emptyState('clientes', 'Nenhum cliente encontrado', 'Toque em + para cadastrar.')); return; }
+    const groups = new Map();
+    for (const c of cs.sort((a, b) => (ultimo.get(b.id) || '').localeCompare(ultimo.get(a.id) || '') || a.nome.localeCompare(b.nome))) {
+      const k = ultimo.get(c.id) || 'Sem agendamentos';
+      if (!groups.has(k)) groups.set(k, []); groups.get(k).push(c);
+    }
+    for (const [k, arr] of groups) {
+      list.append(h('div', { class: 'gh-row' }, h('b', null, k === 'Sem agendamentos' ? k : fmtDate(k, { day: 'numeric', month: 'long', year: 'numeric' })), h('span', null, `${arr.length} cliente${arr.length > 1 ? 's' : ''}`)));
+      for (const c of arr) {
+        const vis = can(me, 'cliente.contatos', { ehMeuCliente: S.ehMeuCliente(c.id) });
+        list.append(h('button', { class: 'clirow block' + (c.id === sel ? ' on' : ''), 'aria-current': c.id === sel ? 'true' : null, onclick: () => go('cliente', { id: c.id }) }, h('span', { class: 'cn' }, c.nome), h('small', null, vis && c.cel ? fmtPhone(c.cel) : ''), c.obs ? h('i', { class: 'muted small' }, c.obs) : null));
+      }
+    }
+  };
+  qi.addEventListener('input', draw);
+  draw();
+  return h('div', null, h('div', { class: 'searchbar' }, icon('search', 20), qi), h('p', { class: 'muted small padx' }, 'Clientes dos últimos agendamentos (sem clientes avulsos):'), list);
 }
 
 function visaoCliente(c, podeContato) {

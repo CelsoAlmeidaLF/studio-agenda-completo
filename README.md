@@ -1,4 +1,4 @@
-# Studio Agenda — PWA (v1.4.0)
+# Studio Agenda — PWA (v1.5.0)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
@@ -64,6 +64,20 @@ node --test 05-testes/unit/          # 25 testes de domínio, aplicação, cofre
 python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP, com a CSP ativa
 ```
 
+## Telas e aparelhos
+
+Funciona em celular, tablet, notebook e telas grandes. Medido no Chrome em 390, 844×390 (deitado), 768, 1024, 1366, 1920 e 2560 px, sem rolagem horizontal em nenhum.
+
+| Aparelho | Como fica |
+|---|---|
+| Celular em pé | uma coluna, menu em gaveta, barras de ação fixas embaixo |
+| Celular deitado | topo e controles compactos; agenda com linhas mais baixas (cabem umas 3 horas); PIN com o teclado ao lado |
+| Tablet em pé (768) | menu fixo de 236 px |
+| Tablet deitado (1024) | menu fixo de 272 px |
+| Notebook e telas grandes (≥ 1200) | clientes e equipe com lista ao lado da ficha; comanda, fechamento, caixa, relatórios e gestão em duas colunas; comandas em grade; conteúdo de até 1240 px (1480 px a partir de 1700 px) |
+
+As regras ficam no template Studio Claro 1.3 (parte `12-telas-e-orientacao`).
+
 ## Funcionalidades
 
 | Área | O que faz |
@@ -80,7 +94,7 @@ python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP,
 | Gestão | Estabelecimento, horário com vários intervalos, intervalo da agenda, fechamento de caixa, serviços, profissionais, PIN, permissões |
 | Segurança | Meu PIN e biometria, bloqueio automático, armazenamento persistente, backup criptografado, restauração, auditoria, apagar dados |
 
-## Testado (v1.4.0)
+## Testado (v1.5.0)
 
 - **Unitários (`05-testes/unit/`):**
   - a aplicação não expõe o cofre;
@@ -113,6 +127,7 @@ python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP,
   - console sem acesso à sessão;
   - tela de segurança;
   - biometria com o autenticador virtual do Chrome (WebAuthn PRF): ativar e entrar sem PIN;
+  - layout: menu fixo no tablet em pé; no notebook, lista ao lado da ficha de cliente e relatórios em duas colunas;
   - segunda aba travada;
   - nenhuma tela com rolagem horizontal.
 

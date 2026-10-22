@@ -6,7 +6,9 @@ import { route, go, sheet, closeSheet, run, field, input, avatar, pill, emptySta
 
 let S; // aplicação (casos de uso), injetada pela raiz de composição
 
-const RH = 56; // altura de cada linha da grade
+// Altura de cada linha da grade; no celular deitado (pouca altura) as linhas ficam mais baixas para caber mais horas.
+const DEITADO = typeof matchMedia === 'function' ? matchMedia('(orientation: landscape) and (max-height: 520px)') : null;
+let RH = 56;
 
 function dateBar(name, d) {
   const di = input({ type: 'date', value: d, 'aria-label': 'Escolher data', onchange: (e) => e.target.value && go(name, { d: e.target.value }) });
@@ -42,7 +44,10 @@ function headerActions(name, d) {
 
 export function registerAgenda(app) {
   S = app;
+  // Girar o celular muda a altura das linhas: redesenha a agenda aberta.
+  DEITADO?.addEventListener?.('change', () => { if (document.querySelector('.grid')) rerender(); });
   route('agenda', ({ d = today() }) => {
+    RH = DEITADO?.matches ? 40 : 56;
     const me = S.me();
     if (!can(me, 'agenda.ver', { profId: me.id })) return { title: 'Agenda', body: emptyState('lock', 'Sem acesso à agenda', 'Peça ao gestor para liberar a sua permissão.') };
     const e = S.est();
@@ -87,7 +92,7 @@ export function registerAgenda(app) {
       return col;
     });
 
-    const grid = h('div', { class: 'grid', style: { '--n': String(Math.max(1, ps.length)) } },
+    const grid = h('div', { class: 'grid', style: { '--n': String(Math.max(1, ps.length)), '--rh': RH + 'px' } },
       h('div', { class: 'gh corner' }),
       ps.map((p) => h('div', { class: 'gh', style: { '--c': p.cor } }, avatar(p, 26), h('span', null, p.nome), h('small', null, String(itens.filter((i) => i.profId === p.id).length)))),
       h('div', { class: 'tcol' }, [...Array(nSlots)].map((_, k) => { const m = start + k * slot; return h('div', { class: 'tl' + (m % 60 ? ' half' : ''), style: { height: RH + 'px' } }, m % 60 ? '' : String(m / 60).padStart(2, '0')); })),
@@ -111,16 +116,16 @@ export function registerAgenda(app) {
     const byHour = new Map();
     for (const x of cs) { const k = x.itens[0].hora.slice(0, 2) + ':00'; if (!byHour.has(k)) byHour.set(k, []); byHour.get(k).push(x); }
     return {
-      title: dayTitle(d), sub: `Comandas · ${cs.length}`, actions: headerActions('comandas', d),
+      title: dayTitle(d), sub: `Comandas · ${cs.length}`, actions: headerActions('comandas', d), layout: 'largo',
       body: h('div', null, dateBar('comandas', d),
-        cs.length ? [...byHour].map(([hr, list]) => h('div', null, h('h3', { class: 'hour' }, hr),
+        cs.length ? [...byHour].map(([hr, list]) => h('div', null, h('h3', { class: 'hour' }, hr), h('div', { class: 'grade-cmd' },
           list.map(({ c, itens }) => {
             const last = itens[itens.length - 1];
             return h('button', { class: 'card cmd', onclick: () => go('comanda', { id: c.id }) },
               h('div', { class: 'cmd-h' }, h('b', null, S.nomeCliente(c)), h('span', null, h('b', null, itens[0].hora), ` - ${fromMin(toMin(last.hora) + last.duracao)}`)),
               itens.map((i) => h('div', { class: 'cmd-i' }, h('i', { class: 'dot', style: { '--sc': STATUS[i.status].cor } }), h('span', null, i.nome), avatar(S.prof(i.profId), 24))),
               c.status === 'fechada' ? pill('Pago', STATUS.pago.cor) : null);
-          }))) : emptyState('agenda', 'Nenhuma comanda neste dia', 'Toque em + para agendar ou vender.')),
+          })))) : emptyState('agenda', 'Nenhuma comanda neste dia', 'Toque em + para agendar ou vender.')),
       fab: { label: 'Agendar ou vender', onclick: () => go('novo', { d }) },
     };
   });

@@ -41,13 +41,14 @@ export function registerFinanceiro(app) {
       // O saldo final soma todas as formas; para conferir a gaveta vale só o dinheiro.
       h('div', { class: 'kv gaveta' }, h('span', null, 'Dinheiro na gaveta'), h('b', null, money((cx?.inicial || 0) + ls.filter((l) => l.forma === 'dinheiro').reduce((a, l) => a + l.valor, 0)))));
     return {
-      title: 'Caixa', sub: 'Financeiro', back: 'financeiro',
-      body: h('div', { class: 'stack' },
-        h('div', { class: 'datebar' }, h('button', { class: 'hbtn', 'aria-label': 'Dia anterior', onclick: () => go('caixa', { d: addDays(d, -1) }) }, icon('left', 22)),
+      title: 'Caixa', sub: 'Financeiro', back: 'financeiro', layout: 'largo',
+      // Tela larga: resumo à esquerda e lançamentos do dia à direita.
+      body: h('div', { class: 'duo' },
+        h('div', { class: 'datebar span-2' }, h('button', { class: 'hbtn', 'aria-label': 'Dia anterior', onclick: () => go('caixa', { d: addDays(d, -1) }) }, icon('left', 22)),
           h('b', { class: 'grow center' }, dayTitle(d)), h('button', { class: 'hbtn', 'aria-label': 'Próximo dia', disabled: d >= today(), onclick: () => go('caixa', { d: addDays(d, 1) }) }, icon('right', 22))),
-        resumo,
-        h('button', { class: 'link center block muted', onclick: (ev) => { cats.hidden = !cats.hidden; ev.currentTarget.textContent = cats.hidden ? 'Mostrar categorias de pagamento' : 'Ocultar categorias de pagamento'; } }, 'Mostrar categorias de pagamento'),
-        cats,
+        h('div', { class: 'stack' }, resumo,
+          h('button', { class: 'link center block muted', onclick: (ev) => { cats.hidden = !cats.hidden; ev.currentTarget.textContent = cats.hidden ? 'Mostrar categorias de pagamento' : 'Ocultar categorias de pagamento'; } }, 'Mostrar categorias de pagamento'),
+          cats),
         ls.length ? h('div', { class: 'card' }, ls.map((l) => movRow(l))) : emptyState('money', 'Nenhum lançamento neste dia', '')),
       fab: can(me, 'caixa.lancar') ? { label: 'Lançar entrada ou saída', onclick: () => lancarCaixa(d) } : null,
     };
@@ -63,9 +64,10 @@ export function registerFinanceiro(app) {
     const maxS = Math.max(1, ...r.porSrv.map(([, v]) => v.n));
     const kpi = (t, v) => h('div', { class: 'card pad kpi' }, h('small', null, t), h('b', null, v));
     return {
-      title: 'Relatórios', back: 'financeiro',
-      body: h('div', { class: 'stack' }, h('div', { class: 'row-end' }, mi),
-        h('div', { class: 'kpis' }, kpi('Faturamento', money(r.fat)), kpi('Atendimentos', String(r.n)), kpi('Ticket médio', money(r.ticket)), kpi('Comissões', money(r.com))),
+      title: 'Relatórios', back: 'financeiro', layout: 'largo',
+      // Tela larga: indicadores numa linha e os quadros em duas colunas.
+      body: h('div', { class: 'duo' }, h('div', { class: 'row-end span-2' }, mi),
+        h('div', { class: 'kpis span-2' }, kpi('Faturamento', money(r.fat)), kpi('Atendimentos', String(r.n)), kpi('Ticket médio', money(r.ticket)), kpi('Comissões', money(r.com))),
         h('div', { class: 'card pad' }, h('h3', { class: 'ch' }, 'Evolução do faturamento'),
           h('div', { class: 'bars', role: 'img', 'aria-label': 'Faturamento dos últimos 6 meses: ' + r.meses.map((x) => `${x.label} ${money(x.v)}`).join(', ') },
             r.meses.map((x) => h('div', { class: 'bar-c' + (x.key === ym ? ' cur' : '') }, h('small', null, x.v ? money(x.v).replace(',00', '') : '—'), h('i', { style: { height: Math.round((x.v / max) * 120) + 'px' } }), h('span', null, x.label))))),
@@ -75,7 +77,7 @@ export function registerFinanceiro(app) {
           r.porSrv.length ? r.porSrv.slice(0, 10).map(([n, v]) => h('div', { class: 'hb' }, h('div', { class: 'kv' }, h('span', null, n), h('small', null, `${v.n}× · ${money(v.fat)}`)), h('div', { class: 'track' }, h('i', { style: { width: Math.round((v.n / maxS) * 100) + '%' } })))) : h('p', { class: 'muted' }, 'Sem vendas no mês.')),
         h('div', { class: 'card pad' }, h('h3', { class: 'ch' }, 'Recebido por forma de pagamento'),
           r.porForma.size ? [...r.porForma].map(([f, v]) => h('div', { class: 'kv' }, h('span', null, FORMAS[f]), h('b', null, money(v)))) : h('p', { class: 'muted' }, 'Sem pagamentos no mês.')),
-        h('div', { class: 'card pad kv' }, h('span', null, 'Clientes atendidos / novos cadastros'), h('b', null, `${r.clientes} / ${r.novos}`))),
+        h('div', { class: 'card pad kv span-2' }, h('span', null, 'Clientes atendidos / novos cadastros'), h('b', null, `${r.clientes} / ${r.novos}`))),
     };
   });
 }

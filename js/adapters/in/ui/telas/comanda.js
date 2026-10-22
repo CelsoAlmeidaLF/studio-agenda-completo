@@ -129,7 +129,7 @@ export function registerComanda(app) {
     const total = ativos.reduce((s, i) => s + i.preco, 0);
     const fech = c.fechId ? S.fechamento(c.fechId) : null;
     const saldoCli = cli && can(me, 'cliente.saldo') ? S.saldo('cli:' + cli.id) : null;
-    const head = h('div', { class: 'cli-head' },
+    const head = h('div', { class: 'cli-head span-2' },
       h('button', { class: 'link-plain', onclick: () => cli && go('cliente', { id: cli.id }), disabled: !cli }, h('b', { class: 'big' }, S.nomeCliente(c)), saldoCli != null ? h('span', { class: 'saldo' + (saldoCli < 0 ? ' neg' : saldoCli > 0 ? ' pos' : '') }, money(saldoCli)) : null, !cli ? h('small', { class: 'muted' }, 'Cliente avulso') : null),
       podeContato && cli.cel ? h('div', { class: 'acts-row' },
         h('a', { class: 'circ wa', href: waLink(cli.cel, `Olá, ${cli.nome.split(' ')[0]}!`), target: '_blank', rel: 'noopener noreferrer', 'aria-label': 'Abrir WhatsApp' }, icon('whats', 22)),
@@ -151,8 +151,9 @@ export function registerComanda(app) {
     else if (fech) footer = h('div', { class: 'stack-s' }, h('div', { class: 'bar okbar' + (fech.pendente ? ' pend' : '') }, h('span', null, `${fech.pendente ? `Pendente ${money(fech.pendente)}` : 'Pago'} · Fechamento nº ${String(fech.numero).padStart(6, '0')}`), h('b', null, money(fech.total))),
       can(me, 'comanda.anular') ? dangerBtn('Anular fechamento', () => anular(fech.id), 'btn danger block') : null);
     return {
-      title: dayTitle(c.data), sub: 'Comanda', back: () => go('agenda', { d: c.data }),
-      body: h('div', { class: 'stack' }, head, cards.length ? cards : emptyState('list', 'Comanda vazia', '')),
+      title: dayTitle(c.data), sub: 'Comanda', back: () => go('agenda', { d: c.data }), layout: 'largo',
+      // Tela larga: os itens da comanda ficam em duas colunas.
+      body: h('div', { class: 'duo' }, head, cards.length ? cards : h('div', { class: 'span-2' }, emptyState('list', 'Comanda vazia', ''))),
       footer,
       fab: c.status === 'aberta' ? { label: 'Adicionar à comanda', onclick: () => { selecao = c.cliId ? { cliId: c.cliId } : { avulso: c.avulso }; go('adicionar', { d: c.data }); } } : null,
     };
@@ -184,13 +185,15 @@ export function registerComanda(app) {
     const di = input({ type: 'date', value: r.data, onchange: () => { r.data = di.value; } });
     upd();
     return {
-      title: 'Fechamento', back: () => go('comanda', { id }),
-      body: h('div', { class: 'stack' },
-        h('div', { class: 'cli-head' }, h('b', { class: 'big' }, S.nomeCliente(c))),
+      title: 'Fechamento', back: () => go('comanda', { id }), layout: 'largo',
+      // Tela larga: itens à esquerda; gorjeta, total e data à direita.
+      body: h('div', { class: 'duo lado' },
+        h('div', { class: 'cli-head span-2' }, h('b', { class: 'big' }, S.nomeCliente(c))),
         h('div', { class: 'card' }, h('div', { class: 'fl-hd' }, h('b', null, fmtDate(c.data, { day: 'numeric', month: 'long', year: 'numeric' })), h('span', null, `${r.linhas.length} itens`)), linhas),
-        h('div', { class: 'card pad' }, h('div', { class: 'row2' }, field('Gorjeta para', gp), field('Valor da gorjeta', gv))),
-        h('div', { class: 'totrow' }, h('span', null, 'Total a pagar'), totalEl),
-        field('Data do fechamento', di, 'Define em que dia o valor entra no caixa.')),
+        h('div', { class: 'stack' },
+          h('div', { class: 'card pad' }, h('div', { class: 'row2' }, field('Gorjeta para', gp), field('Valor da gorjeta', gv))),
+          h('div', { class: 'totrow' }, h('span', null, 'Total a pagar'), totalEl),
+          field('Data do fechamento', di, 'Define em que dia o valor entra no caixa.'))),
       footer: h('button', { class: 'bar pri', onclick: () => {
         if (r.linhas.some((l) => l.desconto > l.preco)) return toast('O desconto não pode ser maior que o preço.');
         go('pagamento', { id });
