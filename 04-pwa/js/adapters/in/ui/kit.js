@@ -27,6 +27,12 @@ export function render() {
 }
 export const rerender = () => render();
 
+// Telas largas (notebook e maiores): conteúdo em duas colunas e lista ao lado da ficha.
+// O ponto de quebra é o mesmo do CSS (.content.largo, .duo, .split); ao cruzar, a tela é desenhada de novo.
+const LARGA = typeof matchMedia === 'function' ? matchMedia('(min-width: 1200px)') : null;
+export const telaLarga = () => !!LARGA?.matches;
+LARGA?.addEventListener?.('change', () => { if (document.querySelector('.shell')) render(); });
+
 function paint(scr) {
   const app = document.getElementById('app');
   clear(app);
@@ -38,9 +44,10 @@ function paint(scr) {
     left,
     h('div', { class: 'ttl' }, scr.sub ? h('small', null, scr.sub) : null, h('h1', null, scr.title)),
     h('div', { class: 'acts' }, scr.actions || []));
-  const main = h('main', { class: 'content' + (scr.wide ? ' wide' : '') }, scr.body);
+  const layout = scr.layout ? ' ' + scr.layout : '';
+  const main = h('main', { class: 'content' + (scr.wide ? ' wide' : '') + layout }, scr.body);
   const nav = navBuilder();
-  app.append(h('div', { class: 'shell' }, nav ? h('aside', { class: 'side' }, nav) : null, h('div', { class: 'page' }, header, main, scr.footer ? h('div', { class: 'foot' }, scr.footer) : null)));
+  app.append(h('div', { class: 'shell' }, nav ? h('aside', { class: 'side' }, nav) : null, h('div', { class: 'page' }, header, main, scr.footer ? h('div', { class: 'foot' + layout }, scr.footer) : null)));
   if (scr.fab) app.append(h('button', { class: 'fab' + (scr.footer ? ' up' : ''), 'aria-label': scr.fab.label, onclick: scr.fab.onclick }, icon('plus', 28)));
   main.focus({ preventScroll: true });
   window.scrollTo(0, 0);

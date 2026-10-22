@@ -13,14 +13,15 @@ export function registerGestao(app) {
   route('gestao', () => {
     const me = S.me();
     const grp = (t, ...rows) => { const r = rows.filter(Boolean); return r.length ? h('div', null, h('h3', { class: 'gtitle' }, t), h('div', { class: 'card' }, r)) : null; };
-    const body = h('div', { class: 'stack' },
-      h('p', { class: 'divider' }, 'OPERAÇÃO'),
+    // Tela larga: os grupos ficam em duas colunas.
+    const body = h('div', { class: 'duo' },
+      h('p', { class: 'divider span-2' }, 'OPERAÇÃO'),
       grp('Estabelecimento', can(me, 'gestao.est') && navRow('Geral', () => go('estabelecimento')), can(me, 'gestao.est') && navRow('Horário de funcionamento', () => go('horario')), can(me, 'gestao.est') && navRow('Agenda e caixa', () => go('preferencias'))),
       grp('Serviços', can(me, 'gestao.itens') && navRow('Lista de serviços', () => go('servicos'))),
       grp('Equipe', can(me, 'gestao.equipe') && navRow('Lista de profissionais', () => go('profissionais'))),
-      h('p', { class: 'divider' }, 'SISTEMA'),
+      h('p', { class: 'divider span-2' }, 'SISTEMA'),
       grp('Segurança', navRow('Meu PIN e biometria', () => go('meupin')), can(me, 'seguranca') && navRow('Bloqueio, backup e dados', () => go('seguranca')), can(me, 'seguranca') && navRow('Auditoria', () => go('auditoria'))));
-    return { title: 'Gestão', sub: S.est().nome, body };
+    return { title: 'Gestão', sub: S.est().nome, layout: 'largo', body };
   });
 
   route('estabelecimento', () => {

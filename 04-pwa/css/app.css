@@ -155,6 +155,11 @@ p {
   margin: 0;
 }
 
+/* O atributo hidden sempre esconde, mesmo em componentes com display próprio (ex.: .card.stack-s). */
+[hidden] {
+  display: none !important;
+}
+
 /* ---------- Shell ---------- */
 .shell {
   min-height: 100vh;
@@ -313,10 +318,12 @@ p {
   display: none;
 }
 
-@media (min-width: 960px) {
+/* Menu fixo à esquerda: no tablet em pé (768 px, se a tela tiver altura de tablet) e em telas maiores.
+   O celular deitado (largo, mas baixo) continua com a gaveta. */
+@media (min-width: 768px) and (min-height: 560px), (min-width: 1200px) {
   .shell {
     display: grid;
-    grid-template-columns: 272px 1fr;
+    grid-template-columns: 236px minmax(0, 1fr);
   }
   .side {
     display: block;
@@ -332,6 +339,11 @@ p {
   }
   .fab {
     right: 32px;
+  }
+}
+@media (min-width: 960px) and (min-height: 560px), (min-width: 1200px) {
+  .shell {
+    grid-template-columns: 272px minmax(0, 1fr);
   }
 }
 /* ---------- Menu ---------- */
@@ -1282,7 +1294,7 @@ textarea.inp {
 .gcol {
   position: relative;
   border-left: 1px solid var(--line);
-  background-image: repeating-linear-gradient(180deg, transparent 0 55px, var(--line-2) 55px 56px);
+  background-image: repeating-linear-gradient(180deg, transparent 0 calc(var(--rh, 56px) - 1px), var(--line-2) calc(var(--rh, 56px) - 1px) var(--rh, 56px));
 }
 
 .slot {
@@ -1417,7 +1429,7 @@ textarea.inp {
   padding: 8px 14px;
 }
 
-.cmd-i span {
+.cmd-i > span:not(.av) {
   flex: 1;
 }
 
@@ -2265,4 +2277,182 @@ button.prow:hover, button.srow:hover {
   border-top: 1px solid var(--line-2);
   margin-top: 10px;
   padding-top: 10px;
+}
+
+/* ---------- Telas largas, tablet e celular deitado ---------- */
+/* Duas colunas (.duo), lista ao lado da ficha (.split) e grade de comandas. Abaixo de 1200 px tudo vira uma coluna. */
+.duo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.grade-cmd {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+}
+
+.grade-cmd .cmd {
+  margin-bottom: 0;
+}
+
+.clirow.on, .prow.on {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+@media (min-width: 768px) and (min-height: 560px), (min-width: 1200px) {
+  .nav-i {
+    gap: 14px;
+    font-size: 16px;
+  }
+}
+@media (min-width: 960px) and (min-height: 560px), (min-width: 1200px) {
+  .nav-i {
+    gap: 18px;
+    font-size: 17px;
+  }
+}
+@media (min-width: 1200px) {
+  .content.largo {
+    max-width: 1240px;
+  }
+  .foot.largo > * {
+    max-width: 1212px;
+  }
+  .duo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+  .duo.lado {
+    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+  }
+  .duo > .span-2 {
+    grid-column: 1/-1;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .split > .mestre {
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #c9cbd1 transparent;
+    border-radius: var(--radius);
+  }
+  .split > .mestre::-webkit-scrollbar {
+    width: 8px;
+  }
+  .split > .mestre::-webkit-scrollbar-thumb {
+    background: #c9cbd1;
+    border-radius: 8px;
+  }
+  .split .tabs {
+    margin: 0;
+    padding: 0;
+  }
+  .split .searchbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+@media (min-width: 1700px) {
+  .content.largo {
+    max-width: 1480px;
+  }
+  .foot.largo > * {
+    max-width: 1452px;
+  }
+  .split {
+    grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  }
+}
+/* Celular deitado: pouca altura. Topo, datas e botões compactos para a agenda ganhar espaço; PIN com o teclado ao lado. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .top {
+    min-height: 48px;
+  }
+  .top small {
+    display: none;
+  }
+  .hbtn {
+    height: 40px;
+  }
+  .content {
+    padding-top: 8px;
+  }
+  .datebar {
+    margin-bottom: 6px;
+  }
+  .datebar .btn, .datebar .inp {
+    min-height: 36px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .datebar .hbtn {
+    height: 36px;
+  }
+  .gwrap {
+    max-height: calc(100vh - 104px);
+  }
+  .gh {
+    padding: 4px 6px;
+  }
+  .fab {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  .fab.up {
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  .foot {
+    padding-top: 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  }
+  .bar {
+    min-height: 48px;
+  }
+  .sheet {
+    max-height: 96vh;
+  }
+  .auth {
+    padding: 12px;
+    align-items: center;
+  }
+  .auth-card.pin {
+    max-width: 700px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 32px;
+    row-gap: 6px;
+    justify-items: center;
+    align-items: center;
+    padding: 16px 20px;
+  }
+  .auth-card.pin > * {
+    grid-column: 1;
+  }
+  .auth-card.pin > .keypad {
+    grid-column: 2;
+    grid-row: 1/span 9;
+    grid-template-columns: repeat(3, 58px);
+    gap: 10px;
+    margin: 0;
+  }
+  .auth-card.pin .keypad button {
+    height: 58px;
+    font-size: 23px;
+  }
 }

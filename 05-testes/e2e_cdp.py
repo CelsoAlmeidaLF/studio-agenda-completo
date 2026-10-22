@@ -11,7 +11,7 @@ import websockets
 
 AQUI = Path(__file__).resolve().parent
 APP = AQUI.parent / '04-pwa'
-OUT = AQUI / 'capturas' / 'v1.4.0'
+OUT = AQUI / 'capturas' / 'v1.5.0'
 PORTA_APP, PORTA_CDP = 8123, 9333
 CHROME = os.environ.get('CHROME') or shutil.which('google-chrome') or shutil.which('chromium')
 PIN = '482916'
@@ -268,6 +268,18 @@ async def principal():
         larg = await p.js("[document.documentElement.scrollWidth, innerWidth]")
         assert larg[0] <= larg[1], (rota, larg)
 
+    # Layout por tamanho de tela: tablet em pé com menu fixo; notebook com lista ao lado da ficha e duas colunas
+    await p.cmd('Emulation.setDeviceMetricsOverride', width=768, height=1024, deviceScaleFactor=1, mobile=True)
+    await p.js("location.hash = '#/agenda'"); await asyncio.sleep(.4)
+    assert await p.js("getComputedStyle(document.querySelector('.side')).display !== 'none'"), 'tablet em pé deveria ter menu fixo'
+    await p.cmd('Emulation.setDeviceMetricsOverride', width=1366, height=768, deviceScaleFactor=1, mobile=False)
+    await p.js("location.hash = '#/clientes'"); await p.esperar("document.querySelector('.split .mestre .clirow')")
+    await p.clicar('.split .clirow', 'Renata'); await p.esperar("document.querySelector('.split .detalhe .tabs') && document.querySelector('.clirow.on')")
+    await p.js("location.hash = '#/relatorios'"); await asyncio.sleep(.4)
+    cols = await p.js("getComputedStyle(document.querySelector('.duo')).gridTemplateColumns.split(' ').length")
+    assert cols == 2, cols
+    await p.cmd('Emulation.setDeviceMetricsOverride', width=390, height=844, deviceScaleFactor=1, mobile=True)
+
     # Segunda aba: fica travada (instância única)
     p2 = await conectar(abrir_aba(base))
     await p2.esperar("document.body.innerText.includes('já está aberto em outra aba')", 20)
@@ -275,7 +287,7 @@ async def principal():
 
     erros = [e for e in p.erros + p2.erros if e and 'favicon' not in e]
     assert not erros, erros
-    print('E2E OK: setup, PIN, agenda, comanda, pagamento, ícones SVG, console sem acesso, segurança, biometria, aba única, sem rolagem horizontal')
+    print('E2E OK: setup, PIN, agenda, comanda, pagamento, ícones SVG, console sem acesso, segurança, biometria, layout tablet/notebook, aba única, sem rolagem horizontal')
 
 
 def main():

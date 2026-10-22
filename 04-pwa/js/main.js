@@ -18,7 +18,7 @@ import { registerEquipe } from './adapters/in/ui/telas/equipe.js';
 import { registerFinanceiro } from './adapters/in/ui/telas/financeiro.js';
 import { registerGestao } from './adapters/in/ui/telas/gestao.js';
 
-const VERSAO = '1.4.0';
+const VERSAO = '1.5.0';
 const PUBLIC = new Set(['setup', 'login']);
 
 const app = createApp({ cofre: createCofreCifrado({ db }), relogio: relogioDoSistema, ids: idsAleatorios, biometria: createBiometriaWebAuthn({ nomeApp: 'Studio Agenda' }) });

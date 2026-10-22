@@ -3,7 +3,7 @@ import { money, parseMoney, fmtDate, h } from '../base.js';
 import { can } from '../../../../domain/permissoes.js';
 import { FORMAS, FORMAS_CAIXA } from '../../../../domain/financeiro.js';
 import { NeedCaixa } from '../../../../application/erros.js';
-import { route, go, sheet, closeSheet, toast, field, input, select, avatar, emptyState, tabs, rerender } from '../kit.js';
+import { route, go, sheet, closeSheet, toast, field, input, select, avatar, emptyState, tabs, rerender, telaLarga } from '../kit.js';
 import { movRow } from './clientes.js';
 import { abrirCaixaSheet } from './comanda.js';
 
@@ -15,9 +15,8 @@ export function registerEquipe(app) {
     const me = S.me();
     const lista = S.profs().filter((p) => can(me, 'equipe.ver', { profId: p.id }));
     if (!lista.length) return { title: 'Equipe', body: emptyState('lock', 'Sem acesso à conta da equipe', '') };
-    return { title: 'Equipe', body: h('div', { class: 'card' },
-      h('div', { class: 'thead' }, h('b', null, 'Profissional'), h('b', null, 'Saldo')),
-      lista.map((p) => { const s = S.saldo('prof:' + p.id); return h('button', { class: 'prow', onclick: () => go('profissional', { id: p.id }) }, avatar(p, 46), h('span', { class: 'pn' }, h('b', null, p.nome), h('small', null, p.area)), h('span', { class: 'pv' + (s ? '' : ' muted') }, money(s))); })) };
+    if (telaLarga()) return { title: 'Equipe', layout: 'largo', body: h('div', { class: 'split' }, h('div', { class: 'mestre' }, listaEquipe(lista, null)), h('div', { class: 'card' }, emptyState('equipe', 'Escolha um profissional', 'A conta corrente aparece aqui, ao lado da lista.'))) };
+    return { title: 'Equipe', body: listaEquipe(lista, null) };
   });
 
   route('profissional', ({ id, t = 'conta' }) => {
@@ -45,8 +44,19 @@ export function registerEquipe(app) {
         podeMov ? (ls.length ? h('div', { class: 'card' }, ls.map((l) => { const ap = acc; acc -= l.valor; return movRow(l, ap); })) : emptyState('money', 'Sem movimentos', 'As comissões aparecem aqui quando as comandas são fechadas.')) : null);
     }
     const podeLancar = can(me, 'equipe.lancar') || can(me, 'equipe.recibo');
-    return { title: 'Ficha do profissional', back: 'equipe', body: h('div', { class: 'stack' }, head, tb, body), fab: podeLancar && t === 'conta' ? { label: 'Lançar movimento', onclick: () => lancarProf(p) } : null };
+    const ficha = h('div', { class: 'stack' }, head, tb, body);
+    const fab = podeLancar && t === 'conta' ? { label: 'Lançar movimento', onclick: () => lancarProf(p) } : null;
+    const lista = S.profs().filter((x) => can(me, 'equipe.ver', { profId: x.id }));
+    if (telaLarga() && lista.length > 1) return { title: 'Equipe', sub: p.nome, layout: 'largo', fab, body: h('div', { class: 'split' }, h('div', { class: 'mestre' }, listaEquipe(lista, p.id)), h('div', { class: 'detalhe' }, ficha)) };
+    return { title: 'Ficha do profissional', back: 'equipe', body: ficha, fab };
   });
+}
+
+// Lista da equipe com o saldo de cada um. "sel" destaca o profissional aberto (tela larga).
+function listaEquipe(lista, sel) {
+  return h('div', { class: 'card' },
+    h('div', { class: 'thead' }, h('b', null, 'Profissional'), h('b', null, 'Saldo')),
+    lista.map((p) => { const s = S.saldo('prof:' + p.id); return h('button', { class: 'prow' + (p.id === sel ? ' on' : ''), 'aria-current': p.id === sel ? 'true' : null, onclick: () => go('profissional', { id: p.id }) }, avatar(p, 46), h('span', { class: 'pn' }, h('b', null, p.nome), h('small', null, p.area)), h('span', { class: 'pv' + (s ? '' : ' muted') }, money(s))); }));
 }
 
 function lancarProf(p) {
