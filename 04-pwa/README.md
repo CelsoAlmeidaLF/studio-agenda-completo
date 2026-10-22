@@ -1,8 +1,14 @@
-# Studio Agenda — PWA (v1.5.0)
+# Studio Agenda — PWA (v1.5.1)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
 Funciona offline e guarda os dados **criptografados** no banco do navegador (IndexedDB).
+
+## No ar
+
+**https://celsoalmeidalf.github.io/studio-agenda-completo/** (GitHub Pages, branch `gh-pages` = conteúdo desta pasta).
+
+O endereço `celsoalmeidalf.github.io` é dividido com outros apps (FINANC, BarGestão e a versão antiga `studio-agenda`). Por isso o service worker só apaga caches com o prefixo `studio-agenda-completo-`.
 
 ## Como rodar
 

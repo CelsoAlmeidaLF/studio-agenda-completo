@@ -1,6 +1,9 @@
 // Service worker: guarda só os arquivos do app (shell) para funcionar offline.
 // Os dados NUNCA passam por aqui: ficam no IndexedDB, criptografados.
-const VERSION = 'studio-agenda-v1.5.0';
+// Prefixo próprio: o site divide o endereço (celsoalmeidalf.github.io) com outros apps e com a versão antiga
+// do Studio Agenda; a limpeza só pode apagar os caches deste app.
+const PREFIXO = 'studio-agenda-completo-';
+const VERSION = PREFIXO + 'v1.5.1';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/adapters/in/ui/base.js',
@@ -46,7 +49,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k.startsWith(PREFIXO) && k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
 self.addEventListener('message', (e) => { if (e.data === 'skipWaiting') self.skipWaiting(); });
