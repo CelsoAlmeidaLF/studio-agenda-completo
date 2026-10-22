@@ -23,6 +23,16 @@ export async function deriveKEK(pin, salt, iterations = PBKDF2_ITER) {
   );
 }
 
+// Biometria: o segredo PRF do WebAuthn (32 bytes, só liberado depois que o aparelho confere a digital ou o rosto)
+// vira, por HKDF-SHA256, uma segunda KEK que também embrulha a DEK. O segredo nunca é salvo.
+export async function deriveBioKEK(secret, salt, info) {
+  const bytes = new Uint8Array(secret);
+  if (bytes.length < 32) throw new Error('Segredo biométrico inválido.');
+  const base = await crypto.subtle.importKey('raw', bytes, 'HKDF', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt, info: enc.encode(info) }, base,
+    { name: 'AES-GCM', length: 256 }, false, ['wrapKey', 'unwrapKey']);
+}
+
 // A DEK precisa ser "extractable" só para poder ser embrulhada para outros profissionais.
 // Ela vive apenas na memória da sessão e nunca é gravada em claro.
 export const newDEK = () => crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);

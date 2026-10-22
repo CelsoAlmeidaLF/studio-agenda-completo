@@ -19,7 +19,7 @@ export function registerGestao(app) {
       grp('Serviços', can(me, 'gestao.itens') && navRow('Lista de serviços', () => go('servicos'))),
       grp('Equipe', can(me, 'gestao.equipe') && navRow('Lista de profissionais', () => go('profissionais'))),
       h('p', { class: 'divider' }, 'SISTEMA'),
-      grp('Segurança', navRow('Meu PIN', () => go('meupin')), can(me, 'seguranca') && navRow('Bloqueio, backup e dados', () => go('seguranca')), can(me, 'seguranca') && navRow('Auditoria', () => go('auditoria'))));
+      grp('Segurança', navRow('Meu PIN e biometria', () => go('meupin')), can(me, 'seguranca') && navRow('Bloqueio, backup e dados', () => go('seguranca')), can(me, 'seguranca') && navRow('Auditoria', () => go('auditoria'))));
     return { title: 'Gestão', sub: S.est().nome, body };
   });
 
@@ -119,11 +119,13 @@ export function registerGestao(app) {
       footer: h('button', { class: 'bar pri', onclick: () => run(() => S.salvarPermissoes(p.id, perm), 'Permissões salvas').then(() => go('profissionais')).catch(() => {}) }, h('span', null, 'Salvar permissões')) };
   });
 
-  route('meupin', () => {
+  route('meupin', async () => {
     const a = pinInput({ autocomplete: 'current-password' });
     const b = pinInput({ autocomplete: 'new-password' });
     const c = pinInput({ autocomplete: 'new-password' });
-    return { title: 'Meu PIN', back: 'gestao', body: h('div', { class: 'card pad stack' }, h('p', { class: 'muted' }, 'O PIN é a chave que abre os dados criptografados neste aparelho. Use 6 números, sem sequências.'), field('PIN atual', a), field('Novo PIN', b), field('Repita o novo PIN', c)),
+    return { title: 'Meu PIN e biometria', back: 'gestao', body: h('div', { class: 'stack' },
+      h('div', { class: 'card pad stack' }, h('p', { class: 'muted' }, 'O PIN é a chave que abre os dados criptografados neste aparelho. Use 6 números, sem sequências.'), field('PIN atual', a), field('Novo PIN', b), field('Repita o novo PIN', c)),
+      await cartaoBiometria()),
       footer: h('button', { class: 'bar pri', onclick: async () => {
         const prob = pinProblem(b.value);
         if (prob) return toast(prob);
@@ -185,6 +187,26 @@ export function registerGestao(app) {
     return { title: 'Auditoria', back: 'gestao', body: h('div', { class: 'card' }, list.map((a) => h('div', { class: 'mov' },
       h('div', { class: 'mov-c' }, h('small', { class: 'muted' }, `${fmtDateTime(a.em)} · ${S.nomeProf(a.autor)}`), h('b', null, a.acao), a.alvo ? h('span', null, a.alvo) : null, a.detalhe ? h('small', { class: 'muted' }, a.detalhe) : null)))) };
   });
+}
+
+// Biometria: liga com o PIN e passa a abrir o app pela digital ou pelo rosto deste aparelho.
+async function cartaoBiometria() {
+  const [disp, ativa] = await Promise.all([S.biometriaDisponivel(), S.minhaBiometria()]);
+  const tit = h('h3', { class: 'ch' }, icon('fingerprint', 22), 'Biometria');
+  const txt = 'Entre com a digital ou o rosto deste aparelho, sem digitar o PIN. A biometria fica só neste aparelho, abre os dados com criptografia e o PIN continua valendo.';
+  if (!disp) return h('div', { class: 'card pad stack-s' }, tit, h('p', { class: 'small muted' }, txt), h('p', { class: 'note' }, 'Este aparelho ou navegador não oferece biometria com criptografia (WebAuthn com PRF). Continue usando o PIN. No Android, use o Chrome atualizado com o bloqueio de tela ativo.'));
+  if (ativa) return h('div', { class: 'card pad stack-s' }, tit, h('p', { class: 'small muted' }, txt),
+    h('div', { class: 'kv' }, h('span', null, 'Situação'), h('b', { class: 'pos' }, 'Ativada neste aparelho')),
+    dangerBtn('Desativar a biometria', () => run(() => S.desativarBiometria(), 'Biometria desativada').then(rerender).catch(() => {})));
+  const p = pinInput({ autocomplete: 'current-password', 'aria-label': 'Seu PIN para ativar a biometria' });
+  return h('div', { class: 'card pad stack-s' }, tit, h('p', { class: 'small muted' }, txt),
+    field('Seu PIN', p, 'O PIN confirma que é você antes de cadastrar a biometria.'),
+    h('button', { class: 'btn pri with-ic', onclick: async (ev) => {
+      const b = ev.currentTarget;
+      b.disabled = true;
+      try { await S.ativarBiometria(p.value); toast('Biometria ativada. Na próxima entrada, é só tocar na digital.', true); rerender(); }
+      catch (e) { toast(e.message); b.disabled = false; }
+    } }, icon('fingerprint', 20), 'Ativar a biometria'));
 }
 
 const deny = (t) => ({ title: t, back: 'gestao', body: emptyState('lock', 'Sem acesso', 'Peça ao gestor para liberar esta permissão.') });

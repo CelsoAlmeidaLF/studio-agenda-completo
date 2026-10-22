@@ -1166,6 +1166,16 @@ textarea.inp {
   transform: scale(0.96);
 }
 
+.keypad .bio {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.keypad .bio:hover {
+  background: #f8d3e0;
+}
+
 .keypad.busy {
   opacity: 0.5;
   pointer-events: none;
