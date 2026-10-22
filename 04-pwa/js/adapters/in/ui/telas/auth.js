@@ -68,17 +68,28 @@ export function registerAuth(app, { onLogin }) {
       finally { busy = false; pad.classList.remove('busy'); }
     };
     const press = (d) => { if (busy) return; if (d === 'del') pin = pin.slice(0, -1); else if (pin.length < 6) pin += d; paint(); if (pin.length === 6) tryLogin(); };
+    // Biometria: só aparece se este profissional ativou e o aparelho oferece WebAuthn com PRF.
+    const bioOn = sel.bio && await S.biometriaDisponivel();
+    const tryBio = async (auto) => {
+      if (busy) return;
+      busy = true; pad.classList.add('busy'); msg.textContent = auto ? '' : 'Aguardando a biometria…';
+      try { const prof = await S.entrarComBiometria(sel.id); msg.textContent = ''; onLogin(prof); }
+      catch (e) { msg.textContent = auto ? '' : e.message; }
+      finally { busy = false; pad.classList.remove('busy'); }
+    };
     const pad = h('div', { class: 'keypad' }, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].map((d) => d === ''
-      ? h('span')
+      ? (bioOn ? h('button', { type: 'button', class: 'bio', 'aria-label': 'Entrar com biometria', onclick: () => tryBio(false) }, icon('fingerprint', 30)) : h('span'))
       : h('button', { type: 'button', 'aria-label': d === 'del' ? 'Apagar dígito' : d, onclick: () => press(d) }, d === 'del' ? icon('back', 24) : d)));
     const onKey = (e) => { if (!document.body.contains(pad)) return document.removeEventListener('keydown', onKey); if (/^\d$/.test(e.key)) press(e.key); else if (e.key === 'Backspace') press('del'); };
     document.addEventListener('keydown', onKey);
     if (sel.until > Date.now()) msg.textContent = `Acesso bloqueado por segurança. Tente de novo em ${Math.ceil((sel.until - Date.now()) / 1000)} s.`;
     wrap.append(h('div', { class: 'auth-card pin' },
       users.length > 1 ? h('button', { class: 'link with-ic', onclick: () => go('login') }, icon('left', 18), 'Trocar profissional') : null,
-      avatar(sel, 72), h('b', { class: 'big' }, sel.nome), h('small', { class: 'muted' }, 'Digite o seu PIN de 6 números'),
+      avatar(sel, 72), h('b', { class: 'big' }, sel.nome), h('small', { class: 'muted' }, bioOn ? 'Digite o seu PIN ou toque na digital' : 'Digite o seu PIN de 6 números'),
       dots, live, msg, pad, recovery()));
     paint();
+    // Abre o pedido de biometria sozinho uma vez (como nos apps de banco); se cancelar, o PIN continua ali.
+    if (bioOn && !(sel.until > Date.now())) setTimeout(() => { if (document.body.contains(pad)) tryBio(true); }, 350);
     return { bare: true, body: wrap };
   });
 }

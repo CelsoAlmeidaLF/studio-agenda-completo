@@ -1,4 +1,4 @@
-# Studio Agenda — PWA (v1.1.0)
+# Studio Agenda — PWA (v1.4.0)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
@@ -37,12 +37,12 @@ js/
     permissoes.js          catálogo, perfis, política can(), regra contra escalada
     equipe.js · pin.js · validacao.js
   application/             casos de uso (a interface só fala com esta camada)
-    ports.js               contrato das portas: Cofre, Relogio, GeradorId
+    ports.js               contrato das portas: Cofre, Biometria (opcional), Relogio, GeradorId
     app.js                 createApp(portas): junta consultas e casos de uso num objeto congelado
     contexto.js · erros.js
     casos/                 consultas, sessao, gestao, agenda, financeiro (+ dados internos)
   adapters/
-    out/                   webcrypto, indexeddb, cofre-cifrado (sessão + repositório cifrado), relogio
+    out/                   webcrypto, indexeddb, cofre-cifrado (sessão + repositório cifrado), biometria-webauthn, relogio
     in/ui/                 dom (DOM seguro + ícones SVG), kit (roteador e componentes), telas/
 ```
 
@@ -50,12 +50,17 @@ Regras das camadas (conferidas por script): `domain` só importa `shared`; `appl
 
 A aplicação recebe os adaptadores por injeção e não é exportada por nenhum módulo. Assim, a sessão aberta (com a chave dos dados) não fica ao alcance de um `import()` feito pelo console.
 
+## Visual (template Studio Claro)
+
+O visual deste app é o template **`studio-claro`** em `FINANC/.designers/templates/studio-claro/`, mantido como padrão pelo Celso em 22/10/2026. Lá ficam a fonte em SCSS, a vitrine com todos os componentes, o guia de uso (README) e um `starter/` para projetos novos.
+Na v1.3.0, o visual recebeu o acabamento do Studio Claro 1.1: cantos e sombras suaves, transições e foco rosa, com a mesma fonte e as mesmas cores. O `css/app.css` daqui é a origem conferida pelo `npm run check` (em `.designers`). Para mudar o visual: edite o SCSS do template, rode `npm run build` e `npm run check`, copie o dist para `css/app.css` e troque a versão do cache no `sw.js`.
+
 ## Testes
 
 Rodar a partir da pasta `studio-agenda-completo`:
 
 ```bash
-node --test 05-testes/unit/          # 14 testes de domínio, aplicação e cofre (Node 20+, sem navegador)
+node --test 05-testes/unit/          # 25 testes de domínio, aplicação, cofre, dinheiro e biometria (Node 20+, sem navegador)
 python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP, com a CSP ativa
 ```
 
@@ -63,19 +68,19 @@ python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP,
 
 | Área | O que faz |
 |---|---|
-| Entrada | Configuração inicial, escolha do profissional, teclado de PIN, bloqueio após erros, "Esqueci o PIN" (restaurar backup ou apagar) |
+| Entrada | Configuração inicial, escolha do profissional, teclado de PIN, **entrada com biometria** (digital ou rosto, WebAuthn PRF), bloqueio após erros, "Esqueci o PIN" (restaurar backup ou apagar) |
 | Agenda | Grade por profissional, horários fechados hachurados, linha da hora atual, bloqueios (almoço/ausência), lista de comandas do dia |
 | Agendar / Vender | Busca por nome ou celular, novo cliente, cliente avulso, favoritos, filtro de serviços do profissional, validação de conflito e de horário de funcionamento |
 | Comanda | Itens do cliente no dia, status (Marcado, Confirmado, Em espera, Iniciado, Atrasado, Cancelado), notas internas, WhatsApp e ligação |
 | Fechamento | Preço (com permissão), desconto por item, gorjeta, data de fechamento, numeração sequencial |
-| Pagamento | Pix, dinheiro, débito, crédito e crédito do cliente, divisão entre formas, "continuar sem pagamento" (vira débito do cliente) |
+| Pagamento | Pix, dinheiro, débito, crédito e crédito do cliente, divisão entre formas, pagamento parcial ou "continuar sem pagamento" (o que falta vira débito do cliente) |
 | Clientes | Lista, ficha com visão geral, conta corrente, agendamentos e fechamentos |
 | Equipe | Saldo por profissional, conta corrente (comissões, gorjetas, recibos, adiantamentos), comissões pendentes |
-| Financeiro | Caixa do dia com valor inicial, entradas/saídas e categorias; relatórios do mês e evolução de 6 meses |
+| Financeiro | Caixa do dia com valor inicial, entradas/saídas, categorias e dinheiro na gaveta; relatórios do mês e evolução de 6 meses |
 | Gestão | Estabelecimento, horário com vários intervalos, intervalo da agenda, fechamento de caixa, serviços, profissionais, PIN, permissões |
-| Segurança | Meu PIN, bloqueio automático, armazenamento persistente, backup criptografado, restauração, auditoria, apagar dados |
+| Segurança | Meu PIN e biometria, bloqueio automático, armazenamento persistente, backup criptografado, restauração, auditoria, apagar dados |
 
-## Testado (v1.1.0)
+## Testado (v1.4.0)
 
 - **Unitários (`05-testes/unit/`):**
   - a aplicação não expõe o cofre;
@@ -90,15 +95,24 @@ python3 05-testes/e2e_cdp.py         # ponta a ponta no Chrome headless via CDP,
   - tipo de registro autenticado;
   - uma tentativa de PIN por vez e bloqueio;
   - backup só com PIN e sem registros adulterados;
-  - troca da chave dos dados.
+  - troca da chave dos dados;
+  - "1.500" lido como R$ 1.500,00;
+  - pagamento parcial com o resto pendente;
+  - item cancelado não volta a ativo em comanda fechada;
+  - estorno só com o caixa do dia aberto;
+  - biometria: ativar com PIN, entrar sem PIN, segredo errado, cancelamento, troca de PIN, PIN do gestor, desativação, backup e troca da chave.
 - **E2E (`05-testes/e2e_cdp.py`, celular de 390 px):**
   - configuração inicial com PIN fraco recusado;
   - PIN errado;
   - agenda;
-  - favorito, comanda, fechamento e pagamento com abertura do caixa;
+  - favorito e comanda;
+  - item incluído depois de abrir o fechamento entra no total;
+  - pagamento parcial com o resto pendente e abertura do caixa;
+  - entrada de "1.500" no caixa e dinheiro na gaveta;
   - nenhum caractere usado como ícone;
   - console sem acesso à sessão;
   - tela de segurança;
+  - biometria com o autenticador virtual do Chrome (WebAuthn PRF): ativar e entrar sem PIN;
   - segunda aba travada;
   - nenhuma tela com rolagem horizontal.
 

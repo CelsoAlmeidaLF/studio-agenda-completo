@@ -14,6 +14,19 @@ let S; // aplicação (casos de uso), injetada pela raiz de composição
 let selecao = null;        // cliente escolhido no fluxo Agendar/Vender
 const rascunhos = new Map(); // comandaId -> dados do fechamento
 
+// O rascunho acompanha a comanda: itens incluídos ou excluídos depois de abrir o fechamento
+// entram ou saem dele, e o que já foi digitado (preço, desconto) nos itens que continuam é mantido.
+function rascunhoAtual(id) {
+  const base = S.previaFechamento(id);
+  const r = rascunhos.get(id);
+  if (!r) return { linhas: base, gorjeta: { profId: '', valor: 0 }, data: today() };
+  const antes = new Map(r.linhas.map((l) => [l.itemId, l]));
+  const linhas = base.map((l) => antes.get(l.itemId) || l);
+  const gorjeta = linhas.some((l) => l.profId === r.gorjeta.profId) ? r.gorjeta : { profId: '', valor: 0 };
+  return { ...r, linhas, gorjeta };
+}
+const mesmosItens = (a, b) => a.length === b.length && a.every((l, i) => l.itemId === b[i].itemId);
+
 export function registerComanda(app) {
   S = app;
   // ---------- Agendar / Vender: buscar cliente ----------
@@ -135,8 +148,8 @@ export function registerComanda(app) {
     });
     let footer = null;
     if (c.status === 'aberta' && S.podeFechar(id)) footer = h('button', { class: 'bar pri', onclick: () => go('fechamento', { id }) }, h('span', null, 'Fechamento'), h('b', null, money(total)));
-    else if (fech) footer = h('div', { class: 'stack-s' }, h('div', { class: 'bar okbar' }, h('span', null, `Pago · Fechamento nº ${String(fech.numero).padStart(6, '0')}`), h('b', null, money(fech.total))),
-      can(me, 'comanda.anular') ? dangerBtn('Anular fechamento', () => run(() => S.anularFechamento(fech.id), 'Fechamento anulado e valores estornados').then(rerender), 'btn danger block') : null);
+    else if (fech) footer = h('div', { class: 'stack-s' }, h('div', { class: 'bar okbar' + (fech.pendente ? ' pend' : '') }, h('span', null, `${fech.pendente ? `Pendente ${money(fech.pendente)}` : 'Pago'} · Fechamento nº ${String(fech.numero).padStart(6, '0')}`), h('b', null, money(fech.total))),
+      can(me, 'comanda.anular') ? dangerBtn('Anular fechamento', () => anular(fech.id), 'btn danger block') : null);
     return {
       title: dayTitle(c.data), sub: 'Comanda', back: () => go('agenda', { d: c.data }),
       body: h('div', { class: 'stack' }, head, cards.length ? cards : emptyState('list', 'Comanda vazia', '')),
@@ -150,7 +163,7 @@ export function registerComanda(app) {
     const c = S.comanda(id);
     if (!c || c.status !== 'aberta') { go('comanda', { id }); return { title: '', body: h('div') }; }
     const me = S.me();
-    const r = rascunhos.get(id) || { linhas: S.previaFechamento(id), gorjeta: { profId: '', valor: 0 }, data: today() };
+    const r = rascunhoAtual(id);
     rascunhos.set(id, r);
     const editPreco = can(me, 'preco.editar');
     const totalEl = h('b', null);
@@ -190,12 +203,16 @@ export function registerComanda(app) {
     const c = S.comanda(id);
     const r = rascunhos.get(id);
     if (!c || !r || c.status !== 'aberta') { go('comanda', { id }); return { title: '', body: h('div') }; }
+    if (!mesmosItens(r.linhas, S.previaFechamento(id))) { toast('A comanda mudou. Confira o fechamento de novo.'); go('fechamento', { id }); return { title: '', body: h('div') }; }
     const total = comandaTotals(r.linhas, r.gorjeta.valor).total;
     const cred = c.cliId && can(S.me(), 'cliente.saldo') ? Math.max(0, S.saldo('cli:' + c.cliId)) : 0;
     const vals = Object.fromEntries(Object.keys(FORMAS).map((k) => [k, 0]));
     const restanteEl = h('b');
     const inputs = {};
-    const upd = () => { const pago = Object.values(vals).reduce((a, b) => a + b, 0); const f = total - pago; restanteEl.textContent = f === 0 ? 'Valor completo' : f > 0 ? `Faltam ${money(f)}` : `Passou ${money(-f)}`; restanteEl.className = f === 0 ? 'ok' : 'warn'; confirmar.disabled = f !== 0; };
+    const upd = () => { const pago = Object.values(vals).reduce((a, b) => a + b, 0); const f = total - pago; restanteEl.textContent = f === 0 ? 'Valor completo' : f > 0 ? `Faltam ${money(f)}` : `Passou ${money(-f)}`; restanteEl.className = f === 0 ? 'ok' : 'warn'; confirmar.disabled = f !== 0;
+      if (pendenteBtn) { pendenteBtn.disabled = f <= 0; pendenteTxt.textContent = pago > 0 ? `Registrar e deixar ${money(Math.max(0, f))} pendente` : 'Continuar sem pagamento'; } };
+    const pendenteTxt = h('span', null, 'Continuar sem pagamento');
+    const pendenteBtn = c.cliId ? h('button', { class: 'bar', onclick: () => finalizar(true) }, pendenteTxt, icon('right', 18)) : null;
     const confirmar = h('button', { class: 'bar pri', onclick: () => finalizar(false) }, h('span', null, 'Confirmar pagamento'), h('b', null, money(total)));
     const rows = Object.entries(FORMAS).filter(([k]) => k !== 'credito_cliente' || (c.cliId && cred > 0)).map(([k, nome]) => {
       const inp = input({ inputmode: 'decimal', placeholder: '0,00', 'aria-label': `Valor em ${nome}` });
@@ -208,7 +225,7 @@ export function registerComanda(app) {
       const pagamentos = Object.entries(vals).filter(([, v]) => v > 0).map(([forma, valor]) => ({ forma, valor }));
       try {
         await S.fechar(id, { linhas: r.linhas, gorjeta: r.gorjeta.profId ? r.gorjeta : null, data: r.data, pagamentos, semPagamento });
-        rascunhos.delete(id); toast(semPagamento ? 'Comanda fechada com saldo pendente' : 'Pagamento registrado', true); go('comanda', { id });
+        rascunhos.delete(id); toast(semPagamento ? 'Comanda fechada com saldo pendente na conta do cliente' : 'Pagamento registrado', true); go('comanda', { id });
       } catch (e) {
         if (e instanceof NeedCaixa) abrirCaixaSheet(e.data, () => finalizar(semPagamento)); else toast(e.message);
       }
@@ -218,9 +235,15 @@ export function registerComanda(app) {
       title: 'Pagamento', back: () => go('fechamento', { id }),
       body: h('div', { class: 'stack' }, h('div', { class: 'paytot' }, h('span', null, 'R$'), h('b', null, centsToInput(total))),
         h('p', null, 'Escolha a forma de pagamento (pode dividir entre várias):'), rows, h('p', { class: 'center' }, restanteEl)),
-      footer: h('div', { class: 'stack-s' }, confirmar, c.cliId ? h('button', { class: 'bar', onclick: () => finalizar(true) }, h('span', null, 'Continuar sem pagamento'), icon('right', 18)) : null),
+      footer: h('div', { class: 'stack-s' }, confirmar, pendenteBtn),
     };
   });
+}
+
+// O estorno sai do caixa de hoje; se ele não foi aberto, pede a abertura e tenta de novo.
+async function anular(fechId) {
+  try { await S.anularFechamento(fechId); toast('Fechamento anulado e valores estornados', true); rerender(); }
+  catch (e) { if (e instanceof NeedCaixa) abrirCaixaSheet(e.data, () => anular(fechId)); else toast(e.message); }
 }
 
 export function abrirCaixaSheet(data, then) {

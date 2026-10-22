@@ -5,6 +5,7 @@
 import * as db from './adapters/out/indexeddb.js';
 import { createCofreCifrado } from './adapters/out/cofre-cifrado.js';
 import { relogioDoSistema, idsAleatorios } from './adapters/out/relogio.js';
+import { createBiometriaWebAuthn } from './adapters/out/biometria-webauthn.js';
 import { createApp } from './application/app.js';
 import { can } from './domain/permissoes.js';
 import { h, icon } from './adapters/in/ui/dom.js';
@@ -17,10 +18,10 @@ import { registerEquipe } from './adapters/in/ui/telas/equipe.js';
 import { registerFinanceiro } from './adapters/in/ui/telas/financeiro.js';
 import { registerGestao } from './adapters/in/ui/telas/gestao.js';
 
-const VERSAO = '1.1.0';
+const VERSAO = '1.4.0';
 const PUBLIC = new Set(['setup', 'login']);
 
-const app = createApp({ cofre: createCofreCifrado({ db }), relogio: relogioDoSistema, ids: idsAleatorios });
+const app = createApp({ cofre: createCofreCifrado({ db }), relogio: relogioDoSistema, ids: idsAleatorios, biometria: createBiometriaWebAuthn({ nomeApp: 'Studio Agenda' }) });
 
 // Bloquear apaga a chave da memória; recarregar a página descarta o resto (telas, rascunhos).
 function bloquear() { app.bloquear(); location.reload(); }

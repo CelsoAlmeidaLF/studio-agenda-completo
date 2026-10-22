@@ -1,4 +1,4 @@
-# Studio Agenda — Segurança (v1.1.0)
+# Studio Agenda — Segurança (v1.4.0)
 
 ## 1. Criptografia dos dados (em repouso)
 
@@ -23,6 +23,24 @@
 - **Inativar um profissional apaga o acesso por PIN dele.** Para voltar, o gestor cria um PIN novo.
 - **Troca da chave dos dados** (Segurança › Trocar a chave dos dados): depois de desligar alguém, recifra todos os registros com uma chave nova. Só quem fez a troca continua com acesso; os outros PINs são recriados pelo gestor. Cópias antigas do banco e backups antigos não abrem os dados novos.
 - **Esqueci o PIN:** não há recuperação (o PIN é a chave). Os caminhos são três: outro gestor redefine; restaurar um backup; ou apagar tudo e começar do zero (é preciso digitar "APAGAR").
+
+## 2.1 Biometria (digital ou rosto)
+
+- **Como funciona:** WebAuthn com a extensão **PRF**, a mesma base do kit de segurança do FINANC. Ao ativar, o aparelho cria uma passkey do profissional. A cada entrada, o aparelho confere a pessoa e só então libera um segredo de 32 bytes, que vira por HKDF-SHA256 uma segunda chave. Essa chave abre a chave dos dados (DEK).
+- **É criptografia, não só uma tela:** sem a digital, o segredo não sai do aparelho e os dados não abrem. O segredo nunca é salvo e é apagado da memória logo depois do uso.
+- **Ativar exige o PIN** (conta tentativas como a entrada): quem pegar o aparelho desbloqueado não cadastra a própria digital. A ativação é por profissional e vale só neste aparelho.
+- **Quando a biometria deixa de valer:**
+  - quando o profissional a desativa;
+  - quando um gestor redefine o PIN dele;
+  - quando o profissional é inativado ou perde o acesso;
+  - quando alguém usa **Trocar a chave dos dados**.
+
+  Nesses casos, o app pede ao navegador para esquecer a passkey. Trocar o próprio PIN mantém a biometria.
+- **Fora do backup:** a passkey é deste aparelho. Num aparelho novo, a biometria é ativada de novo.
+- **Sem PRF, sem biometria:** se o aparelho ou o navegador não oferece PRF (ou o endereço é um IP), a opção aparece como indisponível e o PIN continua sendo o caminho. No Android, use o Chrome atualizado com bloqueio de tela.
+- **Testado:**
+  - unitários com um autenticador falso: ativar, entrar, segredo errado, cancelamento, troca de PIN, PIN do gestor, desativação, backup e troca da chave;
+  - e2e no Chrome com o autenticador virtual do CDP e PRF: ativar com PIN errado e com o certo, bloquear e entrar sem PIN.
 
 ## 3. Autorização (permissões)
 

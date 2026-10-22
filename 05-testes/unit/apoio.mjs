@@ -22,17 +22,42 @@ export function memDB() {
 
 export const PIN_ADMIN = '482916';
 
-export function montar({ agora = new Date(2026, 9, 22, 10, 0) } = {}) {
+// Autenticador falso (porta Biometria): cada passkey tem um segredo PRF fixo de 32 bytes.
+export function biometriaFalsa({ disponivel = true } = {}) {
+  const segredos = new Map();
+  const entregues = [];
+  const b = {
+    esquecidas: [], cancelar: false,
+    async disponivel() { return disponivel; },
+    async cadastrar(prof) {
+      const credentialId = 'cred-' + (segredos.size + 1) + '-' + prof.id;
+      segredos.set(credentialId, crypto.getRandomValues(new Uint8Array(32)));
+      return { credentialId, prfSalt: 'c2FsdA==', secret: await b.liberar(credentialId) };
+    },
+    async liberar(credentialId) {
+      if (b.cancelar) { const e = new Error('cancelado'); e.name = 'NotAllowedError'; throw e; }
+      const s = segredos.get(credentialId);
+      if (!s) throw new Error('passkey desconhecida');
+      const copia = new Uint8Array(s); entregues.push(copia); return copia;
+    },
+    esquecer(id) { b.esquecidas.push(id); },
+    trocarSegredo(id) { segredos.set(id, crypto.getRandomValues(new Uint8Array(32))); },
+    entregues,
+  };
+  return b;
+}
+
+export function montar({ agora = new Date(2026, 9, 22, 10, 0), biometria = biometriaFalsa() } = {}) {
   const db = memDB();
   const cofre = createCofreCifrado({ db });
   let n = 0;
-  const app = createApp({ cofre, relogio: { agora: () => agora }, ids: { novo: () => `id${++n}-${Math.random().toString(36).slice(2, 8)}` } });
-  return { db, cofre, app };
+  const app = createApp({ cofre, relogio: { agora: () => agora }, ids: { novo: () => `id${++n}-${Math.random().toString(36).slice(2, 8)}` }, biometria });
+  return { db, cofre, app, biometria };
 }
 
 // Configura com dados de exemplo e entra como administrador.
-export async function prontoComoAdmin() {
-  const m = montar();
+export async function prontoComoAdmin(opcoes) {
+  const m = montar(opcoes);
   const adminId = await m.app.configurar({ estNome: 'Studio Teste', adminNome: 'Patrícia Souza', pin: PIN_ADMIN, comExemplos: true });
   await m.app.entrar(adminId, PIN_ADMIN);
   const byNome = (nome) => m.app.profs(true).find((p) => p.nome === nome);

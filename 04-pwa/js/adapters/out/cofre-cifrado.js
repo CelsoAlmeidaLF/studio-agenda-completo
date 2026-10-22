@@ -4,7 +4,7 @@
 // É uma fábrica: a instância (com a DEK em memória) só existe dentro da raiz de composição (main.js) e
 // da aplicação montada por ela. Nenhum módulo exporta essa instância, então importar este arquivo pelo
 // console não dá acesso à sessão aberta.
-import { deriveKEK, newDEK, wrapDEK, unwrapDEK, seal, open, rand, PBKDF2_ITER, toB64, fromB64 } from './webcrypto.js';
+import { deriveKEK, deriveBioKEK, newDEK, wrapDEK, unwrapDEK, seal, open, rand, PBKDF2_ITER, toB64, fromB64 } from './webcrypto.js';
 
 const MAX_FREE = 5;            // tentativas antes do bloqueio temporário
 const BASE_LOCK_MS = 30000;    // 30 s, dobra a cada erro seguinte
@@ -12,6 +12,8 @@ const MAX_LOCK_MS = 3600000;   // teto de 1 h
 
 // O tipo do registro sai do id ("tipo:uuid"), que é o dado autenticado (AAD) do AES-GCM.
 // O campo "type" em claro serve só para o índice do banco e não é confiável.
+// Contexto do HKDF da biometria: a chave de um profissional não serve para outro.
+const bioInfoCtx = (profId) => `studio-agenda:biometria:${profId}`;
 const typeOf = (recId) => String(recId).slice(0, String(recId).indexOf(':'));
 
 // O cache guarda objetos congelados: quem lê não altera o estado sem passar por commit().
@@ -82,7 +84,7 @@ export function createCofreCifrado({ db }) {
   async function vaultInfo() { return db.get('meta', 'vault'); }
   async function listLogins() {
     const ks = await db.getAll('keys');
-    return ks.map((k) => ({ id: k.id, nome: k.nome, sigla: k.sigla, cor: k.cor, until: k.until || 0, fails: k.fails || 0 }))
+    return ks.map((k) => ({ id: k.id, nome: k.nome, sigla: k.sigla, cor: k.cor, until: k.until || 0, fails: k.fails || 0, bio: !!k.bio }))
       .sort((a, b) => a.nome.localeCompare(b.nome));
   }
 
@@ -101,7 +103,10 @@ export function createCofreCifrado({ db }) {
   }
 
   async function login(profId, pin) {
-    const dek = await unlockEntry(profId, pin);
+    return abrirSessao(profId, await unlockEntry(profId, pin));
+  }
+
+  async function abrirSessao(profId, dek) {
     const { out, bad } = await decryptAll(dek, await db.getAll('recs'));
     const prof = out.get('prof')?.get(profId);
     if (!prof || prof.ativo === false) throw new Error('Este profissional está inativo.');
@@ -110,6 +115,49 @@ export function createCofreCifrado({ db }) {
     integrityErrors = bad;
     DEK = dek; USER_ID = profId;
     return prof;
+  }
+
+  // ---------- Biometria (a DEK também fica embrulhada por uma chave derivada do segredo PRF) ----------
+  // Dados públicos para a tela de entrada pedir a biometria certa: id da passkey e sal do PRF.
+  async function bioInfo(profId) {
+    const k = await db.get('keys', profId);
+    return k?.bio ? { credentialId: k.bio.credentialId, prfSalt: k.bio.prfSalt } : null;
+  }
+  async function loginBio(profId, secret) {
+    if (tentando) throw new Error('Aguarde a verificação anterior.');
+    tentando = true;
+    let dek;
+    try {
+      const k = await db.get('keys', profId);
+      if (!k?.bio) throw new Error('A biometria não está ativada para este profissional.');
+      try {
+        const kek = await deriveBioKEK(secret, k.bio.salt, bioInfoCtx(profId));
+        dek = await unwrapDEK(k.bio.wrapped, k.bio.iv, kek);
+      } catch { throw new Error('Esta biometria não abre os dados. Entre com o PIN e ative a biometria de novo.'); }
+      // A biometria confirmou a pessoa: zera o contador de PIN errado.
+      if (k.fails || k.until) { k.fails = 0; k.until = 0; await db.put('keys', k); }
+    } finally { tentando = false; }
+    return abrirSessao(profId, dek);
+  }
+  // Ativa para quem está na sessão; o PIN confirma a operação (conta tentativas como a entrada).
+  async function enableBio(pin, { credentialId, prfSalt, secret }) {
+    exigeSessao();
+    if (typeof credentialId !== 'string' || typeof prfSalt !== 'string') throw new Error('Credencial inválida.');
+    await unlockEntry(USER_ID, pin);
+    const salt = rand(16);
+    const { iv, wrapped } = await wrapDEK(DEK, await deriveBioKEK(secret, salt, bioInfoCtx(USER_ID)));
+    const k = await db.get('keys', USER_ID);
+    const anterior = k.bio?.credentialId || null;
+    k.bio = { credentialId, prfSalt, salt, iv, wrapped, em: new Date().toISOString() };
+    await db.put('keys', k);
+    return anterior;
+  }
+  async function disableBio() {
+    exigeSessao();
+    const k = await db.get('keys', USER_ID);
+    const anterior = k?.bio?.credentialId || null;
+    if (k?.bio) { delete k.bio; await db.put('keys', k); }
+    return anterior;
   }
 
   // Apaga a chave e os dados da memória. Quem chama deve recarregar a página para descartar o resto.
@@ -128,7 +176,12 @@ export function createCofreCifrado({ db }) {
     for (const o of ops) {
       if (o.put) dbOps.push({ store: 'recs', val: await seal(DEK, `${o.put}:${o.obj.id}`, o.put, o.obj) });
       else if (o.del) dbOps.push({ store: 'recs', del: true, key: `${o.del}:${o.id}` });
-      else if (o.putKey) dbOps.push({ store: 'keys', val: await writeKeyEntry(o.putKey, o.pin) });
+      else if (o.putKey) {
+        const novo = await writeKeyEntry(o.putKey, o.pin);
+        // Trocar o próprio PIN não muda a DEK: a biometria continua valendo. PIN definido pelo gestor apaga a biometria.
+        if (o.manterBiometria) { const atual = await db.get('keys', o.putKey.id); if (atual?.bio) novo.bio = atual.bio; }
+        dbOps.push({ store: 'keys', val: novo });
+      }
       else if (o.delKey) dbOps.push({ store: 'keys', del: true, key: o.delKey });
       else if (o.keyLabel) {
         const k = await db.get('keys', o.keyLabel.id);
@@ -171,7 +224,8 @@ export function createCofreCifrado({ db }) {
     return JSON.stringify({
       formato: 'studio-agenda-backup', v: 1, geradoEm: new Date().toISOString(),
       meta,
-      keys: keys.map((k) => ({ ...k, salt: toB64(k.salt), iv: toB64(k.iv), wrapped: toB64(k.wrapped) })),
+      // A biometria fica fora do backup: a passkey é deste aparelho e não serve em outro.
+      keys: keys.map(({ bio, ...k }) => ({ ...k, salt: toB64(k.salt), iv: toB64(k.iv), wrapped: toB64(k.wrapped) })),
       recs: recs.map((r) => ({ id: r.id, type: r.type, iv: toB64(r.iv), ct: toB64(r.ct) })),
     });
   }
@@ -212,6 +266,7 @@ export function createCofreCifrado({ db }) {
     userId: () => USER_ID, integrity: () => integrityErrors, lockRemaining,
     all, get, commit,
     hasLogin, verifyPin, rotateDEK,
+    bioInfo, loginBio, enableBio, disableBio,
     exportBackup, importBackup, wipe,
   });
 }

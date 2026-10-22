@@ -11,7 +11,7 @@ import websockets
 
 AQUI = Path(__file__).resolve().parent
 APP = AQUI.parent / '04-pwa'
-OUT = AQUI / 'capturas' / 'v1.1.0'
+OUT = AQUI / 'capturas' / 'v1.4.0'
 PORTA_APP, PORTA_CDP = 8123, 9333
 CHROME = os.environ.get('CHROME') or shutil.which('google-chrome') or shutil.which('chromium')
 PIN = '482916'
@@ -65,6 +65,13 @@ class Pagina:
         alvo = f"[...document.querySelectorAll({json.dumps(seletor)})].find(e => {json.dumps(texto)} === null || e.textContent.includes({json.dumps(texto)}))"
         ok = await self.js(f"(() => {{ const e = {alvo}; if (!e) return false; e.click(); return true; }})()")
         assert ok, f'não achei para clicar: {seletor} {texto or ""}'
+
+    async def tocar(self, seletor):
+        # Clique "de verdade" (evento confiável do navegador): necessário para gestos como pedir a biometria.
+        r = await self.js(f"(() => {{ const e = document.querySelector({json.dumps(seletor)}); if (!e) return null; const b = e.getBoundingClientRect(); return [b.x + b.width / 2, b.y + b.height / 2]; }})()")
+        assert r, f'não achei para tocar: {seletor}'
+        for t in ('mousePressed', 'mouseReleased'):
+            await self.cmd('Input.dispatchMouseEvent', type=t, x=r[0], y=r[1], button='left', clickCount=1)
 
     async def preencher(self, seletor, valor, i=0):
         ok = await self.js(f"""(() => {{ const e = document.querySelectorAll({json.dumps(seletor)})[{i}]; if (!e) return false;
@@ -158,17 +165,49 @@ async def principal():
     assert tel == 'tel:+5511900001234', tel
     assert await p.js("!!document.querySelector('.stbtn svg.ic')"), 'seta do status deve ser SVG'
     await p.foto('04-comanda.png')
+    # Abre o fechamento, volta e inclui outro item: o fechamento acompanha a comanda
     await p.clicar('.bar.pri', 'Fechamento')
     await p.esperar("location.hash.startsWith('#/fechamento')")
+    await p.js("history.back()")
+    await p.esperar("location.hash.startsWith('#/comanda')")
+    await p.clicar('.fab')
+    await p.esperar("document.querySelector('form.stack select')")
+    await p.js("""(() => { const s = document.querySelectorAll('form.stack select')[0];
+      s.value = [...s.options].find(o => o.textContent.includes('Camila')).value; s.dispatchEvent(new Event('change')); })()""")
+    await p.preencher('form.stack input[type=time]', '13:00')
+    await p.js("document.querySelector('form.stack').requestSubmit()")
+    await p.esperar("location.hash.startsWith('#/comanda') && document.querySelectorAll('.card.item').length === 2")
+    await p.clicar('.bar.pri', 'Fechamento')
+    await p.esperar("document.querySelectorAll('.fl').length === 2")
     await p.clicar('.bar.pri', 'Pagamento')
     await p.esperar("document.querySelector('.payrow.pix')")
-    await p.clicar('.payrow.pix .payname')
-    await p.clicar('.bar.pri', 'Confirmar')
+    total = await p.js("document.querySelector('.paytot b').textContent")
+    assert total == '280,00', total
+
+    # Pagamento parcial: R$ 100 no Pix e o resto pendente na conta do cliente
+    await p.preencher('.payrow.pix input', '100')
+    await p.esperar("document.querySelector('.foot .bar:not(.pri)').textContent.includes('180,00 pendente')")
+    await p.clicar('.foot .bar:not(.pri)')
     await p.esperar("document.querySelector('.sheet-root')")
     await p.preencher('.sheet-root input', '0,00')
     await p.clicar('.sheet-root .btn.pri', 'Abrir')
     await p.esperar("document.querySelector('.okbar')", 20)
+    ok = await p.js("document.querySelector('.okbar').textContent")
+    assert 'Pendente' in ok and '180,00' in ok, ok
     await p.foto('05-pago.png')
+
+    # Caixa: "1.500" é mil e quinhentos reais
+    await p.js("location.hash = '#/caixa'"); await p.esperar("document.querySelector('.fab')")
+    await p.clicar('.fab'); await p.esperar("document.querySelector('.sheet-root')")
+    await p.js("(() => { const s = document.querySelector('.sheet-root select'); s.value = 'entrada'; s.dispatchEvent(new Event('change')); })()")
+    await p.preencher('.sheet-root input.inp', '1.500', 0)
+    await p.clicar('.sheet-root .btn.pri', 'Lançar')
+    await p.esperar("!document.querySelector('.sheet-root')")
+    saldo = await p.js("document.querySelector('.ok-t').textContent")
+    assert '1.600,00' in saldo, saldo  # 100 do Pix + 1.500 de entrada
+    gaveta = await p.js("document.querySelector('.kv.gaveta b').textContent")
+    assert '1.500,00' in gaveta, gaveta
+    await p.foto('09-caixa.png')
 
     # Todas as telas abrem para o administrador, sem erro
     await p.js("location.hash = '#/clientes'"); await p.esperar("document.querySelector('.clirow')")
@@ -201,6 +240,27 @@ async def principal():
     assert await p.js("document.querySelectorAll('input[type=password]').length") >= 2
     await p.foto('06-seguranca.png')
 
+    # Biometria (WebAuthn com PRF) com o autenticador virtual do Chrome
+    await p.cmd('WebAuthn.enable', enableUI=False)
+    aut = (await p.cmd('WebAuthn.addVirtualAuthenticator', options={'protocol': 'ctap2', 'ctap2Version': 'ctap2_1', 'transport': 'internal',
+        'hasResidentKey': True, 'hasUserVerification': True, 'isUserVerified': True, 'automaticPresenceSimulation': True, 'hasPrf': True}))['authenticatorId']
+    await p.js("location.hash = '#/meupin'")
+    await p.esperar("document.body.innerText.includes('Ativar a biometria')")
+    await p.preencher('input[aria-label="Seu PIN para ativar a biometria"]', '111111')
+    await p.clicar('button', 'Ativar a biometria')
+    await p.esperar("document.querySelector('.toast') && document.querySelector('.toast').textContent.includes('PIN incorreto')", 30)
+    await p.preencher('input[aria-label="Seu PIN para ativar a biometria"]', PIN)
+    await p.clicar('button', 'Ativar a biometria')
+    await p.esperar("document.body.innerText.includes('Ativada neste aparelho')", 40)
+    await p.foto('10-biometria-ativa.png')
+    # Bloqueia e entra de novo pela biometria (o pedido abre sozinho na tela do PIN)
+    await p.js("document.querySelector('.nav-i.lock').click()")
+    await p.esperar("document.querySelector('.who-b, .keypad')", 40)
+    if await p.js("!!document.querySelector('.who-b')"):
+        await p.clicar('.who-b', 'Patrícia')
+    await p.esperar("document.querySelector('.grid')", 40)
+    print('biometria: entrou sem PIN')
+
     # Sem rolagem horizontal no celular
     for rota in ['#/agenda', '#/comandas', '#/clientes', '#/gestao', '#/seguranca', '#/caixa', '#/relatorios']:
         await p.js(f"location.hash = '{rota}'")
@@ -215,7 +275,7 @@ async def principal():
 
     erros = [e for e in p.erros + p2.erros if e and 'favicon' not in e]
     assert not erros, erros
-    print('E2E OK: setup, PIN, agenda, comanda, pagamento, ícones SVG, console sem acesso, segurança, aba única, sem rolagem horizontal')
+    print('E2E OK: setup, PIN, agenda, comanda, pagamento, ícones SVG, console sem acesso, segurança, biometria, aba única, sem rolagem horizontal')
 
 
 def main():
