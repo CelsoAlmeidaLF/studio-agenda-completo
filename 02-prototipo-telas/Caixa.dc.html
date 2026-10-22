@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Caixa do dia</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.mv{display:flex;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #dcdde1}
+.mv .l{display:flex;flex-direction:column;align-items:center;gap:8px;width:42px;flex:none;font-size:14.5px}
+.mv .tag{font-size:14.5px;font-weight:900;color:#6b6f78}
+.mv b{display:block;font-size:16px;font-weight:900}
+.mv .c{font-size:15.5px}
+.mv .r{margin-left:auto;text-align:right;white-space:nowrap}
+.mv .r small{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:14.5px;color:#6b6f78}
+.mv .r div{font-size:19px;margin-top:6px}
+.cd{width:30px;height:19px;border-radius:3px;display:inline-block}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <a href="Financeiro.dc.html" aria-label="Voltar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center;"><div style="font-size: 13px; font-weight: 800; color: #6b6f78;">Financeiro</div><div style="font-size: 18px; font-weight: 900;">Caixa</div></div>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <button aria-label="Dia anterior" style="border: 0; background: none; padding: 4px 8px; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button style="border: 0; background: none; font-family: inherit; font-size: 18px; color: #15171c; cursor: pointer; display: flex; align-items: center; gap: 8px;"><span><b style="font-weight: 900;">Hoje,</b> 16 Out 2026</span><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18l-9 11z" fill="#15171c"/></svg></button>
+    <button aria-label="Próximo dia" disabled style="border: 0; background: none; padding: 4px 8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5b8be" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+
+  <div style="padding: 14px 14px 0;">
+    <div style="background: #fff; border: 1.5px solid #d6d8dc; border-radius: 10px; padding: 12px 16px;">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #dcdde1;">
+        <div><div style="font-size: 15px; font-weight: 900; color: #5a5d66;">Saldo final</div><div style="font-size: 21px; font-weight: 900; color: #3f9c3a;">R$ 2.949,80</div></div>
+        <div><div style="font-size: 15px; font-weight: 900; color: #5a5d66;">Valor inicial</div><div style="font-size: 21px; font-weight: 900; display: flex; align-items: center; gap: 10px;">R$ 0,00<button aria-label="Editar valor inicial" style="border: 0; background: none; padding: 0; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.2V21h3.8L18 9.8 14.2 6zM20.7 7.1a1 1 0 0 0 0-1.4l-2.4-2.4a1 1 0 0 0-1.4 0L15 5.2 18.8 9z" fill="#1c6fd1"/></svg></button></div></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-top: 10px;">
+        <div><div style="font-size: 15px; font-weight: 900; color: #8a5ad6;">Entradas | 21</div><div style="font-size: 18px;">R$ 3.389,80</div></div>
+        <div><div style="font-size: 15px; font-weight: 900; color: #c95fc9;">Saídas | 1</div><div style="font-size: 18px;">R$ 440,00</div></div>
+      </div>
+    </div>
+    <button style="display: flex; flex-direction: column; align-items: center; width: 100%; padding: 12px 0 6px; border: 0; background: none; font-family: inherit; font-size: 15px; font-weight: 900; color: #9a9da4; cursor: pointer;">Mostrar categorias de pagamento<svg width="20" height="14" viewBox="0 0 24 14" fill="none" stroke="#9a9da4" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 3l8 8 8-8"/></svg></button>
+    <a href="Filtros.dc.html" style="display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; border: 1px solid #d6d8dc; border-radius: 6px; background: #e3e4e7; font-size: 18px; font-weight: 900; color: #7d8089; text-decoration: none; margin: 4px 0 14px;">Adicionar filtros <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18l-7 8.5V20l-4-2v-5.5z" fill="#7d8089"/></svg></a>
+  </div>
+
+  <div style="border-top: 1px solid #dcdde1;">
+    <div class="mv"><div class="l"><span style="width: 24px; height: 24px; border-radius: 5px; background: #8a6be0; display: grid; place-items: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6"/></svg></span>21:01</div><div style="min-width: 0;"><div class="tag">Fechamento</div><b>Fechamento nº 000521</b><div class="c">Cliente: Viviane Freitas</div></div><div class="r"><small>Crédito <span class="cd" style="background: linear-gradient(180deg, #4fb8ef, #2a8ad6);"></span></small><div>+ R$ 262,00</div></div></div>
+    <div class="mv"><div class="l"><span style="width: 24px; height: 24px; border-radius: 5px; background: #8a6be0; display: grid; place-items: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6"/></svg></span>20:52</div><div style="min-width: 0;"><div class="tag">Fechamento</div><b>Fechamento nº 000520</b><div class="c">Cliente: Renata Oliveira</div></div><div class="r"><small>Crédito <span class="cd" style="background: linear-gradient(180deg, #4fb8ef, #2a8ad6);"></span></small><div>+ R$ 361,00</div></div></div>
+    <div class="mv"><div class="l"><span style="width: 24px; height: 24px; border-radius: 5px; background: #8a6be0; display: grid; place-items: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v13M6 13l6 6 6-6"/></svg></span>18:46</div><div style="min-width: 0;"><div class="tag">Fechamento</div><b>Fechamento nº 000514</b><div class="c">Cliente: Carla Santos</div></div><div class="r"><small>Dinheiro <span class="cd" style="background: #16b85a;"></span></small><div>+ R$ 156,00</div></div></div>
+    <div class="mv"><div class="l"><span style="width: 24px; height: 24px; border-radius: 5px; background: #e46fd8; display: grid; place-items: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V6M6 11l6-6 6 6"/></svg></span>18:20</div><div style="min-width: 0;"><div class="tag">Saída</div><b>Compra de materiais</b><div class="c">Por: Patrícia</div></div><div class="r"><small>Pix <span class="cd" style="background: #e6e7ea;"></span></small><div>- R$ 440,00</div></div></div>
+  </div>
+
+  <button aria-label="Lançar entrada ou saída" style="position: absolute; right: 22px; bottom: 30px; width: 64px; height: 64px; border: 0; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #1c6fd1; box-shadow: 0 8px 20px -6px rgba(28,111,209,.6); cursor: pointer;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

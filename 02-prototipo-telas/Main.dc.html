@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Agenda</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.hr{height:72px;box-sizing:border-box;font-size:22px;font-weight:600;text-align:center;padding-top:0;color:#15171c;line-height:1;transform:translateY(-10px)}
+.ap{position:absolute;left:3px;right:3px;box-sizing:border-box;background:#fff;border:1.5px solid #5b73c4;border-left-width:5px;border-radius:6px;padding:5px 8px;overflow:hidden;text-decoration:none;color:#15171c}
+.ap .t{font-size:13px;font-weight:700;color:#3d58b3}
+.ap b{display:block;font-size:13.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap span{display:block;font-size:13px;color:#2a2d33;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blk{position:absolute;left:3px;right:3px;box-sizing:border-box;background:#e0e1e4;border:1.5px solid #b5b8be;border-radius:6px;padding:6px 8px;color:#15171c}
+.hatch{position:absolute;left:0;right:0;background:repeating-linear-gradient(135deg,#ffffff 0 6px,#9a9da4 6px 7.2px)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #ffffff;">
+  <div style="height: 70px; display: flex; align-items: center; gap: 14px; padding: 0 14px; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <a href="Menu.dc.html" aria-label="Menu" style="padding: 6px; color: #15171c; display: grid;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></a>
+    <button style="flex: 1; display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 0; font-family: inherit; color: #15171c; cursor: pointer; text-align: left;"><span style="font-size: 21px;"><b style="font-weight: 900;">Amanhã</b> 17 Out</span><span style="background: #9ea1a8; color: #fff; font-size: 12px; font-weight: 800; padding: 1px 8px; border-radius: 9px;">27</span><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-7 9z" fill="#15171c"/></svg></button>
+    <button aria-label="Lembretes pendentes" style="position: relative; border: 0; background: none; padding: 6px; cursor: pointer; color: #c2255c;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span style="position: absolute; top: 0; right: 0; width: 18px; height: 18px; border-radius: 50%; background: #c2255c; color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center;">5</span></button>
+    <button aria-label="Filtrar profissionais" style="border: 0; background: none; padding: 6px; cursor: pointer;"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18l-7 8.5V20l-4-2v-5.5z" fill="#15171c"/></svg></button>
+    <a href="Comandas.dc.html" aria-label="Ver comandas em lista" style="padding: 6px; color: #15171c; display: grid;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg></a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 46px repeat(3, minmax(0, 1fr)); height: 46px; border-bottom: 1px solid #dcdde1;">
+    <div></div>
+    <div style="display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; border-bottom: 4px solid #2a8ad6; white-space: nowrap; overflow: hidden;">Patrícia</div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 15px; font-weight: 600; border-bottom: 4px solid #9a6fd0; border-left: 1px solid #dcdde1; white-space: nowrap; overflow: hidden;">Camila R. <span style="background: #9ea1a8; color: #fff; font-size: 11px; font-weight: 800; padding: 0 6px; border-radius: 8px;">5</span></div>
+    <div style="display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; border-bottom: 4px solid #8cc97e; border-left: 1px solid #dcdde1; white-space: nowrap; overflow: hidden;">Juliana Prado</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 46px repeat(3, minmax(0, 1fr)); height: 648px; position: relative; background-image: repeating-linear-gradient(180deg, transparent 0 71px, #c9cbd0 71px 72px);">
+    <div style="padding-top: 18px; display: flex; flex-direction: column;">
+      <div class="hr">09</div><div class="hr">10</div><div class="hr">11</div><div class="hr">12</div><div class="hr">13</div><div class="hr">14</div><div class="hr">15</div><div class="hr">16</div><div class="hr">17</div>
+    </div>
+    <div style="position: relative; background: #e9f3fb; border-left: 1px solid #dcdde1;">
+      <div class="blk" style="top: 3px; height: 640px;"><b style="font-size: 14px; font-weight: 800; display: block;">Bloqueio de agenda</b><span style="font-size: 13.5px;">Ausência · dia todo</span></div>
+    </div>
+    <div style="position: relative; background: #f6f1fb; border-left: 1px solid #dcdde1;">
+      <div class="ap" style="top: 75px; height: 138px;"><div class="t">10:00 - 12:00</div><b>Maria Souza</b><span>Manutenção 3D | 4D</span><span>16 a 21 dias</span></div>
+      <a href="Comanda.dc.html" class="ap" style="top: 219px; height: 64px;"><div><span style="display: inline; color: #3d58b3; font-weight: 700;">12:00</span> <b style="display: inline;">Renata Oliveira</b></div><span>Design + Buço - COMBO</span><i aria-hidden="true" style="position: absolute; top: 0; right: 0; border-style: solid; border-width: 0 12px 12px 0; border-color: transparent #e6c229 transparent transparent;"></i></a>
+      <div class="blk" style="top: 291px; height: 64px;"><b style="font-size: 13.5px; font-weight: 800; display: block;">13:00 Bloqueio</b><span style="font-size: 13px;">Almoço</span></div>
+      <div class="ap" style="top: 363px; height: 102px;"><div class="t">14:00 - 15:30</div><b>Cristina Alves</b><span>Manutenção Fox</span></div>
+      <div class="ap" style="top: 471px; height: 64px;"><div><span style="display: inline; color: #3d58b3; font-weight: 700;">15:30</span> <b style="display: inline;">Cristina A.</b></div><span>Design + Buço - COMBO</span></div>
+      <div class="ap" style="top: 543px; height: 102px;"><div class="t">16:30 - 18:30</div><b>Natália Ribeiro</b><span>Manutenção Brasileiro</span></div>
+    </div>
+    <div style="position: relative; background: #f3f9f1; border-left: 1px solid #dcdde1;">
+      <div class="ap" style="top: 147px; height: 102px; border-color: #6aae5c;"><div class="t" style="color: #3e7f31;">11:00 - 12:30</div><b>Bianca Torres</b><span>Escova + Hidratação</span></div>
+      <div class="hatch" style="top: 576px; height: 72px;"></div>
+    </div>
+  </div>
+
+  <a href="BuscarCliente.dc.html" aria-label="Agendar ou vender" style="position: absolute; right: 22px; bottom: 30px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #1c6fd1; box-shadow: 0 8px 20px -6px rgba(28,111,209,.6);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

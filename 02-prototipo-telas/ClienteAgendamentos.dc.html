@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Agendamentos do cliente</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.tb{display:flex;align-items:center;gap:6px;padding:12px 4px 13px;font-size:15.5px;font-weight:900;color:#5a5d66;text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent}
+.tb:hover{color:#15171c}
+.tb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.it{background:#fff;border:1.5px solid #d6d8dc;border-radius:8px}
+.it .top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #eceef1}
+.it .hr{font-size:28px;font-weight:900}
+.it .hr span{font-size:19px;font-weight:600;color:#6b6f78}
+.st{background:#5b73c4;color:#fff;font-size:13px;font-weight:800;padding:4px 10px;border-radius:5px}
+.row{display:flex;align-items:center;gap:12px;padding:8px 14px 0;font-size:16px}
+.row:last-child{padding-bottom:12px}
+.av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:9.5px;font-weight:800;color:#fff;flex:none}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="background: #fff;">
+    <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative;">
+      <a href="Cliente.dc.html" aria-label="Voltar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></a>
+      <div style="position: absolute; left: 0; right: 0; text-align: center; font-size: 16px; font-weight: 900;">Ficha de cliente</div>
+    </div>
+    <div style="padding: 0 16px 14px;"><div style="font-size: 23px; font-weight: 900;">Renata Oliveira</div><span style="display: inline-block; margin-top: 2px; background: #dedfe2; color: #fff; font-size: 13px; font-weight: 900; padding: 1px 6px; border-radius: 3px;">R$ 0,00</span></div>
+    <nav style="display: flex; justify-content: space-between; padding: 0 12px; border-bottom: 1.5px solid #c2255c;">
+      <a href="ContaCorrente.dc.html" class="tb"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg>Conta corrente</a>
+      <a href="ClienteAgendamentos.dc.html" class="tb" style="color: #c2255c; border-bottom-color: #c2255c;"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>Agendamentos</a>
+      <a href="Fechamentos.dc.html" class="tb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.6-1.6-2.4-2.5-4.5-2.5-2.5 0-4.5 1.3-4.5 3.4 0 4.6 9.5 2.3 9.5 7.1 0 2-2 3.5-4.8 3.5-2.4 0-4.4-1-5-2.8"/></svg>Fechamentos</a>
+    </nav>
+  </div>
+  <div style="padding: 14px 12px; display: flex; flex-direction: column; gap: 12px;">
+    <div style="font-size: 18px; font-weight: 900; margin: 2px 4px 0;">Amanhã, 17 Out 2026</div>
+    <a href="Comanda.dc.html" class="it" style="text-decoration: none; color: #15171c;"><div class="top"><span class="hr">12:00 <span>- 13:00</span></span><span class="st">Confirmado</span></div>
+      <div class="row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg><b style="flex: 1; font-weight: 900;">Design + Buço - COMBO</b><span style="color: #6b6f78;">R$ 70,00</span></div>
+      <div class="row"><span class="av" style="background: #9a6fd0;">CR</span>Camila Rocha</div></a>
+    <a href="Comanda.dc.html" class="it" style="text-decoration: none; color: #15171c;"><div class="top"><span class="hr">12:00 <span>- 12:30</span></span><span class="st">Confirmado</span></div>
+      <div class="row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg><b style="flex: 1; font-weight: 900;">Esmaltação tradicional</b><span style="color: #6b6f78;">R$ 25,00</span></div>
+      <div class="row"><span class="av" style="background: #a85a6e;">SA</span>Sueli Andrade</div></a>
+    <div style="font-size: 18px; font-weight: 900; margin: 6px 4px 0;">SEX 2 Out 2026</div>
+    <div class="it"><div class="top"><span class="hr">12:30 <span>- 13:00</span></span><span class="st" style="background: #16a34a;">Pago</span></div>
+      <div class="row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg><b style="flex: 1; font-weight: 900;">Design + Buço - COMBO</b><span style="color: #6b6f78;">R$ 70,00</span></div>
+      <div class="row"><span class="av" style="background: #9a6fd0;">CR</span>Camila Rocha</div></div>
+  </div>
+  <a href="Adicionar.dc.html" aria-label="Novo agendamento" style="position: absolute; right: 22px; bottom: 30px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #1c6fd1; box-shadow: 0 8px 20px -6px rgba(28,111,209,.6);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

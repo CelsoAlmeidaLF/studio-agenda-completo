@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Agendar ou vender — buscar cliente</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #ffffff;">
+  <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative;">
+    <a href="Main.dc.html" aria-label="Fechar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center; font-size: 19px; font-weight: 900;">Agendar / Vender</div>
+  </div>
+  <label for="qc" style="display: block; background: #fdfbe8; border-bottom: 1px solid #dcdde1; padding: 0 20px;"><input id="qc" placeholder="Nome ou celular do cliente" style="width: 100%; border: 0; outline: 0; padding: 16px 0 18px; font-family: inherit; font-size: 19px; background: transparent; color: #15171c;"></label>
+  <a href="BuscarResultados.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 26px; text-decoration: none;">
+    <span style="position: relative; display: block; width: 150px; height: 82px;">
+      <svg width="64" height="54" viewBox="0 0 64 54" aria-hidden="true" style="position: absolute; left: -62px; top: 0;"><path d="M60 46c-22 3-40-4-44-30" fill="none" stroke="#e1e2e6" stroke-width="2.5" stroke-linecap="round"/><path d="M8 18l8-14 8 14z" fill="none" stroke="#e1e2e6" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      <svg width="68" height="76" viewBox="0 0 68 76" aria-hidden="true" style="position: absolute; left: 41px; top: 0;"><rect x="0" y="8" width="68" height="68" rx="8" fill="#ebecef"/><circle cx="34" cy="10" r="6" fill="#ebecef"/><circle cx="34" cy="10" r="2.5" fill="#fff"/><circle cx="34" cy="34" r="11" fill="#fff"/><path d="M12 64c2-11 10-16 22-16s20 5 22 16z" fill="#fff"/></svg>
+    </span>
+    <span style="font-size: 16px; color: #a3a6ad;">Escreva o nome ou celular do cliente.</span>
+  </a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

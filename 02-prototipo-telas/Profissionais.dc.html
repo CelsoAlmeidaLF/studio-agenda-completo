@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Escolher profissional</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+h2{margin:0;font-size:30px;font-weight:900;letter-spacing:-.3px}
+.pros{display:flex;gap:24px;flex-wrap:wrap}
+.pro{width:96px;display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:#15171c;text-align:center;font-size:15px;font-weight:900;line-height:1.2}
+.pro:hover{color:#15171c}
+.pro span{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font-size:24px;font-weight:900;color:#fff;border:3px solid #fff}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #ffffff;">
+  <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative;">
+    <a href="Adicionar.dc.html" aria-label="Fechar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center; font-size: 19px; font-weight: 900;">Profissionais</div>
+  </div>
+  <label for="busca" style="display: block; border-bottom: 1px solid #dcdde1; padding: 0 20px;"><input id="busca" placeholder="Pesquisar profissional" style="width: 100%; border: 0; outline: 0; padding: 14px 0 18px; font-family: inherit; font-size: 19px; background: transparent; color: #15171c;"></label>
+
+  <div style="padding: 20px 20px; display: flex; flex-direction: column; gap: 22px;">
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <h2>Gerência</h2>
+      <div class="pros"><a href="Adicionar.dc.html" class="pro"><span style="background: #2a8ad6; box-shadow: 0 0 0 3px #2a8ad6;">PT</span>Patrícia</a></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <h2>Estética</h2>
+      <div class="pros"><a href="Adicionar.dc.html" class="pro"><span style="background: #9a6fd0; box-shadow: 0 0 0 3px #9a6fd0;">CR</span>Camila Rocha</a></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <h2>Cabelos</h2>
+      <div class="pros">
+        <a href="Adicionar.dc.html" class="pro"><span style="background: #6aae5c; box-shadow: 0 0 0 3px #8cc97e;">JP</span>Juliana Prado</a>
+        <a href="Adicionar.dc.html" class="pro"><span style="background: #4e8f42; box-shadow: 0 0 0 3px #8cc97e;">DM</span>Diego Martins</a>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <h2>Manicure</h2>
+      <div class="pros">
+        <a href="Adicionar.dc.html" class="pro"><span style="background: #2f9a83; box-shadow: 0 0 0 3px #3aa58e;">TM</span>Thaís Moura</a>
+        <a href="Adicionar.dc.html" class="pro"><span style="background: #c07a2c; box-shadow: 0 0 0 3px #3aa58e;">BL</span>Bianca Lopes</a>
+        <a href="Adicionar.dc.html" class="pro"><span style="background: #a85a6e; box-shadow: 0 0 0 3px #3aa58e;">SA</span>Sueli Andrade</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

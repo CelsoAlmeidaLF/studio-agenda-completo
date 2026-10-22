@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Permissões</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.sh{display:flex;align-items:center;gap:16px;width:100%;padding:18px 18px;border:0;border-bottom:1px solid #dcdde1;background:#f3f3f5;font-family:inherit;font-size:19px;font-weight:900;color:#15171c;text-align:left;cursor:pointer;line-height:1.25}
+.sh .ch{margin-left:auto;flex:none}
+.sh .ic{width:24px;height:24px;flex:none}
+.body{background:#fff;padding:4px 18px 22px;border-bottom:1px solid #dcdde1}
+.gt{margin:20px 0 6px;font-size:18px;font-weight:900;line-height:1.3}
+.ro{display:flex;align-items:flex-start;gap:14px;width:100%;padding:8px 0;border:0;background:none;font-family:inherit;font-size:17.5px;line-height:1.3;color:#7d8089;text-align:left;cursor:pointer}
+.ro.on{color:#c2255c}
+.dot{width:24px;height:24px;border-radius:50%;border:2px solid #c9cbd0;box-sizing:border-box;flex:none;margin-top:1px}
+.ro.on .dot{border-color:#c2255c;box-shadow:inset 0 0 0 4px #fff;background:#c2255c}
+.ck{display:flex;align-items:flex-start;gap:14px;width:100%;padding:8px 0 8px 46px;border:0;background:none;font-family:inherit;font-size:16.5px;line-height:1.3;color:#15171c;text-align:left;cursor:pointer;box-sizing:border-box}
+.box{width:22px;height:22px;border-radius:4px;border:2px solid #c9cbd0;box-sizing:border-box;flex:none;display:grid;place-items:center;margin-top:1px}
+.ck.on .box{background:#c2255c;border-color:#c2255c}
+.ro:focus-visible,.ck:focus-visible,.sh:focus-visible{outline:2px solid #1c6fd1;outline-offset:-2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 6400px; position: relative; overflow-y: auto; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <svg width="0" height="0" style="position: absolute;" aria-hidden="true">
+  <symbol id="i-agenda" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5" fill="none" stroke="#15171c" stroke-width="2.2"/><path d="M3 9h18M8 2.5v4M16 2.5v4" stroke="#15171c" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-estoque" viewBox="0 0 24 24"><path d="M3 20V7h18v13M3 20h18M7 11h3v4H7zM14 11h3v4h-3zM3 7l2-3h14l2 3" fill="none" stroke="#15171c" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-clientes" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#15171c"/><circle cx="12" cy="10" r="3.4" fill="#fff"/><path d="M5.6 18.6c1.3-2.4 3.6-3.6 6.4-3.6s5.1 1.2 6.4 3.6" fill="#fff"/></symbol>
+  <symbol id="i-anamnese" viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="14" rx="2.5" fill="#15171c"/><path d="M9 6.5V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v1.5" fill="none" stroke="#15171c" stroke-width="2"/><path d="M12 10.5v6M9 13.5h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-contas" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="14" rx="2.5" fill="#15171c"/><path d="M4 6l11-3 1.5 3" fill="none" stroke="#15171c" stroke-width="2" stroke-linejoin="round"/><rect x="15" y="11" width="6.5" height="4" rx="1" fill="#fff"/></symbol>
+  <symbol id="i-financeiro" viewBox="0 0 24 24"><path d="M12 3v18M16.5 7.5c-.6-1.6-2.4-2.5-4.5-2.5-2.5 0-4.5 1.3-4.5 3.4 0 4.6 9.5 2.3 9.5 7.1 0 2-2 3.5-4.8 3.5-2.4 0-4.4-1-5-2.8" fill="none" stroke="#15171c" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-relatorios" viewBox="0 0 24 24"><path d="M3 4v16h18M8 16v-4M12 16V8M16 16v-6M20 16V6" fill="none" stroke="#15171c" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-gestao" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="#15171c" stroke-width="2.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="#15171c" stroke-width="2.4" stroke-linecap="round"/></symbol>
+</svg>
+  <div style="height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; position: relative; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <a href="Gestao.dc.html" aria-label="Voltar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center; pointer-events: none;"><div style="font-size: 13px; font-weight: 800; color: #6b6f78;">Permissões</div><div style="font-size: 17px; font-weight: 900;">Patrícia</div></div>
+    <a href="Equipe.dc.html" aria-label="Trocar profissional" style="width: 40px; height: 40px; border-radius: 50%; background: #2a8ad6; color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 900; text-decoration: none; border: 2px solid #fff; box-shadow: 0 0 0 2px #2a8ad6; position: relative; z-index: 1;">PT</a>
+  </div>
+
+  <sc-for list="{{secoes}}" as="s" hint-placeholder-count="8">
+    <button class="sh" onClick="{{s.toggle}}" aria-expanded="{{s.open}}">
+      <svg class="ic" aria-hidden="true"><use href="{{s.ico}}"></use></svg>{{s.nome}}
+      <sc-if value="{{s.open}}" hint-placeholder-val="{{true}}"><svg class="ch" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></sc-if>
+      <sc-if value="{{s.closed}}" hint-placeholder-val="{{false}}"><svg class="ch" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></sc-if>
+    </button>
+    <sc-if value="{{s.open}}" hint-placeholder-val="{{true}}">
+      <div class="body">
+        <sc-for list="{{s.grupos}}" as="g" hint-placeholder-count="2">
+          <div class="gt">{{g.titulo}}</div>
+          <div role="radiogroup" aria-label="{{g.titulo}}">
+            <sc-for list="{{g.ops}}" as="o" hint-placeholder-count="2">
+              <sc-if value="{{o.on}}" hint-placeholder-val="{{false}}">
+                <button class="ro on" role="radio" aria-checked="true" onClick="{{o.pick}}"><span class="dot"></span><span>{{o.txt}}</span></button>
+                <sc-for list="{{o.subs}}" as="c" hint-placeholder-count="0">
+                  <sc-if value="{{c.on}}" hint-placeholder-val="{{true}}">
+                    <button class="ck on" role="checkbox" aria-checked="true" onClick="{{c.flip}}"><span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>{{c.txt}}</span></button>
+                  </sc-if>
+                  <sc-if value="{{c.off}}" hint-placeholder-val="{{false}}">
+                    <button class="ck" role="checkbox" aria-checked="false" onClick="{{c.flip}}"><span class="box"></span><span>{{c.txt}}</span></button>
+                  </sc-if>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{o.off}}" hint-placeholder-val="{{true}}">
+                <button class="ro" role="radio" aria-checked="false" onClick="{{o.pick}}"><span class="dot"></span><span>{{o.txt}}</span></button>
+              </sc-if>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </sc-for>
+
+  <div style="display: flex; align-items: center; gap: 10px; padding: 26px 18px 8px; font-size: 15px; color: #6b6f78;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b6f78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6M3 4v4h4"/><path d="M12 7.5V12l3 2"/></svg><span><b style="font-weight: 900;">Criado:</b> Seg, 3 Mar 2025, 10:15</span></div>
+  <div style="padding: 18px 14px 30px;"><a href="Gestao.dc.html" style="display: block; text-align: center; padding: 16px; border-radius: 6px; background: #c2255c; color: #fff; text-decoration: none; font-weight: 900; font-size: 18px;">Salvar permissões</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":6400}}'>
+class Component extends DCLogic {
+  perm() {
+    var SA = 'Sem acesso.', AC = 'Apenas consulta.', CE = 'Criação e edição de dados.', PA = 'Permitir acesso.';
+    return [
+      { nome: 'Agenda', ico: '#i-agenda', grupos: [
+        { titulo: 'Gestão dos agendamentos', sel: 3, ops: [SA, 'Apenas consulta os seus próprios agendamentos.', 'Criar e editar os seus próprios agendamentos.', 'Criar e editar todos os agendamentos, incluindo os da equipe.'],
+          subs: { 3: ['Permitir envio de notificações aos clientes (e-mail, SMS e WhatsApp) na criação ou alteração de agendamentos.', 'Permitir criar e editar todos os bloqueios de agenda, incluindo os da equipe.', 'Permitir realizar e anular fechamentos de todas as comandas.', 'Permitir editar o preço de todos os agendamentos.'] } },
+        { titulo: 'Gestão dos produtos nos agendamentos', sel: 1, ops: ['Apenas consultar produtos nas comandas.', 'Permitir adicionar e editar a quantidade de produtos apenas dos seus agendamentos.', 'Permitir adicionar e editar a quantidade de produtos de todos os agendamentos, incluindo os da equipe.'] }
+      ] },
+      { nome: 'Estoque', ico: '#i-estoque', grupos: [
+        { titulo: 'Configurações do módulo de estoque:', sel: 0, ops: [SA, CE] },
+        { titulo: 'Movimentações do estoque:', sel: 0, ops: [SA, AC, 'Permitir criar movimentações de estoque.'] },
+        { titulo: 'Posição do estoque (visualização do que há em estoque):', sel: 0, ops: [SA, PA] },
+        { titulo: 'Inventário (contagem e ajuste do estoque):', sel: 0, ops: [SA, AC, CE] },
+        { titulo: 'Pedidos de compra:', sel: 0, ops: [SA, AC, CE] }
+      ] },
+      { nome: 'Clientes', ico: '#i-clientes', grupos: [
+        { titulo: 'Contatos dos clientes:', sel: 2, ops: ['Sem acesso, ver apenas o nome dos clientes.', 'Ver e editar os contatos dos seus clientes, mas ver apenas o nome dos clientes dos outros profissionais.', 'Ver e editar os contatos de todos os clientes do estabelecimento.'] },
+        { titulo: 'Conta corrente dos clientes:', sel: 2, ops: [SA, 'Ver apenas o saldo.', 'Ver o saldo e os movimentos.'],
+          subs: { 2: ['Permitir realizar lançamentos (registrar manualmente entradas e saídas de valores).'] } }
+      ] },
+      { nome: 'Anamnese do cliente', ico: '#i-anamnese', grupos: [
+        { titulo: 'Fichas de histórico e tratamento:', sel: 2, ops: [SA, AC, 'Criação e edição de fichas de histórico e tratamento.'] },
+        { titulo: 'Fichas de avaliação:', sel: 2, ops: [SA, AC, 'Criação e edição de fichas de avaliação.'], subs: { 2: ['Permitir excluir fotos.'] } }
+      ] },
+      { nome: 'Contas correntes e comissões dos profissionais', ico: '#i-contas', grupos: [
+        { titulo: 'Conta corrente da equipe:', sel: 2, ops: [SA, 'Ver todos os movimentos, menos o saldo, gorjetas, comissões e recibos.', 'Ver o saldo e os movimentos.'],
+          subs: { 2: ['Permitir criar e editar movimentos.', 'Pagar e anular recibos.'] } },
+        { titulo: 'Minha conta (conta corrente pessoal):', sel: 2, ops: [SA, 'Ver apenas o saldo.', 'Ver o saldo e todos os movimentos.'], subs: { 2: ['Ver movimentos detalhados.'] } }
+      ] },
+      { nome: 'Financeiro', ico: '#i-financeiro', grupos: [
+        { titulo: 'Acesso ao caixa:', sel: 2, ops: [SA, AC, 'Criação e edição de lançamentos.'], subs: { 2: ['Permitir abrir o caixa.'] } },
+        { titulo: 'Acesso à conta corrente:', sel: 2, ops: [SA, AC, 'Consulta e transferências.'] },
+        { titulo: 'Acesso às transações:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Acesso às notas fiscais:', sel: 1, ops: [SA, PA] }
+      ] },
+      { nome: 'Relatórios', ico: '#i-relatorios', grupos: [
+        { titulo: 'Baixar relatórios:', sel: 1, ops: [SA, 'Permitir baixar relatórios.'] },
+        { titulo: 'Relatórios de agendamentos:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios de produtos:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios de pacotes:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios de fechamentos:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios de comissões:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios de notificações:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios avançados:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Relatórios de estoque:', sel: 0, ops: [SA, PA] }
+      ] },
+      { nome: 'Gestão do estabelecimento', ico: '#i-gestao', grupos: [
+        { titulo: 'Configurações do estabelecimento (geral, financeiro e preferências):', sel: 1, ops: [SA, CE] },
+        { titulo: 'Configurações dos itens (serviços, descontos, produtos e pacotes):', sel: 1, ops: [SA, CE] },
+        { titulo: 'Configurações da equipe:', sel: 1, ops: [SA, CE], subs: { 1: ['Permitir gestão das permissões.'] } },
+        { titulo: 'Atividade:', sel: 1, ops: [SA, 'Consulta.'] },
+        { titulo: 'Configurações das vendas online:', sel: 1, ops: [SA, CE] },
+        { titulo: 'Configurações dos pagamentos:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Configurações das fichas de anamnese:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Configurações do módulo fiscal:', sel: 1, ops: [SA, PA] },
+        { titulo: 'Configurações das notificações:', sel: 1, ops: [SA, CE] },
+        { titulo: 'Configurações do plano e faturamento:', sel: 1, ops: [SA, CE] }
+      ] }
+    ];
+  }
+  constructor(p) {
+    super(p);
+    this.P = this.perm();
+    var sel = {}, sub = {}, open = {};
+    this.P.forEach(function (s, si) {
+      open[si] = true;
+      s.grupos.forEach(function (g, gi) {
+        sel[si + '-' + gi] = g.sel;
+        Object.keys(g.subs || {}).forEach(function (oi) {
+          g.subs[oi].forEach(function (_, ci) { sub[si + '-' + gi + '-' + oi + '-' + ci] = true; });
+        });
+      });
+    });
+    this.state = { sel: sel, sub: sub, open: open };
+  }
+  renderVals() {
+    var self = this, st = this.state;
+    function set(key, k, v) { var n = Object.assign({}, st[key]); n[k] = v; var o = {}; o[key] = n; self.setState(o); }
+    var secoes = this.P.map(function (s, si) {
+      var isOpen = !!st.open[si];
+      return {
+        nome: s.nome, ico: s.ico, open: isOpen, closed: !isOpen,
+        toggle: function () { set('open', si, !isOpen); },
+        grupos: s.grupos.map(function (g, gi) {
+          var gk = si + '-' + gi;
+          return {
+            titulo: g.titulo,
+            ops: g.ops.map(function (txt, oi) {
+              var on = st.sel[gk] === oi;
+              var subs = ((g.subs || {})[oi] || []).map(function (ctxt, ci) {
+                var ck = gk + '-' + oi + '-' + ci, c = !!st.sub[ck];
+                return { txt: ctxt, on: c, off: !c, flip: function () { set('sub', ck, !c); } };
+              });
+              return { txt: txt, on: on, off: !on, subs: subs, pick: function () { set('sel', gk, oi); } };
+            })
+          };
+        })
+      };
+    });
+    return { secoes: secoes };
+  }
+}
+</script>
+</body>
+</html>

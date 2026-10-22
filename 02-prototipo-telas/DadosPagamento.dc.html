@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Dados de pagamento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.h1{padding:22px 18px 4px;font-size:32px;font-weight:400}
+.sub{padding:0 18px;font-size:16px;color:#6b6f78;line-height:1.35}
+.cd{margin:18px 14px 0;padding:16px 18px;background:#fff;border-radius:10px;box-shadow:0 2px 10px -4px rgba(30,35,60,.12);font-size:16.5px;line-height:1.4}
+.ok{float:right;padding:2px 10px;border-radius:999px;background:#6db35b;color:#fff;font-size:14px;font-weight:900}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow-y: auto; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <a href="Gestao.dc.html" aria-label="Voltar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center;"><div style="font-size: 13px; font-weight: 800; color: #6b6f78;">Gestão</div><div style="font-size: 17px; font-weight: 900;">Dados de pagamento</div></div>
+  </div>
+  <div class="h1">Dados de faturamento</div>
+  <div class="sub">Para alterar os dados de faturamento, envie um e-mail para <span style="user-select: all; color: #15171c;">[SEU E-MAIL DE SUPORTE]</span></div>
+  <div class="cd">
+    <span class="ok">Ativo</span>
+    <b style="font-size: 18px; font-weight: 900;">Bella Forma Estética Ltda.</b>
+    <div>00.000.000/0001-00</div>
+    <div>Rua das Flores, 250, Sala 3, Centro, São Paulo, 01310-000, SP, BR</div>
+    <b style="display: block; margin-top: 14px; font-weight: 900;">Contatos</b>
+    <div>(11) 90000-5000</div>
+    <div>contato@bellaforma.exemplo</div>
+  </div>
+  <div class="h1" style="padding-top: 34px;">Pagamento preferencial</div>
+  <div class="cd">
+    <span class="ok">Ativo</span>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 900;"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 21.5 12 12 21.5 2.5 12z" fill="none" stroke="#2fa58e" stroke-width="2.6" stroke-linejoin="round"/><path d="M8.5 12h7" stroke="#2fa58e" stroke-width="2.6" stroke-linecap="round"/></svg>Pix</div>
+    <p style="margin: 12px 0 0;">O Pix é pago direto no aplicativo do seu banco, por QR Code ou chave Pix.</p>
+    <a href="#" style="display: inline-block; margin-top: 12px; font-weight: 800; text-decoration: none;">Trocar forma de pagamento</a>
+  </div>
+  <div style="margin: 26px 14px 0; padding-top: 16px; border-top: 1px solid #d6d8dc; font-size: 16.5px; color: #6b6f78;">Dúvidas? Fale com o suporte pelo WhatsApp: <span style="user-select: all;">[SEU WHATSAPP]</span></div>
+  <a href="#" style="display: block; margin: 10px 14px 0; font-size: 18px; font-weight: 600; text-decoration: none;">Entrar em contato</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

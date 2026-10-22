@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Horário de funcionamento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.dia{padding:18px 18px 8px;font-size:16px;font-weight:900;color:#6b6f78;border-bottom:1px solid #dcdde1}
+.blk{background:#fff;border-bottom:1px solid #dcdde1;padding:0 18px}
+.iv{display:flex;align-items:center;justify-content:space-between;height:54px;border-bottom:1px solid #dcdde1;font-size:20px;font-weight:900}
+.fe{display:flex;align-items:center;height:54px;font-size:18px;color:#6b6f78}
+.add{display:flex;align-items:center;justify-content:flex-end;gap:8px;height:52px;margin-left:auto;border:0;background:none;font-family:inherit;font-size:18px;font-weight:900;color:#1c6fd1;cursor:pointer}
+.rm{border:0;background:none;padding:6px;cursor:pointer;display:grid}
+</style>
+</helmet>
+<div style="width: 390px; height: 1420px; position: relative; overflow-y: auto; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <a href="Gestao.dc.html" aria-label="Voltar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center; font-size: 16px; font-weight: 900;">Horário de funcionamento</div>
+  </div>
+  <div style="padding: 18px 18px 8px;">
+    <div style="font-size: 28px;">Horário</div>
+    <p style="margin: 4px 0 0; font-size: 15.5px; color: #6b6f78; line-height: 1.4;">Indique os dias e horários em que o estabelecimento atende.</p>
+    <p style="margin: 10px 0 0; font-size: 15.5px; color: #6b6f78; line-height: 1.4;">Em cada dia, divida o horário em intervalos para marcar pausas, como a hora do almoço.</p>
+  </div>
+  <sc-for list="{{dias}}" as="d" hint-placeholder-count="7">
+    <div class="dia">{{d.nome}}</div>
+    <div class="blk">
+      <sc-if value="{{d.fechado}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; align-items: center;"><span class="fe">Estabelecimento fechado</span><button class="add" onClick="{{d.add}}">Adicionar <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v9M7.5 12h9"/></svg></button></div>
+      </sc-if>
+      <sc-for list="{{d.ivs}}" as="iv" hint-placeholder-count="1">
+        <div class="iv"><span>{{iv.txt}}</span><button class="rm" aria-label="Remover intervalo" onClick="{{iv.rm}}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#9a9da4"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+      </sc-for>
+      <sc-if value="{{d.aberto}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex;"><button class="add" onClick="{{d.add}}">Adicionar <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v9M7.5 12h9"/></svg></button></div>
+      </sc-if>
+    </div>
+  </sc-for>
+  <div style="padding: 24px 14px;"><a href="Gestao.dc.html" style="display: block; text-align: center; padding: 16px; border-radius: 6px; background: #c2255c; color: #fff; text-decoration: none; font-weight: 900; font-size: 18px;">Salvar horário</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1420}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    var t = ['08:00 - 19:00'];
+    this.state = { h: { 'Segunda': [], 'Terça': ['09:00 - 12:00', '13:00 - 19:00'], 'Quarta': t.slice(), 'Quinta': t.slice(), 'Sexta': t.slice(), 'Sábado': ['08:00 - 18:00'], 'Domingo': [] } };
+  }
+  renderVals() {
+    var self = this, h = this.state.h;
+    var dias = Object.keys(h).map(function (nome) {
+      var list = h[nome];
+      return {
+        nome: nome,
+        fechado: list.length === 0,
+        aberto: list.length > 0,
+        add: function () {
+          var n = Object.assign({}, h);
+          n[nome] = list.concat([list.length ? '14:00 - 19:00' : '08:00 - 19:00']);
+          self.setState({ h: n });
+        },
+        ivs: list.map(function (txt, i) {
+          return { txt: txt, rm: function () {
+            var n = Object.assign({}, h);
+            n[nome] = list.filter(function (_, j) { return j !== i; });
+            self.setState({ h: n });
+          } };
+        })
+      };
+    });
+    return { dias: dias };
+  }
+}
+</script>
+</body>
+</html>

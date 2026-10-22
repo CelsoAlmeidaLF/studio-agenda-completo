@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Gestão</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.div{display:flex;align-items:center;gap:16px;padding:22px 16px 10px;font-size:14px;font-weight:900;letter-spacing:.06em;color:#6b6f78}
+.div::before,.div::after{content:"";flex:1;height:1px;background:#d6d8dc}
+.gh{display:flex;align-items:center;gap:20px;padding:22px 16px 12px;font-size:19px;font-weight:900;border-bottom:1px solid #dcdde1}
+.gh svg{width:22px;height:22px;flex:none}
+.op{display:flex;align-items:center;justify-content:space-between;height:58px;padding:0 18px 0 58px;background:#fff;border-bottom:1px solid #dcdde1;font-size:18px;color:#15171c;text-decoration:none}
+.op:hover{color:#15171c;background:#fafafa}
+</style>
+</helmet>
+<div style="width: 390px; height: 1560px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <a href="Menu.dc.html" aria-label="Menu" style="padding: 6px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></a>
+    <div style="position: absolute; left: 0; right: 0; text-align: center;"><div style="font-size: 13px; font-weight: 800; color: #6b6f78;">Gestão</div><div style="font-size: 17px; font-weight: 900;">Studio Bella Forma</div></div>
+  </div>
+  <div class="div">OPERAÇÃO</div>
+  <div class="gh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18l1 5c0 1.5-1.2 2.5-2.5 2.5S17 10.5 17 9c0 1.5-1.2 2.5-2.5 2.5S12 10.5 12 9c0 1.5-1.2 2.5-2.5 2.5S7 10.5 7 9c0 1.5-1.2 2.5-2.5 2.5S2 10.5 2 9z" fill="#15171c"/><path d="M4 12.5V20h6v-5h4v5h6v-7.5" fill="none" stroke="#15171c" stroke-width="2"/></svg>Estabelecimento</div>
+  <a href="Estabelecimento.dc.html" class="op">Geral<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="Horario.dc.html" class="op">Horário de funcionamento<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.6-1.6-2.4-2.5-4.5-2.5-2.5 0-4.5 1.3-4.5 3.4 0 4.6 9.5 2.3 9.5 7.1 0 2-2 3.5-4.8 3.5-2.4 0-4.4-1-5-2.8"/></svg>Financeiro</div>
+  <a href="CaixaConfig.dc.html" class="op">Caixa<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg>Serviços</div>
+  <a href="Servicos.dc.html" class="op">Lista de serviços<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="#" class="op">Descontos<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h4v4H9zM8 7h6v14H8zM16 11h3v10h-3z"/></svg>Produtos</div>
+  <a href="#" class="op">Lista de produtos<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="#" class="op">Linhas de produtos<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="#" class="op">Marcas<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="#" class="op">Fornecedores<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="#" class="op">Configurações gerais<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="gh"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="#15171c"/><circle cx="16.5" cy="8.5" r="3" fill="#15171c"/><path d="M2 19c.6-3.5 3.4-5.5 7-5.5s6.4 2 7 5.5zM15 13.6c3.5-.4 6.4 1.5 7 5.4h-4.5" fill="#15171c"/></svg>Equipe</div>
+  <a href="Equipe.dc.html" class="op">Lista de profissionais<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="Permissoes.dc.html" class="op">Permissões<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="div">SISTEMA</div>
+  <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>Preferências</div>
+  <a href="#" class="op">Comissões<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6" stroke-linecap="round"/></svg>Plano e faturamento</div>
+  <a href="Plano.dc.html" class="op">Plano Studio Agenda<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="NotasCobranca.dc.html" class="op">Notas de cobrança<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="PagamentosPlano.dc.html" class="op">Pagamentos<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <a href="DadosPagamento.dc.html" class="op">Dados de pagamento<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3a6ad" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

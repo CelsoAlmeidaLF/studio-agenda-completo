@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Mudar status</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.op{position:relative;display:flex;align-items:center;justify-content:center;height:62px;border-bottom:1px solid #e3e4e8;font-size:18px;color:#15171c;text-decoration:none;background:#fff}
+.op:hover{color:#15171c;background:#f7f7f9}
+.op i{position:absolute;left:22px;top:50%;width:13px;height:13px;margin-top:-6.5px;border-radius:50%}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #fafafa;">
+  <div aria-hidden="true" style="padding: 26px 14px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="text-align: center;"><div style="font-size: 13px; font-weight: 800; color: #6b6f78;">Comanda</div><div style="font-size: 16px; font-weight: 900;">Amanhã, 17 Out 2026</div></div>
+    <div style="font-size: 23px; font-weight: 900;">Renata Oliveira</div>
+    <div style="background: #fff; border: 1.5px solid #d6d8dc; border-radius: 10px; padding: 14px; font-size: 30px; font-weight: 900;">11:30 <span style="font-size: 20px; font-weight: 600; color: #6b6f78;">- 12:00</span></div>
+  </div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(20,22,28,.45);"></div>
+
+  <div role="dialog" aria-label="Mudar status do atendimento" style="position: absolute; left: 0; right: 0; bottom: 0; border-radius: 16px 16px 0 0; overflow: hidden; background: #fff;">
+    <div style="background: #f3f3f5; padding: 14px 16px; text-align: center; border-bottom: 1px solid #e3e4e8;">
+      <div style="font-size: 19px; font-weight: 900;">11:30 - 12:00</div>
+      <div style="font-size: 15px; color: #6b6f78;"><b>Mão</b> | Bianca Lopes</div>
+    </div>
+    <a href="Comanda.dc.html" class="op"><i style="background: #1eaee8;"></i>Marcado</a>
+    <a href="Comanda.dc.html" class="op" style="font-weight: 900;"><i style="background: #5b73c4;"></i>Confirmado<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 22px;"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></a>
+    <a href="Comanda.dc.html" class="op"><i style="background: #f2c200;"></i>Em espera</a>
+    <a href="Comanda.dc.html" class="op"><i style="background: #9ccf6b;"></i>Iniciado</a>
+    <a href="Comanda.dc.html" class="op"><i style="background: #f08a24;"></i>Atrasado</a>
+    <a href="Comanda.dc.html" class="op"><i style="background: #7d7f86;"></i>Cancelado</a>
+    <a href="Comanda.dc.html" class="op" style="font-weight: 900; border-bottom: 0; height: 70px; padding-bottom: 16px;">Sair</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

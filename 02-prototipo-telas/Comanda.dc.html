@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Comanda</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.it{background:#fff;border:1.5px solid #d6d8dc;border-radius:10px}
+.it .top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #eceef1}
+.it .hr{font-size:30px;font-weight:900;letter-spacing:-.5px}
+.it .hr span{font-size:20px;font-weight:600;color:#6b6f78;letter-spacing:0}
+.st{display:inline-flex;align-items:center;gap:6px;background:#5b73c4;color:#fff;font-size:13px;font-weight:800;padding:5px 10px;border-radius:5px;text-decoration:none}
+.st:hover{color:#fff}
+.row{display:flex;align-items:center;gap:12px;padding:10px 14px 0;font-size:16px}
+.row:last-child{padding-bottom:14px}
+.av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex:none}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #fafafa;">
+  <div style="height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px;">
+    <a href="Main.dc.html" aria-label="Fechar comanda" style="padding: 8px; color: #15171c; display: grid;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <div style="text-align: center;"><div style="font-size: 13px; font-weight: 800; color: #6b6f78;">Comanda</div><div style="font-size: 16px; font-weight: 900;">Amanhã, 17 Out 2026</div></div>
+    <button aria-label="Mais opções" style="border: 0; background: none; padding: 8px; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2" fill="#15171c"/><circle cx="12" cy="12" r="2" fill="#15171c"/><circle cx="12" cy="19" r="2" fill="#15171c"/></svg></button>
+  </div>
+
+  <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 4px 14px 14px;">
+    <a href="Cliente.dc.html" style="text-decoration: none; color: #15171c;"><div style="font-size: 23px; font-weight: 900;">Renata Oliveira</div><span style="display: inline-block; margin-top: 2px; background: #dedfe2; color: #fff; font-size: 13px; font-weight: 900; padding: 1px 6px; border-radius: 3px;">R$ 0,00</span></a>
+    <div style="display: flex; gap: 10px;">
+      <a href="https://wa.me/" aria-label="Chamar no WhatsApp" style="width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid #3fa34d; display: grid; place-items: center; color: #3fa34d;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5 5.3 16A8 8 0 1 1 8 18.7z"/><path d="M9.5 9.5c.3 1.6 1.8 3.4 3.8 4.2l1-1 1.7.8c-.2 1-1 1.6-2 1.5-2.6-.3-5.3-3-5.6-5.6-.1-1 .5-1.8 1.5-2l.8 1.7z" fill="currentColor" stroke="none"/></svg></a>
+      <button aria-label="Ligar" style="width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid #1c6fd1; background: none; display: grid; place-items: center; color: #1c6fd1; cursor: pointer;"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="currentColor"/></svg></button>
+    </div>
+  </div>
+
+  <div style="padding: 0 14px; display: flex; flex-direction: column; gap: 14px;">
+    <div class="it">
+      <div class="top"><span class="hr">11:30 <span>- 12:00</span></span><a href="Status.dc.html" class="st">Confirmado <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18l-9 11z" fill="#fff"/></svg></a></div>
+      <div class="row"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg><b style="flex: 1; font-weight: 900;">Mão</b><span style="color: #6b6f78;">R$ 40,00</span></div>
+      <div class="row"><span class="av" style="background: #3aa58e;">BL</span>Bianca Lopes</div>
+    </div>
+    <div class="it">
+      <div class="top"><span class="hr">12:00 <span>- 12:30</span></span><a href="Status.dc.html" class="st">Confirmado <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18l-9 11z" fill="#fff"/></svg></a></div>
+      <div class="row"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg><b style="flex: 1; font-weight: 900;">Esmaltação tradicional</b><span style="color: #6b6f78;">R$ 25,00</span></div>
+      <div class="row"><span class="av" style="background: #d08a3a;">SA</span>Sueli Andrade</div>
+    </div>
+    <div class="it" style="border-color: #c2255c;">
+      <div class="top"><span class="hr">12:00 <span>- 13:00</span></span><a href="Status.dc.html" class="st">Confirmado <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18l-9 11z" fill="#fff"/></svg></a></div>
+      <div class="row"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg><b style="flex: 1; font-weight: 900;">Design + Buço - COMBO</b><span style="color: #6b6f78;">R$ 70,00</span></div>
+      <div class="row"><span class="av" style="background: #9a6fd0;">CR</span>Camila Rocha</div>
+      <div class="row" style="align-items: flex-start;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15171c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px;"><path d="M11 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6"/><path d="M18 2.5 21.5 6 13 14.5H9.5V11z"/></svg><i style="font-size: 15px; color: #4a4e57;">Prefere linha, mas aceita pinça e cera com a Camila.</i></div>
+    </div>
+  </div>
+
+  <a href="Adicionar.dc.html" aria-label="Adicionar à comanda" style="position: absolute; right: 22px; bottom: 116px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #1c6fd1; box-shadow: 0 8px 20px -6px rgba(28,111,209,.6);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 14px 28px; background: #fafafa; border-top: 1px solid #dcdde1;">
+    <a href="Fechamento.dc.html" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; border-radius: 6px; background: #c2255c; color: #fff; text-decoration: none; font-weight: 900; font-size: 17px;"><span>Fechamento</span><span style="font-size: 21px;">R$ 135,00</span></a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

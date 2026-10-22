@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Comandas do dia</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.h{font-size:17px;font-weight:900;color:#6b6f78;margin:6px 2px 0}
+.cm{display:block;background:#fff;border:1px solid #d6d8dc;border-radius:8px;text-decoration:none;color:#15171c}
+.cm .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:11px 14px;border-bottom:1px solid #eceef1}
+.cm .top b{font-size:15.5px;font-weight:900}
+.cm .tm{font-size:15px;white-space:nowrap}
+.cm .tm b{font-weight:900}
+.cm .tm span{color:#6b6f78}
+.it{display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:14.5px}
+.it:last-child{padding-bottom:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:#5b73c4;flex:none}
+.av{margin-left:auto;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:9.5px;font-weight:800;color:#fff;border:2px solid #fff;box-shadow:0 0 0 1.5px #3aa58e}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="height: 70px; display: flex; align-items: center; gap: 14px; padding: 0 14px; background: #f0f0f2; border-bottom: 1px solid #dcdde1;">
+    <button aria-label="Menu" style="border: 0; background: none; padding: 6px; cursor: pointer; color: #15171c;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <button style="flex: 1; display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 0; font-family: inherit; color: #15171c; cursor: pointer; text-align: left;"><span style="font-size: 21px;"><b style="font-weight: 900;">Amanhã</b> 17 Out</span><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-7 9z" fill="#15171c"/></svg></button>
+    <button aria-label="Lembretes pendentes" style="position: relative; border: 0; background: none; padding: 6px; cursor: pointer; color: #c2255c;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4S6 14 6 9"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span style="position: absolute; top: 0; right: 0; width: 18px; height: 18px; border-radius: 50%; background: #c2255c; color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center;">5</span></button>
+    <a href="Main.dc.html" aria-label="Ver agenda em grade" style="padding: 6px; color: #15171c; display: grid;"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5" fill="none" stroke="#15171c" stroke-width="2.2"/><path d="M3 9h18M8 2.5v4M16 2.5v4" stroke="#15171c" stroke-width="2.2" stroke-linecap="round"/><rect x="7" y="12.5" width="5" height="4.5" rx="1" fill="#15171c"/></svg></a>
+  </div>
+  <div style="background: #fff; padding: 14px 18px; border-bottom: 1px solid #dcdde1; display: flex; align-items: center; gap: 8px;">
+    <span style="font-size: 20px; font-weight: 900; color: #6b6f78;">Comandas</span><span style="background: #6b6f78; color: #fff; font-size: 13px; font-weight: 800; padding: 1px 8px; border-radius: 10px;">20</span>
+  </div>
+
+  <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;">
+    <div class="h">07:00</div>
+    <a href="Comanda.dc.html" class="cm"><div class="top"><b>Silvia Brandão</b><span class="tm"><b>07:15</b> <span>- 09:15</span></span></div>
+      <div class="it"><span class="dot"></span>Blindagem<span class="av" style="background: #3aa58e;">TM</span></div>
+      <div class="it"><span class="dot"></span>Esmaltação em gel no pé<span class="av" style="background: #3aa58e;">TM</span></div></a>
+    <div class="h">09:00</div>
+    <a href="Comanda.dc.html" class="cm"><div class="top"><b>Carolina Pires</b><span class="tm"><b>09:00</b> <span>- 09:30</span></span></div>
+      <div class="it"><span class="dot"></span>Mão<span class="av" style="background: #d08a3a;">BL</span></div></a>
+    <a href="Comanda.dc.html" class="cm"><div class="top"><b>Ana Lúcia Prado</b><span class="tm"><b>09:30</b> <span>- 10:00</span></span></div>
+      <div class="it"><span class="dot"></span>Mão<span class="av" style="background: #3aa58e;">TM</span></div></a>
+    <div class="h">10:00</div>
+    <a href="Comanda.dc.html" class="cm"><div class="top"><b>Cíntia Moraes</b><span class="tm"><b>10:00</b> <span>- 11:30</span></span></div>
+      <div class="it"><span class="dot"></span>Mão &amp; Pé Casadinho - COMBO<span class="av" style="background: #3aa58e;">TM</span></div></a>
+    <a href="Comanda.dc.html" class="cm"><div class="top"><span style="font-size: 15.5px;"><span style="color: #6b6f78;">Sra.</span> <b>Karina Duarte</b></span><span class="tm"><b>10:00</b> <span>- 11:45</span></span></div>
+      <div class="it"><span class="dot"></span>Mão &amp; Pé Casadinho - COMBO<span class="av" style="background: #d08a3a;">BL</span></div></a>
+  </div>
+
+  <a href="BuscarCliente.dc.html" aria-label="Agendar ou vender" style="position: absolute; right: 22px; bottom: 30px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #1c6fd1; box-shadow: 0 8px 20px -6px rgba(28,111,209,.6);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

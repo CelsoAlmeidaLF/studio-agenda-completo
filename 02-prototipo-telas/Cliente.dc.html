@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Ficha do cliente</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400;1,6..12,600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1c6fd1}a:hover{color:#1558a8}
+.tb{display:flex;align-items:center;gap:6px;padding:12px 4px 13px;font-size:15.5px;font-weight:900;color:#5a5d66;text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent}
+.tb:hover{color:#15171c}
+.tb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bx{background:#fff;border:1.5px solid #d6d8dc;border-radius:8px}
+.bx h3{margin:0;display:flex;align-items:center;gap:12px;font-size:20px;font-weight:900}
+.vr{display:flex;align-items:center;gap:12px;font-size:16.5px;padding:4px 0}
+.vr i{width:10px;height:10px;border-radius:50%;flex:none}
+.vr span.a{margin-left:auto;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:9.5px;font-weight:800;color:#fff;font-style:normal}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: 'Nunito Sans', sans-serif; color: #15171c; background: #f3f3f5;">
+  <div style="background: #fff;">
+    <div style="height: 70px; display: flex; align-items: center; padding: 0 12px; position: relative;">
+      <a href="Comanda.dc.html" aria-label="Voltar" style="padding: 8px; color: #15171c; display: grid; position: relative; z-index: 1;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></a>
+      <div style="position: absolute; left: 0; right: 0; text-align: center; font-size: 16px; font-weight: 900;">Ficha de cliente</div>
+    </div>
+    <div style="padding: 0 16px 14px;"><div style="font-size: 23px; font-weight: 900;">Renata Oliveira</div><span style="display: inline-block; margin-top: 2px; background: #dedfe2; color: #fff; font-size: 13px; font-weight: 900; padding: 1px 6px; border-radius: 3px;">R$ 0,00</span></div>
+    <nav style="display: flex; justify-content: space-between; padding: 0 12px; border-bottom: 1.5px solid #c2255c;">
+      <a href="Cliente.dc.html" class="tb" style="color: #c2255c; border-bottom-color: #c2255c;"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6z" fill="currentColor"/></svg>Visão geral</a>
+      <a href="ContaCorrente.dc.html" class="tb"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 19M8.5 15.5 20 5"/></svg>Conta corrente</a>
+      <a href="Fechamentos.dc.html" class="tb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16.5 7.5c-.6-1.6-2.4-2.5-4.5-2.5-2.5 0-4.5 1.3-4.5 3.4 0 4.6 9.5 2.3 9.5 7.1 0 2-2 3.5-4.8 3.5-2.4 0-4.4-1-5-2.8"/></svg>Fechamentos</a>
+    </nav>
+  </div>
+
+  <div style="padding: 14px 12px; display: flex; flex-direction: column; gap: 14px;">
+    <div class="bx" style="padding: 16px 18px 12px;">
+      <h3><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="18" rx="2.5" fill="#5a5d66"/><rect x="9" y="2" width="6" height="3.5" rx="1.2" fill="#5a5d66" stroke="#fff" stroke-width="1"/><circle cx="12" cy="11" r="2.5" fill="#fff"/><path d="M7.5 18c.6-2.3 2.3-3.5 4.5-3.5s3.9 1.2 4.5 3.5z" fill="#fff"/></svg>Dados do cliente</h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 18px 0 14px; border-bottom: 1px solid #dcdde1;">
+        <div><div style="font-size: 16px; color: #6b6f78;">Celular</div><div style="font-size: 19px;">(11) 90000-1234</div></div>
+        <div style="display: flex; gap: 10px;">
+          <a href="https://wa.me/" aria-label="Chamar no WhatsApp" style="width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid #3fa34d; display: grid; place-items: center; color: #3fa34d;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5 5.3 16A8 8 0 1 1 8 18.7z"/></svg></a>
+          <button aria-label="Ligar" style="width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid #1c6fd1; background: none; display: grid; place-items: center; color: #1c6fd1; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="currentColor"/></svg></button>
+        </div>
+      </div>
+      <a href="#" style="display: flex; justify-content: center; align-items: center; gap: 8px; padding-top: 12px; font-size: 18px; font-weight: 600; text-decoration: none;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.2V21h3.8L18 9.8 14.2 6zM20.7 7.1a1 1 0 0 0 0-1.4l-2.4-2.4a1 1 0 0 0-1.4 0L15 5.2 18.8 9z" fill="currentColor"/></svg>Editar cliente</a>
+    </div>
+
+    <a href="#" class="bx" style="display: flex; align-items: center; gap: 12px; padding: 16px 18px; text-decoration: none; color: #15171c;">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; align-self: flex-start; margin-top: 2px;"><rect x="3" y="6.5" width="18" height="14" rx="2.5" fill="#5a5d66"/><path d="M9 6.5V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v1.5" fill="none" stroke="#5a5d66" stroke-width="2"/><path d="M12 10.5v6M9 13.5h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span style="flex: 1;"><b style="display: block; font-size: 20px; font-weight: 900;">Anamnese</b><span style="font-size: 16px; color: #5a5d66;">Histórico do tratamento do cliente</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9a9da4" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <div class="bx" style="padding: 16px 18px 12px;">
+      <h3><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5a5d66" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="15" height="15" rx="2"/><path d="M7 3v4M14 3v4M3 10h15"/><circle cx="18" cy="18" r="4" fill="#fff"/><path d="M18 16.3V18l1.2 1"/></svg>Última visita</h3>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0 10px; border-bottom: 1px solid #dcdde1; font-size: 19px;"><span>SEX 2 Out 2026</span><span><b style="font-weight: 900;">12:30</b> <span style="color: #6b6f78;">- 13:00</span></span></div>
+      <div style="padding-top: 8px;"><div class="vr"><i style="background: #16a34a;"></i>Design + Buço - COMBO<span class="a" style="background: #9a6fd0;">CR</span></div><div class="vr"><i style="background: #16a34a;"></i>Mão<span class="a" style="background: #c07a2c;">BL</span></div></div>
+    </div>
+
+    <div class="bx" style="padding: 16px 18px 12px;">
+      <h3><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5a5d66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M9 15h6M13 13l2 2-2 2"/></svg>Próxima visita</h3>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0 10px; border-bottom: 1px solid #dcdde1; font-size: 19px;"><span>Amanhã, 17 Out 2026</span><span><b style="font-weight: 900;">11:30</b> <span style="color: #6b6f78;">- 13:00</span></span></div>
+      <div style="padding-top: 8px;"><div class="vr"><i style="background: #5b73c4;"></i>Mão<span class="a" style="background: #c07a2c;">BL</span></div><div class="vr"><i style="background: #5b73c4;"></i>Design + Buço - COMBO<span class="a" style="background: #9a6fd0;">CR</span></div><div class="vr"><i style="background: #5b73c4;"></i>Esmaltação tradicional<span class="a" style="background: #a85a6e;">SA</span></div></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
