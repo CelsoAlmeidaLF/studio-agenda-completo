@@ -3,7 +3,7 @@
 // Prefixo próprio: o site divide o endereço (celsoalmeidalf.github.io) com outros apps e com a versão antiga
 // do Studio Agenda; a limpeza só pode apagar os caches deste app.
 const PREFIXO = 'studio-agenda-completo-';
-const VERSION = PREFIXO + 'v1.5.1';
+const VERSION = PREFIXO + 'v1.6.0';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/adapters/in/ui/base.js',
@@ -16,6 +16,7 @@ const SHELL = [
   './js/adapters/in/ui/telas/equipe.js',
   './js/adapters/in/ui/telas/financeiro.js',
   './js/adapters/in/ui/telas/gestao.js',
+  './js/adapters/in/ui/telas/produtos.js',
   './js/adapters/out/biometria-webauthn.js',
   './js/adapters/out/cofre-cifrado.js',
   './js/adapters/out/indexeddb.js',
@@ -27,6 +28,7 @@ const SHELL = [
   './js/application/casos/dados.js',
   './js/application/casos/financeiro.js',
   './js/application/casos/gestao.js',
+  './js/application/casos/produtos.js',
   './js/application/casos/sessao.js',
   './js/application/contexto.js',
   './js/application/erros.js',

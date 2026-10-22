@@ -8,6 +8,7 @@ import { casosSessao } from './casos/sessao.js';
 import { casosGestao } from './casos/gestao.js';
 import { casosAgenda } from './casos/agenda.js';
 import { casosFinanceiro } from './casos/financeiro.js';
+import { casosProdutos } from './casos/produtos.js';
 
 export function createApp(portas) {
   const ctx = criarContexto(portas);
@@ -18,5 +19,6 @@ export function createApp(portas) {
     ...casosGestao(ctx, d),
     ...casosAgenda(ctx, d),
     ...casosFinanceiro(ctx, d),
+    ...casosProdutos(ctx, d),
   });
 }

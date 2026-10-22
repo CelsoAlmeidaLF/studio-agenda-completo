@@ -78,7 +78,7 @@ function listaClientes(q, sel) {
 }
 
 function visaoCliente(c, podeContato) {
-  const itens = S.itensDoCliente(c.id).filter((i) => i.status !== 'cancelado');
+  const itens = S.itensDoCliente(c.id).filter((i) => i.status !== 'cancelado' && i.tipo !== 'produto');
   const hoje = today();
   const passadas = itens.filter((i) => i.data < hoje), futuras = itens.filter((i) => i.data >= hoje).reverse();
   const visita = (titulo, ic, data) => {
@@ -118,7 +118,7 @@ export function movRow(l, saldoApos) {
 }
 
 function agendamentosCliente(c) {
-  const itens = S.itensDoCliente(c.id);
+  const itens = S.itensDoCliente(c.id).filter((i) => i.tipo !== 'produto'); // produtos aparecem nos fechamentos
   if (!itens.length) return emptyState('agenda', 'Nenhum agendamento', '');
   const byDay = new Map();
   for (const i of itens) { if (!byDay.has(i.data)) byDay.set(i.data, []); byDay.get(i.data).push(i); }
