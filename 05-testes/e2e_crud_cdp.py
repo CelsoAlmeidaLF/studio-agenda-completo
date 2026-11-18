@@ -671,7 +671,13 @@ async def mudar_status(p, trecho_card, novo):
     return True, t
 
 
-async def editar_item(p, trecho_card, d=None, hora=None, prof=None, srv=None, preco=None, nota=None):
+async def foto(p, nome):
+    import base64
+    r = await p.cmd('Page.captureScreenshot', format='png')
+    (OUT / nome).write_bytes(base64.b64decode(r['data']))
+
+
+async def editar_item(p, trecho_card, d=None, hora=None, prof=None, srv=None, preco=None, nota=None, captura=None):
     await clicar_no_card(p, trecho_card, 'button', 'Editar')
     await p.esperar("document.querySelector('form.stack select')")
     if prof: await selecionar(p, 'form.stack', 0, prof); await asyncio.sleep(0.15)
@@ -680,6 +686,7 @@ async def editar_item(p, trecho_card, d=None, hora=None, prof=None, srv=None, pr
     if hora: await p.preencher('form.stack input[type=time]', hora)
     if preco is not None: await p.preencher('form.stack input[inputmode=decimal]', preco)
     if nota is not None: await p.preencher('form.stack textarea', nota)
+    if captura: await foto(p, captura)
     return await enviar_agendamento(p)
 
 
@@ -915,7 +922,7 @@ async def secao_vinculos(p, D):
     fechou, t = await salvar_sheet(p)
     chk('VIN-02', 'RN-47: serviço usado em agendamento pode ser inativado (não excluído)', fechou, t)
     await abrir_comanda_de(p, d, 'Mariana')
-    ok, t, h = await editar_item(p, 'QA Servico Vinc', nota='editando com serviço inativo')
+    ok, t, h = await editar_item(p, 'QA Servico Vinc', nota='editando com serviço inativo', captura='b1-select-servico-inativo.png')
     cs = await cards(p)
     chk('VIN-03', 'editar a nota de agendamento cujo serviço foi inativado não troca o serviço em silêncio', ok and any('QA Servico Vinc' in c and 'editando com serviço inativo' in c for c in cs) or (not ok), f'ok={ok} toast={t!r} cards={cs}')
     chk('VIN-03b', 'editar agendamento cujo serviço foi inativado funciona (mantém o serviço) ou avisa claramente', ok and any('QA Servico Vinc' in c for c in cs), f'ok={ok} toast={t!r} cards={cs}')
@@ -926,7 +933,7 @@ async def secao_vinculos(p, D):
     await prof_abrir_edicao(p, 'Bianca'); await p.js("document.querySelector('#pav').click()")
     fechou, t = await salvar_sheet(p)
     chk('VIN-05', 'RN-47: profissional com agendamento futuro pode ser inativado', fechou, t)
-    aps = await agenda_aps(p, d)
+    aps = await agenda_aps(p, d); await foto(p, 'b2-grade-profissional-inativo.png')
     chk('VIN-06', 'agendamento futuro de profissional inativado continua visível em algum lugar da agenda (grade)', any('Ana Paula' in a for a in aps), f'grade do dia: {aps}')
     await ir(p, f'#/comandas?d={d}', 0.5)
     lista = await textos(p, '.card.cmd')
@@ -937,7 +944,7 @@ async def secao_vinculos(p, D):
     cs = await cards(p)
     chk('VIN-08', 'a ficha da cliente ainda lista o agendamento (dados não se perdem)', any('Mão' in c and '09:00' in c for c in cs), cs)
     await p.clicar('.card.item', 'Mão'); await p.esperar("location.hash.startsWith('#/comanda')"); await p.esperar("document.querySelector('.card.item')")
-    ok, t, h = await editar_item(p, 'Mão', nota='com profissional inativo')
+    ok, t, h = await editar_item(p, 'Mão', nota='com profissional inativo', captura='b3-select-profissional-inativo.png')
     await asyncio.sleep(0.3)
     cs = await cards(p)
     chk('VIN-09', 'editar nota de agendamento de profissional inativado mantém o profissional (Bianca) e não troca por outro em silêncio', ok and any('Bianca' in c for c in cs) or (not ok), f'ok={ok} toast={t!r} cards={cs}')
