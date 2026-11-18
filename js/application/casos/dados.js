@@ -1,3 +1,4 @@
+import { normalizaCelular } from '../../domain/validacao.js';
 // Leituras internas da aplicação, sem filtro de permissão. Só os casos de uso usam estas funções;
 // a interface recebe as versões filtradas de consultas.js.
 export function dados(ctx) {
@@ -10,6 +11,10 @@ export function dados(ctx) {
   const lancsCaixaDia = (data) => R.all('lanc').filter((l) => l.conta === 'caixa' && l.data === data).sort((a, b) => b.em.localeCompare(a.em));
   const ehMeuCliente = (cliId) => !!cliId && R.all('item').some((i) => i.cliId === cliId && i.profId === R.userId());
   const nomeCliente = (x) => (x.cliId ? R.get('cli', x.cliId)?.nome : x.avulso) || 'Cliente avulso';
-  const celularEmUso = (cel, exceptId) => !!cel && R.all('cli').some((x) => x.id !== exceptId && x.ativo !== false && x.cel === cel);
+  // Compara pela forma normalizada (sem DDI 55): vale também para clientes gravados antes da normalização.
+  const celularEmUso = (cel, exceptId) => {
+    const n = normalizaCelular(cel);
+    return !!n && R.all('cli').some((x) => x.id !== exceptId && x.ativo !== false && normalizaCelular(x.cel) === n);
+  };
   return { profs, itensDaComanda, saldo, caixaDia, caixaAberto, lancsCaixaDia, ehMeuCliente, nomeCliente, celularEmUso };
 }

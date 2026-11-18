@@ -1,6 +1,6 @@
 // Casos de uso de clientes, agendamentos, status, lembretes e bloqueios (RN-01 a RN-17).
 import { scheduleProblem, nextStatuses } from '../../domain/agenda.js';
-import { isData, isHora, isCelular, isCentavos } from '../../domain/validacao.js';
+import { isData, isHora, isCelular, isCentavos, isEmail, normalizaCelular } from '../../domain/validacao.js';
 import { clip, onlyDigits } from '../../shared/texto.js';
 
 export function casosAgenda(ctx, d) {
@@ -8,7 +8,10 @@ export function casosAgenda(ctx, d) {
   const { need, audit, uid, agoraISO, nomeProf, est } = ctx;
 
   const celularValido = (raw) => {
-    const cel = onlyDigits(raw);
+    const txt = String(raw ?? '').trim();
+    // Letras (ou texto sem nenhum dígito) não viram "sem celular" em silêncio.
+    if (txt && (/\p{L}/u.test(txt) || !/\d/.test(txt))) throw new Error('Celular inválido. Use DDD + número.');
+    const cel = normalizaCelular(onlyDigits(txt));
     if (cel && !isCelular(cel)) throw new Error('Celular inválido. Use DDD + número.');
     return cel;
   };
@@ -27,9 +30,12 @@ export function casosAgenda(ctx, d) {
       const podeContato = !atual || ctx.can('cliente.contatos', { ehMeuCliente: meu });
       const cel = podeContato ? celularValido(c.cel) : atual.cel;
       if (podeContato && d.celularEmUso(cel, c.id)) throw new Error('Já existe um cliente com este celular.');
+      const email = podeContato ? clip(c.email, 120) : atual.email;
+      // Só valida o que foi alterado: um e-mail antigo e fora do padrão não impede editar o resto da ficha.
+      if (podeContato && email && email !== atual?.email && !isEmail(email)) throw new Error('E-mail inválido.');
       const obj = {
         favoritos: [], criadoEm: agoraISO(), ativo: true, ...(atual || {}),
-        id: c.id || uid(), nome, cel, email: podeContato ? clip(c.email, 120) : atual.email, obs: clip(c.obs, 500),
+        id: c.id || uid(), nome, cel, email, obs: clip(c.obs, 500),
       };
       await R.commit([{ put: 'cli', obj }, audit(atual ? 'Editou cliente' : 'Criou cliente', nome)]);
       return obj;
@@ -53,10 +59,12 @@ export function casosAgenda(ctx, d) {
     // ---------- Agendamento ----------
     async agendar(input) {
       const prof = R.get('prof', input.profId), srv = R.get('srv', input.srvId);
-      if (!prof || prof.ativo === false) throw new Error('Escolha um profissional ativo.');
-      if (!srv || srv.ativo === false) throw new Error('Escolha um serviço ativo.');
-      need('agenda.editar', { profId: prof.id }, `Você não pode criar agendamentos para ${prof.nome}.`);
       const atual = input.itemId ? exigeItem(input.itemId) : null;
+      // Ao editar, profissional e serviço que já estão no agendamento podem ter sido inativados depois:
+      // continuam valendo. A exigência de "ativo" é só para escolher um diferente (ou num agendamento novo).
+      if (!prof || (prof.ativo === false && atual?.profId !== prof.id)) throw new Error('Escolha um profissional ativo.');
+      if (!srv || (srv.ativo === false && atual?.srvId !== srv.id)) throw new Error('Escolha um serviço ativo.');
+      need('agenda.editar', { profId: prof.id }, `Você não pode criar agendamentos para ${prof.nome}.`);
       if (atual) {
         if (atual.tipo === 'produto') throw new Error('Este item é um produto. Edite pela aba Produto.');
         need('agenda.editar', { profId: atual.profId });
@@ -74,7 +82,8 @@ export function casosAgenda(ctx, d) {
         cliId = nc.id;
       } else if (cliId) {
         const c = R.get('cli', cliId);
-        if (!c || c.ativo === false) throw new Error('Escolha um cliente ativo.');
+        // Cliente inativado só barra quem escolhe esse cliente agora; o agendamento que já é dele segue editável.
+        if (!c || (c.ativo === false && atual?.cliId !== cliId)) throw new Error('Escolha um cliente ativo.');
       } else {
         avulso = clip(input.avulso, 80) || 'Cliente avulso';
       }
