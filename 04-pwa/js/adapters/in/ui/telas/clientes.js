@@ -29,7 +29,7 @@ export function registerClientes(app) {
     const podeContato = can(me, 'cliente.contatos', { ehMeuCliente: meu });
     const podeSaldo = can(me, 'cliente.saldo');
     const sld = podeSaldo ? S.saldo('cli:' + c.id) : null;
-    const head = h('div', { class: 'cli-head' }, h('div', null, h('b', { class: 'big' }, c.nome), podeSaldo ? h('span', { class: 'saldo' + (sld < 0 ? ' neg' : sld > 0 ? ' pos' : '') }, money(sld)) : null));
+    const head = h('div', { class: 'cli-head' }, h('div', null, h('b', { class: 'big' }, c.nome), c.ativo === false ? h('small', { class: 'muted' }, ' (inativo)') : null, podeSaldo ? h('span', { class: 'saldo' + (sld < 0 ? ' neg' : sld > 0 ? ' pos' : '') }, money(sld)) : null));
     const tb = tabs([
       ['visao', 'Visão geral', () => go('cliente', { id, t: 'visao' })],
       podeSaldo ? ['conta', 'Conta corrente', () => go('cliente', { id, t: 'conta' })] : null,
@@ -93,6 +93,7 @@ function visaoCliente(c, podeContato) {
         c.cel ? h('div', { class: 'acts-row' }, h('a', { class: 'circ wa', href: waLink(c.cel, `Olá, ${c.nome.split(' ')[0]}!`), target: '_blank', rel: 'noopener noreferrer', 'aria-label': 'WhatsApp' }, icon('whats', 22)), h('a', { class: 'circ tel', href: telLink(c.cel), 'aria-label': 'Ligar' }, icon('phone', 22))) : null)
         : h('p', { class: 'muted small' }, 'Você não tem permissão para ver os contatos deste cliente.'),
       c.obs ? h('p', { class: 'note' }, c.obs) : null,
+      c.ativo === false && can(S.me(), 'cliente.editar', { ehMeuCliente: S.ehMeuCliente(c.id) }) ? dangerBtn('Reativar cliente', () => run(() => S.reativarCliente(c.id), 'Cliente reativado').then(() => rerender()).catch(() => {}), 'btn block') : null,
       can(S.me(), 'cliente.editar', { ehMeuCliente: S.ehMeuCliente(c.id) }) ? h('button', { class: 'link center block', onclick: () => editarCliente(c) }, icon('edit', 16), ' Editar cliente') : null),
     visita('Última visita', 'agenda', passadas[0]?.data),
     visita('Próxima visita', 'agenda', futuras[0]?.data));
@@ -148,7 +149,8 @@ export function editarCliente(c) {
   const em = input({ value: c?.email || '', type: 'email', maxlength: 120, disabled: !podeContato });
   const obs = h('textarea', { class: 'inp', rows: 3, maxlength: 500, placeholder: 'Preferências, alergias a produtos…' }, c?.obs || '');
   sheet(c ? 'Editar cliente' : 'Novo cliente', h('div', { class: 'stack' }, field('Nome', n), h('div', { class: 'row2' }, field('Celular', cel), field('E-mail', em)), field('Observações (só a equipe vê)', obs)),
-    [c ? dangerBtn('Inativar', () => run(() => S.inativarCliente(c.id), 'Cliente inativado').then(() => { closeSheet(); go('clientes'); })) : null,
+    [c && c.ativo === false ? dangerBtn('Reativar', () => run(() => S.reativarCliente(c.id), 'Cliente reativado').then(() => { closeSheet(); go('cliente', { id: c.id }); }).catch(() => {}), 'btn')
+      : c ? dangerBtn('Inativar', () => run(() => S.inativarCliente(c.id), 'Cliente inativado').then(() => { closeSheet(); go('clientes'); }).catch(() => {})) : null,
       h('button', { class: 'btn pri', onclick: async () => { const r = await run(() => S.salvarCliente({ id: c?.id, nome: n.value, cel: cel.value, email: em.value, obs: obs.value }), 'Cliente salvo').catch(() => null); if (r) { closeSheet(); go('cliente', { id: r.id }); } } }, 'Salvar')]);
 }
 

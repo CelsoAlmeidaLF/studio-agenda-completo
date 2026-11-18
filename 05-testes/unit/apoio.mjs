@@ -47,7 +47,7 @@ export function biometriaFalsa({ disponivel = true } = {}) {
   return b;
 }
 
-export function montar({ agora = new Date(2026, 9, 22, 10, 0), biometria = biometriaFalsa() } = {}) {
+export function montar({ agora = new Date(2026, 9, 22, 8, 0), biometria = biometriaFalsa() } = {}) {
   const db = memDB();
   const cofre = createCofreCifrado({ db });
   let n = 0;

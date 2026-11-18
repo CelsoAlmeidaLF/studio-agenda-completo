@@ -2,6 +2,7 @@
 import { scheduleProblem, nextStatuses } from '../../domain/agenda.js';
 import { isData, isHora, isCelular, isCentavos, isEmail, normalizaCelular } from '../../domain/validacao.js';
 import { clip, onlyDigits } from '../../shared/texto.js';
+import { HorarioPassado } from '../erros.js';
 
 export function casosAgenda(ctx, d) {
   const R = ctx.cofre;
@@ -14,6 +15,11 @@ export function casosAgenda(ctx, d) {
     const cel = normalizaCelular(onlyDigits(txt));
     if (cel && !isCelular(cel)) throw new Error('Celular inválido. Use DDD + número.');
     return cel;
+  };
+  const jaPassou = (data, hora) => {
+    const agora = ctx.relogio.agora();
+    const hm = `${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`;
+    return data < ctx.hoje() || (data === ctx.hoje() && hora < hm);
   };
   const exigeItem = (id) => { const it = R.get('item', id); if (!it) throw new Error('Agendamento não encontrado.'); return it; };
 
@@ -46,6 +52,15 @@ export function casosAgenda(ctx, d) {
       need('cliente.editar', { ehMeuCliente: d.ehMeuCliente(cid) }, 'Você não tem permissão para inativar este cliente.');
       await R.commit([{ put: 'cli', obj: { ...c, ativo: false } }, audit('Inativou cliente', c.nome)]);
     },
+    // R4: desfaz a inativação. Mantém RN-13: não reativa se outro cliente ativo já usa o celular.
+    async reativarCliente(cid) {
+      const c = R.get('cli', cid);
+      if (!c) throw new Error('Cliente não encontrado.');
+      need('cliente.editar', { ehMeuCliente: d.ehMeuCliente(cid) }, 'Você não tem permissão para reativar este cliente.');
+      if (c.ativo !== false) return;
+      if (d.celularEmUso(c.cel, c.id)) throw new Error('Não é possível reativar: já existe um cliente ativo com este celular.');
+      await R.commit([{ put: 'cli', obj: { ...c, ativo: true } }, audit('Reativou cliente', c.nome)]);
+    },
     async alternarFavorito(cliId, profId) {
       const c = R.get('cli', cliId);
       if (!c || !R.get('prof', profId)) throw new Error('Cliente ou profissional não encontrado.');
@@ -71,6 +86,8 @@ export function casosAgenda(ctx, d) {
         if (atual.status === 'pago') throw new Error('Este item já foi pago. Anule o fechamento para editar.');
       }
       if (!isData(input.data) || !isHora(input.hora)) throw new Error('Data ou hora inválida.');
+      // Data/hora no passado só com confirmação explícita (decisão do Celso, 18/11/2026). Ao editar, só pergunta se o horário mudou.
+      if (!input.confirmarPassado && (!atual || atual.data !== input.data || atual.hora !== input.hora) && jaPassou(input.data, input.hora)) throw new HorarioPassado();
       const ops = [];
       let cliId = input.cliId || null, avulso = null;
       if (input.novoNome) {

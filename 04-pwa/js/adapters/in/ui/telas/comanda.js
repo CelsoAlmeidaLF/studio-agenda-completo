@@ -4,7 +4,7 @@ import { can } from '../../../../domain/permissoes.js';
 import { STATUS, nextStatuses, isActive } from '../../../../domain/agenda.js';
 import { FORMAS, comandaTotals } from '../../../../domain/financeiro.js';
 import { isCelular } from '../../../../domain/validacao.js';
-import { NeedCaixa } from '../../../../application/erros.js';
+import { NeedCaixa, HorarioPassado } from '../../../../application/erros.js';
 import { route, go, sheet, closeSheet, toast, run, field, input, select, avatar, pill, emptyState, dangerBtn, rerender } from '../kit.js';
 import { dayTitle, waLink, telLink } from './agenda.js';
 
@@ -103,11 +103,25 @@ export function registerComanda(app) {
     const paintFav = () => { if (!fav) return; const on = favs.has(ps.value); fav.classList.toggle('on', on); fav.setAttribute('aria-pressed', String(on)); };
     ps.addEventListener('change', paintFav); paintFav();
     const salvar = async () => {
+      if (precoI && !precoI.value.trim()) return toast('Informe o preço.');
       const preco = precoI ? parseMoney(precoI.value) : null;
       if (precoI && !(preco >= 0)) return toast('Preço inválido.');
-      const it = await run(() => S.agendar({ itemId, ...selecao, data: di.value, hora: hi.value, profId: ps.value, srvId: ss.value, nota: nota.value, preco }), atual ? 'Agendamento atualizado' : 'Adicionado à comanda');
-      selecao = null;
-      go('comanda', { id: it.comandaId });
+      const tentar = async (confirmarPassado) => {
+        try {
+          const it = await S.agendar({ itemId, ...selecao, data: di.value, hora: hi.value, profId: ps.value, srvId: ss.value, nota: nota.value, preco, confirmarPassado });
+          toast(atual ? 'Agendamento atualizado' : 'Adicionado à comanda', true);
+          selecao = null;
+          go('comanda', { id: it.comandaId });
+        } catch (e) {
+          if (e instanceof HorarioPassado) { // R5: horário passado só grava com confirmação
+            sheet('Horário no passado', h('p', null, e.message), h('button', { class: 'btn pri', onclick: () => { closeSheet(); tentar(true).catch(() => {}); } }, 'Registrar mesmo assim'));
+            return;
+          }
+          toast(e.message || 'Não foi possível concluir.');
+          throw e;
+        }
+      };
+      await tentar(false);
     };
     return {
       title: atual ? 'Editar item' : 'Adicionar à comanda…', sub: nomeCli, back: true,

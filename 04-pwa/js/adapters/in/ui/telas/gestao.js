@@ -226,7 +226,7 @@ function editarServico(s) {
   sheet(s ? 'Editar serviço' : 'Novo serviço', h('div', { class: 'stack' }, field('Nome', n), field('Categoria', cat), dl, h('div', { class: 'row2' }, field('Duração (min)', dur), field('Preço (R$)', pr)),
     h('div', { class: 'field' }, h('label', null, 'Profissionais que executam'), pbox, h('small', null, 'Nenhum marcado = todos executam.')),
     h('label', { class: 'chk', for: 'sat' }, at, h('span', null, 'Serviço ativo'))),
-    h('button', { class: 'btn pri', onclick: () => run(() => S.salvarServico({ id: s?.id, nome: n.value, categoria: cat.value, duracao: Number(dur.value), preco: parseMoney(pr.value), profs: [...sel], ativo: at.checked }), 'Serviço salvo').then(() => { closeSheet(); rerender(); }).catch(() => {}) }, 'Salvar'));
+    h('button', { class: 'btn pri', onclick: () => run(() => S.salvarServico({ id: s?.id, nome: n.value, categoria: cat.value, duracao: Number(dur.value), preco: pr.value.trim() ? parseMoney(pr.value) : null, profs: [...sel], ativo: at.checked }), 'Serviço salvo').then(() => { closeSheet(); rerender(); }).catch(() => {}) }, 'Salvar'));
 }
 
 function editarProf(p, temLogin) {
