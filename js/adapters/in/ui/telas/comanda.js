@@ -4,7 +4,7 @@ import { can } from '../../../../domain/permissoes.js';
 import { STATUS, nextStatuses, isActive } from '../../../../domain/agenda.js';
 import { FORMAS, comandaTotals } from '../../../../domain/financeiro.js';
 import { isCelular } from '../../../../domain/validacao.js';
-import { NeedCaixa } from '../../../../application/erros.js';
+import { NeedCaixa, HorarioPassado } from '../../../../application/erros.js';
 import { route, go, sheet, closeSheet, toast, run, field, input, select, avatar, pill, emptyState, dangerBtn, rerender } from '../kit.js';
 import { dayTitle, waLink, telLink } from './agenda.js';
 
@@ -66,19 +66,23 @@ export function registerComanda(app) {
     const cli = selecao.cliId ? S.cliente(selecao.cliId) : null;
     const nomeCli = cli?.nome || selecao.novoNome || selecao.avulso;
     const favs = new Set(cli?.favoritos || []);
-    const profsOk = S.profs().filter((x) => x.atende !== false && can(me, 'agenda.editar', { profId: x.id }))
+    // O profissional que já está no agendamento fica na lista mesmo inativo ou sem "Atende clientes" (senão o select
+    // trocaria de profissional em silêncio); para os demais vale só quem está ativo e atende.
+    const profsOk = S.profs(true).filter((x) => (x.id === atual?.profId || (x.ativo !== false && x.atende !== false)) && can(me, 'agenda.editar', { profId: x.id }))
       .sort((a, b) => (favs.has(b.id) - favs.has(a.id)) || a.nome.localeCompare(b.nome));
     if (!profsOk.length) return { title: 'Adicionar à comanda', back: true, body: emptyState('lock', 'Sem permissão para agendar', '') };
     const di = input({ type: 'date', value: atual?.data || d, required: true });
     const hi = input({ type: 'time', value: atual?.hora || hora || '09:00', step: 300, required: true });
-    const ps = select(profsOk.map((x) => [x.id, `${x.nome} · ${x.area}${favs.has(x.id) ? ' · favorito' : ''}`]), atual?.profId || p || (profsOk.find((x) => x.id === me.id) || profsOk[0]).id);
+    const ps = select(profsOk.map((x) => [x.id, `${x.nome} · ${x.area}${favs.has(x.id) ? ' · favorito' : ''}${x.ativo === false ? ' (inativo)' : x.atende === false ? ' (não atende)' : ''}`]), atual?.profId || p || (profsOk.find((x) => x.id === me.id) || profsOk[0]).id);
     const soDoProf = h('input', { type: 'checkbox', id: 'sdp', checked: true });
     const ss = select([], '');
     const precoI = can(me, 'preco.editar') ? input({ inputmode: 'decimal', placeholder: 'Preço do serviço' }) : null;
     const nota = h('textarea', { class: 'inp', maxlength: 300, rows: 2, placeholder: 'Notas internas (não aparecem para o cliente)' }, atual?.nota || '');
     const resumo = h('p', { class: 'muted small' });
     const fillSrv = () => {
-      const lista = S.servicos().filter((s) => !soDoProf.checked || !s.profs?.length || s.profs.includes(ps.value));
+      // O serviço atual do agendamento fica na lista mesmo inativo (marcado "(inativo)"); só os demais exigem ativo.
+      const lista = S.servicos(true).filter((s) => (s.id === atual?.srvId && s.ativo === false) || (s.ativo !== false && (!soDoProf.checked || !s.profs?.length || s.profs.includes(ps.value))))
+        .map((s) => (s.ativo === false ? { ...s, nome: `${s.nome} (inativo)` } : s));
       const prev = ss.value || atual?.srvId;
       ss.replaceChildren(...groupOptions(lista));
       if (prev && lista.some((s) => s.id === prev)) ss.value = prev;
@@ -99,11 +103,25 @@ export function registerComanda(app) {
     const paintFav = () => { if (!fav) return; const on = favs.has(ps.value); fav.classList.toggle('on', on); fav.setAttribute('aria-pressed', String(on)); };
     ps.addEventListener('change', paintFav); paintFav();
     const salvar = async () => {
+      if (precoI && !precoI.value.trim()) return toast('Informe o preço.');
       const preco = precoI ? parseMoney(precoI.value) : null;
       if (precoI && !(preco >= 0)) return toast('Preço inválido.');
-      const it = await run(() => S.agendar({ itemId, ...selecao, data: di.value, hora: hi.value, profId: ps.value, srvId: ss.value, nota: nota.value, preco }), atual ? 'Agendamento atualizado' : 'Adicionado à comanda');
-      selecao = null;
-      go('comanda', { id: it.comandaId });
+      const tentar = async (confirmarPassado) => {
+        try {
+          const it = await S.agendar({ itemId, ...selecao, data: di.value, hora: hi.value, profId: ps.value, srvId: ss.value, nota: nota.value, preco, confirmarPassado });
+          toast(atual ? 'Agendamento atualizado' : 'Adicionado à comanda', true);
+          selecao = null;
+          go('comanda', { id: it.comandaId });
+        } catch (e) {
+          if (e instanceof HorarioPassado) { // R5: horário passado só grava com confirmação
+            sheet('Horário no passado', h('p', null, e.message), h('button', { class: 'btn pri', onclick: () => { closeSheet(); tentar(true).catch(() => {}); } }, 'Registrar mesmo assim'));
+            return;
+          }
+          toast(e.message || 'Não foi possível concluir.');
+          throw e;
+        }
+      };
+      await tentar(false);
     };
     return {
       title: atual ? 'Editar item' : 'Adicionar à comanda…', sub: nomeCli, back: true,
@@ -146,7 +164,7 @@ export function registerComanda(app) {
         it.nota ? h('div', { class: 'item-r note-i' }, icon('edit', 18), h('i', null, it.nota)) : null,
         podeEd && it.status !== 'pago' ? h('div', { class: 'acts-row end' },
           h('button', { class: 'btn sm', onclick: () => go('adicionar', { item: it.id }) }, icon('edit', 16), 'Editar'),
-          dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Item excluído').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))), 'btn sm danger')) : null);
+          dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Item excluído').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))).catch(() => {}), 'btn sm danger')) : null);
     });
     let footer = null;
     if (c.status === 'aberta' && S.podeFechar(id)) footer = h('button', { class: 'bar pri', onclick: () => go('fechamento', { id }) }, h('span', null, 'Fechamento'), h('b', null, money(total)));
@@ -269,7 +287,7 @@ function produtoCard(it, c, id) {
     it.nota ? h('div', { class: 'item-r note-i' }, icon('edit', 18), h('i', null, it.nota)) : null,
     podeEd ? h('div', { class: 'acts-row end' },
       h('button', { class: 'btn sm', onclick: () => go('adicionar', { item: it.id }) }, icon('edit', 16), 'Editar'),
-      dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Produto removido').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))), 'btn sm danger')) : null);
+      dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Produto removido').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))).catch(() => {}), 'btn sm danger')) : null);
 }
 
 // ---------- Abas Serviço / Produto de "Adicionar à comanda" ----------
@@ -323,7 +341,7 @@ function statusSheet(it) {
   const opts = nextStatuses(it.status);
   sheet(`${it.hora} · ${it.nome}`, h('div', { class: 'opts' },
     h('div', { class: 'opt cur' }, h('i', { class: 'dot', style: { '--sc': STATUS[it.status].cor } }), h('b', null, STATUS[it.status].nome), icon('check', 20)),
-    opts.map((s) => h('button', { class: 'opt', onclick: () => run(() => S.mudarStatus(it.id, s), `Status: ${STATUS[s].nome}`).then(() => { closeSheet(); rerender(); }) }, h('i', { class: 'dot', style: { '--sc': STATUS[s].cor } }), h('span', null, STATUS[s].nome)))));
+    opts.map((s) => h('button', { class: 'opt', onclick: () => run(() => S.mudarStatus(it.id, s), `Status: ${STATUS[s].nome}`).then(() => { closeSheet(); rerender(); }).catch(() => {}) }, h('i', { class: 'dot', style: { '--sc': STATUS[s].cor } }), h('span', null, STATUS[s].nome)))));
 }
 
 function novoClienteSheet(nome, cel, seguir) {
@@ -333,9 +351,10 @@ function novoClienteSheet(nome, cel, seguir) {
     h('button', { class: 'btn pri', onclick: () => {
       if (!n.value.trim()) return toast('Informe o nome.');
       const d = onlyDigits(t.value);
+      if (t.value.trim() && !d) return toast('Celular inválido. Use DDD + número.');
       if (d && !isCelular(d)) return toast('Celular inválido. Use DDD + número.');
       if (d && S.celularEmUso(d)) return toast('Já existe um cliente com este celular.');
-      closeSheet(); seguir({ novoNome: n.value.trim(), novoCel: d });
+      closeSheet(); seguir({ novoNome: n.value.trim(), novoCel: t.value }); // o caso de uso valida e normaliza (letras, DDI)
     } }, 'Continuar'));
 }
 

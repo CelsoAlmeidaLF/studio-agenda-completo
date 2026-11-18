@@ -226,7 +226,7 @@ function editarServico(s) {
   sheet(s ? 'Editar serviço' : 'Novo serviço', h('div', { class: 'stack' }, field('Nome', n), field('Categoria', cat), dl, h('div', { class: 'row2' }, field('Duração (min)', dur), field('Preço (R$)', pr)),
     h('div', { class: 'field' }, h('label', null, 'Profissionais que executam'), pbox, h('small', null, 'Nenhum marcado = todos executam.')),
     h('label', { class: 'chk', for: 'sat' }, at, h('span', null, 'Serviço ativo'))),
-    h('button', { class: 'btn pri', onclick: () => run(() => S.salvarServico({ id: s?.id, nome: n.value, categoria: cat.value, duracao: Number(dur.value), preco: parseMoney(pr.value), profs: [...sel], ativo: at.checked }), 'Serviço salvo').then(() => { closeSheet(); rerender(); }).catch(() => {}) }, 'Salvar'));
+    h('button', { class: 'btn pri', onclick: () => run(() => S.salvarServico({ id: s?.id, nome: n.value, categoria: cat.value, duracao: Number(dur.value), preco: pr.value.trim() ? parseMoney(pr.value) : null, profs: [...sel], ativo: at.checked }), 'Serviço salvo').then(() => { closeSheet(); rerender(); }).catch(() => {}) }, 'Salvar'));
 }
 
 function editarProf(p, temLogin) {
@@ -254,6 +254,6 @@ function editarProf(p, temLogin) {
     h('label', { class: 'chk', for: 'pav' }, ativo, h('span', null, 'Profissional ativo')),
     pin1 ? field(temLogin ? 'Redefinir PIN de acesso' : 'Criar PIN de acesso', pin1, 'Passe o PIN pessoalmente ao profissional. Ele pode trocar depois em Gestão › Meu PIN.') : h('p', { class: 'muted small' }, 'O seu PIN é trocado em Gestão › Meu PIN.'),
     p && can(me, 'gestao.perm') ? h('button', { class: 'btn block', onclick: () => { closeSheet(); go('permissoes', { id: p.id }); } }, icon('shield', 18), 'Permissões') : null,
-    p && temLogin && p.id !== me.id ? dangerBtn('Remover acesso por PIN', () => run(() => S.removerAcesso(p.id), 'Acesso removido').then(() => { closeSheet(); rerender(); })) : null),
+    p && temLogin && p.id !== me.id ? dangerBtn('Remover acesso por PIN', () => run(() => S.removerAcesso(p.id), 'Acesso removido').then(() => { closeSheet(); rerender(); }).catch(() => {})) : null),
     h('button', { class: 'btn pri', onclick: salvar }, 'Salvar'));
 }

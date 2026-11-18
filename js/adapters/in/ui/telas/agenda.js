@@ -23,11 +23,16 @@ export function dayTitle(d) {
   return ['Hoje', 'Amanhã', 'Ontem'].includes(r) ? `${r}, ${fmtDate(d, { day: 'numeric', month: 'short' })}` : fmtDate(d, { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-export function visibleProfs() {
+// Quem aparece na grade/lista do dia: profissionais ativos que atendem, mais os inativados (ou sem "Atende clientes")
+// que ainda têm atendimento não cancelado no dia: o agendamento não pode sumir (B2).
+export function visibleProfs(d) {
   const me = S.me();
-  const all = S.profs().filter((p) => p.atende !== false);
+  const comItem = new Set(d ? S.itensDoDia(d).filter((i) => i.status !== 'cancelado').map((i) => i.profId) : []);
+  const all = S.profs(true).filter((p) => (p.ativo !== false && p.atende !== false) || comItem.has(p.id));
   return can(me, 'agenda.verTodos') ? all : all.filter((p) => p.id === me.id);
 }
+const emUso = (p) => p.ativo !== false && p.atende !== false; // false = coluna só para atendimentos já marcados
+const rotuloProf = (p) => (p.ativo === false ? `${p.nome} (inativo)` : p.atende === false ? `${p.nome} (não atende)` : p.nome);
 
 function pendentesLembrete(d) {
   return S.itensDoDia(d).filter((i) => i.tipo !== 'produto' && !i.notificado && ['marcado', 'confirmado'].includes(i.status) && can(S.me(), 'agenda.notificar', { profId: i.profId }));
@@ -51,7 +56,7 @@ export function registerAgenda(app) {
     const me = S.me();
     if (!can(me, 'agenda.ver', { profId: me.id })) return { title: 'Agenda', body: emptyState('lock', 'Sem acesso à agenda', 'Peça ao gestor para liberar a sua permissão.') };
     const e = S.est();
-    const ps = visibleProfs();
+    const ps = visibleProfs(d);
     const [ini, fim, fechado] = dayBounds(e, d);
     const slot = e.slot || 30;
     const start = Math.floor(ini / 60) * 60, end = Math.ceil(fim / 60) * 60;
@@ -70,7 +75,7 @@ export function registerAgenda(app) {
       const col = h('div', { class: 'gcol' });
       col.style.setProperty('height', nSlots * RH + 'px');
       for (const [a, b] of gaps) col.append(h('div', { class: 'hatch', style: { top: y(a) + 'px', height: y(b) - y(a) + 'px' } }));
-      if (can(me, 'agenda.editar', { profId: p.id })) {
+      if (emUso(p) && can(me, 'agenda.editar', { profId: p.id })) {
         for (let k = 0; k < nSlots; k++) {
           const hm = fromMin(start + k * slot);
           col.append(h('button', { class: 'slot' + ((start + (k + 1) * slot) % 60 === 0 ? ' hr' : ''), style: { top: k * RH + 'px', height: RH + 'px' }, 'aria-label': `Novo em ${hm} com ${p.nome}`, onclick: () => slotMenu(d, hm, p) }));
@@ -94,7 +99,7 @@ export function registerAgenda(app) {
 
     const grid = h('div', { class: 'grid', style: { '--n': String(Math.max(1, ps.length)), '--rh': RH + 'px' } },
       h('div', { class: 'gh corner' }),
-      ps.map((p) => h('div', { class: 'gh', style: { '--c': p.cor } }, avatar(p, 26), h('span', null, p.nome), h('small', null, String(itens.filter((i) => i.profId === p.id).length)))),
+      ps.map((p) => h('div', { class: 'gh', style: { '--c': p.cor } }, avatar(p, 26), h('span', null, rotuloProf(p)), h('small', null, String(itens.filter((i) => i.profId === p.id).length)))),
       h('div', { class: 'tcol' }, [...Array(nSlots)].map((_, k) => { const m = start + k * slot; return h('div', { class: 'tl' + (m % 60 ? ' half' : ''), style: { height: RH + 'px' } }, m % 60 ? '' : String(m / 60).padStart(2, '0')); })),
       cols);
 
@@ -110,7 +115,7 @@ export function registerAgenda(app) {
   route('comandas', ({ d = today() }) => {
     const me = S.me();
     if (!can(me, 'agenda.ver', { profId: me.id })) return { title: 'Comandas', body: emptyState('lock', 'Sem acesso à agenda', '') };
-    const vis = new Set(visibleProfs().map((p) => p.id));
+    const vis = new Set(visibleProfs(d).map((p) => p.id));
     // O horário da comanda vem dos serviços; uma comanda só de produtos usa a hora da venda.
     const cs = S.comandasDoDia(d).map((c) => { const itens = S.itensDaComanda(c.id).filter((i) => vis.has(i.profId) && i.status !== 'cancelado'); const srv = itens.filter((i) => i.tipo !== 'produto'); return { c, itens, tempo: srv.length ? srv : itens }; }).filter((x) => x.itens.length)
       .sort((a, b) => a.tempo[0].hora.localeCompare(b.tempo[0].hora));
@@ -148,8 +153,8 @@ function bloqueioSheet(d, prof, b, hora) {
   sheet(b ? 'Bloqueio de agenda' : 'Novo bloqueio', h('div', { class: 'stack' },
     h('p', { class: 'muted' }, `${prof.nome} · ${fmtDate(d)}`),
     h('div', { class: 'row2' }, field('Início', ini), field('Fim', fim)), field('Motivo', mot)),
-    podeEditar ? [b ? dangerBtn('Remover', () => run(() => S.removerBloqueio(b.id), 'Bloqueio removido').then(() => { closeSheet(); rerender(); })) : null,
-      h('button', { class: 'btn pri', onclick: () => run(() => S.salvarBloqueio({ id: b?.id, profId: prof.id, data: d, inicio: ini.value, fim: fim.value, motivo: mot.value }), 'Bloqueio salvo').then(() => { closeSheet(); rerender(); }) }, 'Salvar')] : null);
+    podeEditar ? [b ? dangerBtn('Remover', () => run(() => S.removerBloqueio(b.id), 'Bloqueio removido').then(() => { closeSheet(); rerender(); }).catch(() => {})) : null,
+      h('button', { class: 'btn pri', onclick: () => run(() => S.salvarBloqueio({ id: b?.id, profId: prof.id, data: d, inicio: ini.value, fim: fim.value, motivo: mot.value }), 'Bloqueio salvo').then(() => { closeSheet(); rerender(); }).catch(() => {}) }, 'Salvar')] : null);
 }
 
 export function waLink(cel, text) {
@@ -180,9 +185,9 @@ function lembretes(d) {
         const link = podeContato ? waLink(cli.cel, mensagemLembrete(list)) : null;
         return h('div', { class: 'card pad stack-s' }, h('b', null, `${list[0].hora} · ${S.nomeCliente(list[0])}`), h('p', { class: 'muted small' }, mensagemLembrete(list)),
           h('div', { class: 'acts-row' },
-            link ? h('a', { class: 'btn ok sm', href: link, target: '_blank', rel: 'noopener noreferrer', onclick: () => setTimeout(() => S.marcarNotificado(list.map((i) => i.id)).then(() => { closeSheet(); rerender(); }), 300) }, icon('whats', 18), 'Abrir no WhatsApp')
+            link ? h('a', { class: 'btn ok sm', href: link, target: '_blank', rel: 'noopener noreferrer', onclick: () => setTimeout(() => S.marcarNotificado(list.map((i) => i.id)).then(() => { closeSheet(); rerender(); }).catch(() => {}), 300) }, icon('whats', 18), 'Abrir no WhatsApp')
               : h('span', { class: 'muted small' }, cli ? (podeContato ? 'Cliente sem celular.' : 'Sem permissão para ver o contato.') : 'Cliente avulso, sem contato.'),
-            h('button', { class: 'btn sm', onclick: () => run(() => S.marcarNotificado(list.map((i) => i.id)), 'Marcado como avisado').then(() => { closeSheet(); rerender(); }) }, 'Marcar avisado')));
+            h('button', { class: 'btn sm', onclick: () => run(() => S.marcarNotificado(list.map((i) => i.id)), 'Marcado como avisado').then(() => { closeSheet(); rerender(); }).catch(() => {}) }, 'Marcar avisado')));
       }) : h('p', { class: 'muted' }, 'Nenhum lembrete pendente.'));
   });
   sheet('Lembretes por WhatsApp', h('div', { class: 'stack' }, h('p', { class: 'muted small' }, 'O botão abre o WhatsApp com a mensagem pronta. Envie e o cliente fica marcado como avisado.'), blocks));

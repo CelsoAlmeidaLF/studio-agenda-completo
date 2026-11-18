@@ -84,6 +84,7 @@ export function casosGestao(ctx, d) {
       const nome = clip(s.nome, 80);
       if (!nome) throw new Error('Informe o nome do serviço.');
       if (!(s.duracao >= 5 && s.duracao <= 720 && s.duracao % 5 === 0)) throw new Error('A duração deve ser múltiplo de 5 minutos, entre 5 e 720.');
+      if (s.preco == null || s.preco === '') throw new Error('Informe o preço.'); // R1: obrigatório; gratuito só digitando 0
       if (!isCentavos(s.preco)) throw new Error('Preço inválido.');
       if (s.id && !R.get('srv', s.id)) throw new Error('Serviço não encontrado.');
       const validos = new Set(d.profs(true).map((p) => p.id));

@@ -1,5 +1,5 @@
 // Adaptador de biometria: WebAuthn com a extensão PRF (porta Biometria em application/ports.js).
-// Mesma base do kit de segurança do FINANC (PACOTES/stk-pkt-security/stk-pkg-secure-vault.js).
+// Mesma base do kit de segurança do FINANC (PACOTES/stk-pkt-security/stk-pkt-secure-vault.js).
 // Sem servidor: a segurança vem do segredo PRF, que o autenticador do aparelho só entrega depois
 // de verificar a pessoa (digital, rosto ou bloqueio de tela). Sem PRF, a biometria não é oferecida.
 import { rand, toB64, fromB64 } from './webcrypto.js';

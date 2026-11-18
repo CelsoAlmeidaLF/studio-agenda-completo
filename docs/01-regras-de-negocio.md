@@ -135,3 +135,15 @@ As telas mapeadas no protótipo são o escopo completo do produto. **O que não 
 | Descontos pré-definidos | O desconto é digitado no fechamento, item a item. |
 | Dados pessoais / perfil do usuário | O profissional é editado em Gestão › Profissionais. |
 | Vendas online, maquininha integrada e SMS/e-mail automático | O lembrete continua por link de WhatsApp. |
+
+## 12. Decisões de 18/11/2026 (decidido pelo Celso)
+
+Resultado do e2e de CRUD e agendamentos. Registradas em 18/11/2026, **decidido pelo Celso**.
+
+- **RN-61 (R1)** O preço do serviço é obrigatório. Vazio dá "Informe o preço". Serviço gratuito só digitando `0` de propósito (0 continua aceito). O mesmo vale para o campo de preço do agendamento.
+- **RN-62 (R4)** Cliente inativado pode ser **reativado** pela ficha (botão "Reativar", confirmação em 2 toques). Não reativa se outro cliente ativo já usa o celular (RN-13).
+- **RN-63 (R5)** Agendar ou remarcar para data/hora que já passou é aceito **só com confirmação** ("Este horário já passou. Registrar mesmo assim?"). Sem confirmar, não grava. Editar um agendamento sem mudar data/hora não pergunta.
+- **RN-13 (complemento)** O celular é comparado sem o DDI 55 (`+55 11 98888-7777` e `(11) 98888-7777` são o mesmo número), inclusive contra clientes gravados antes.
+- **RN-47 (complemento)** Editar um agendamento mantém serviço, profissional e cliente que já estão nele, mesmo inativados; "ativo" é exigido só para escolher outro. Agendamento de profissional inativado continua visível na agenda e nas comandas até ser cancelado.
+- **Decidido NÃO mudar:** nome repetido de serviço/profissional continua aceito (R2); não há "Excluir" para serviço, profissional ou cliente sem uso, só inativar (R3); o mesmo cliente pode ficar com dois profissionais ao mesmo tempo (R6); homônimo com outro celular é aceito (R7).
+- **Pendentes:** RN-30 e RN-06 seguem sem decisão do Celso.
