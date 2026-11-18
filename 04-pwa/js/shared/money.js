@@ -3,8 +3,11 @@ const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' 
 export const money = (c) => BRL.format((c || 0) / 100);
 export function parseMoney(str) {
   if (typeof str === 'number') return Math.round(str * 100);
-  const s = String(str || '').replace(/[^\d,.-]/g, '').trim();
-  if (!s) return 0;
+  const bruto = String(str || '').trim();
+  const s = bruto.replace(/[^\d,.-]/g, '').trim();
+  // Vazio continua valendo 0 (decisão sobre preço vazio pendente); texto sem nenhum dígito ("abc") é inválido.
+  if (!s) return bruto ? NaN : 0;
+  if (!/\d/.test(s)) return NaN;
   // Padrão brasileiro: "1.234,56", "12,5" e também "1.500" (ponto como separador de milhar).
   // Sem vírgula, ponto seguido de exatamente 3 dígitos é milhar; caso contrário vale como decimal ("12.5").
   let n;

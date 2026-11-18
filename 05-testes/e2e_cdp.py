@@ -103,6 +103,13 @@ async def conectar(info, largura=390, altura=844):
     return p
 
 
+async def confirmar_passado(p):
+    # R5 (v1.6.1): horário que já passou pede confirmação; o teste agenda às 10:00/13:00 de hoje, que podem já ter passado.
+    await asyncio.sleep(0.6)
+    if await p.js("!![...document.querySelectorAll('.sheet-root .btn.pri')].find(b => b.textContent.includes('Registrar mesmo assim'))"):
+        await p.clicar('.sheet-root .btn.pri', 'Registrar mesmo assim')
+
+
 async def principal():
     OUT.mkdir(parents=True, exist_ok=True)
     base = f'http://localhost:{PORTA_APP}/'
@@ -159,6 +166,7 @@ async def principal():
     await p.esperar("document.querySelector('.hbtn.fav.on')")
     await p.foto('03-adicionar.png')
     await p.js("document.querySelector('form.stack').requestSubmit()")
+    await confirmar_passado(p)
     await p.esperar("location.hash.startsWith('#/comanda')")
     await p.esperar("document.querySelector('.circ.tel svg.ic')")
     tel = await p.js("document.querySelector('.circ.tel').getAttribute('href')")
@@ -176,6 +184,7 @@ async def principal():
       s.value = [...s.options].find(o => o.textContent.includes('Camila')).value; s.dispatchEvent(new Event('change')); })()""")
     await p.preencher('form.stack input[type=time]', '13:00')
     await p.js("document.querySelector('form.stack').requestSubmit()")
+    await confirmar_passado(p)
     await p.esperar("location.hash.startsWith('#/comanda') && document.querySelectorAll('.card.item').length === 2")
     await p.clicar('.bar.pri', 'Fechamento')
     await p.esperar("document.querySelectorAll('.fl').length === 2")

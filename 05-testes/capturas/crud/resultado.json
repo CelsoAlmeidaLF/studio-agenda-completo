@@ -1,0 +1,1094 @@
+[
+ {
+  "id": "SRV-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "lista inicial mostra os 8 serviços de exemplo",
+  "obtido": "8"
+ },
+ {
+  "id": "SRV-02",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria serviço válido (45 min, \"1.500,50\")",
+  "obtido": "Serviço salvo"
+ },
+ {
+  "id": "SRV-03",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "lista mostra preço R$ 1.500,50 e 45 min",
+  "obtido": "QA Limpeza de pele | R$ 1.500,50 | 45 min"
+ },
+ {
+  "id": "SRV-04",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "serviço persiste após recarregar (IndexedDB)",
+  "obtido": "QA Limpeza de pele | R$ 1.500,50 | 45 min"
+ },
+ {
+  "id": "SRV-05.0",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"1.500\" vira R$ 1.500,00",
+  "obtido": "QA Preco 0 | R$ 1.500,00 | 30 min"
+ },
+ {
+  "id": "SRV-05.1",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"1500\" vira R$ 1.500,00",
+  "obtido": "QA Preco 1 | R$ 1.500,00 | 30 min"
+ },
+ {
+  "id": "SRV-05.2",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"1500,5\" vira R$ 1.500,50",
+  "obtido": "QA Preco 2 | R$ 1.500,50 | 30 min"
+ },
+ {
+  "id": "SRV-05.3",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"12.5\" vira R$ 12,50",
+  "obtido": "QA Preco 3 | R$ 12,50 | 30 min"
+ },
+ {
+  "id": "SRV-05.4",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"R$ 80,00\" vira R$ 80,00",
+  "obtido": "QA Preco 4 | R$ 80,00 | 30 min"
+ },
+ {
+  "id": "SRV-05.5",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"0,99\" vira R$ 0,99",
+  "obtido": "QA Preco 5 | R$ 0,99 | 30 min"
+ },
+ {
+  "id": "SRV-05.6",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço digitado \"1.234.567,89\" vira R$ 1.234.567,89",
+  "obtido": "QA Preco 6 | R$ 1.234.567,89 | 30 min"
+ },
+ {
+  "id": "SRV-06.negativo",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço negativo (\"-10\") é recusado com aviso",
+  "obtido": "fechou=False toast='Preço inválido.'"
+ },
+ {
+  "id": "SRV-06.vírgulas repetidas",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço vírgulas repetidas (\"1,5,5\") é recusado com aviso",
+  "obtido": "fechou=False toast='Preço inválido.'"
+ },
+ {
+  "id": "SRV-06.texto",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço com texto (\"abc\") é recusado, não grava R$ 0,00 em silêncio",
+  "obtido": "gravou: None"
+ },
+ {
+  "id": "SRV-06.vazio",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço vazio é recusado com \"Informe o preço\" (R1, decidido pelo Celso em 18/11/2026)",
+  "obtido": "fechou=False toast='Informe o preço.' linha=None"
+ },
+ {
+  "id": "SRV-07",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome vazio é recusado (\"Informe o nome\")",
+  "obtido": "False 'Informe o nome do serviço.'"
+ },
+ {
+  "id": "SRV-08",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome só com espaços é recusado",
+  "obtido": "Informe o nome do serviço."
+ },
+ {
+  "id": "SRV-09",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome com 120 caracteres é limitado a 80",
+  "obtido": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx | R$ 10,00 | 30 min"
+ },
+ {
+  "id": "SRV-10.0",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 0 recusada",
+  "obtido": "fechou=False toast='A duração deve ser múltiplo de 5 minutos, entre 5 e 720.'"
+ },
+ {
+  "id": "SRV-10.7 (não múltiplo de 5)",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 7 (não múltiplo de 5) recusada",
+  "obtido": "fechou=False toast='A duração deve ser múltiplo de 5 minutos, entre 5 e 720.'"
+ },
+ {
+  "id": "SRV-10.725 (acima de 720)",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 725 (acima de 720) recusada",
+  "obtido": "fechou=False toast='A duração deve ser múltiplo de 5 minutos, entre 5 e 720.'"
+ },
+ {
+  "id": "SRV-10.12,5",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 12,5 recusada",
+  "obtido": "fechou=False toast='A duração deve ser múltiplo de 5 minutos, entre 5 e 720.'"
+ },
+ {
+  "id": "SRV-10.negativa",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração negativa recusada",
+  "obtido": "fechou=False toast='A duração deve ser múltiplo de 5 minutos, entre 5 e 720.'"
+ },
+ {
+  "id": "SRV-10.5",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 5 aceita",
+  "obtido": "fechou=True toast='Serviço salvo'"
+ },
+ {
+  "id": "SRV-10.720",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 720 aceita",
+  "obtido": "fechou=True toast='Serviço salvo'"
+ },
+ {
+  "id": "SRV-10.fmt",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "duração 720 min aparece como \"12h\"",
+  "obtido": "QA Dur 720 | R$ 10,00 | 12h"
+ },
+ {
+  "id": "SRV-11",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "serviço com mesmo nome e categoria de um existente (\"Mão\"/Unhas): aceita ou recusa? (regra omissa)",
+  "obtido": "aceitou duplicado, 3 linhas \"Mão\""
+ },
+ {
+  "id": "SRV-12",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "edita nome, categoria, duração e preço",
+  "obtido": "Serviço salvo"
+ },
+ {
+  "id": "SRV-13",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "edição persiste após recarregar",
+  "obtido": "QA Limpeza premium | R$ 99,90 | 1h"
+ },
+ {
+  "id": "SRV-14",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome antigo não fica duplicado após editar",
+  "obtido": "None"
+ },
+ {
+  "id": "SRV-15",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "serviço migra para a nova categoria",
+  "obtido": "['Cílios', 'QA', 'QA Duracao', 'QA Facial 2', 'QA Preco', 'Sobrancelha', 'Unhas']"
+ },
+ {
+  "id": "SRV-16",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "inativar serviço: lista marca \"inativo\"",
+  "obtido": "QA Limpeza premium | R$ 99,90 | 1h · inativo"
+ },
+ {
+  "id": "SRV-17",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "serviço inativo não é oferecido para novo agendamento",
+  "obtido": "['Alongamento de cílios - Fio a fio · R$ 140,00 · 120 min', 'Lash lifting · R$ 150,00 · 120 min', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx · R$ 10,00 · 30 min', 'QA Dur 5 · R$ 10,00 · 5 min', 'QA Dur 720 · R$ 10,00 · 720 min', 'QA Preco 0 · R$ 1.500,00 · 30 min', 'QA Preco 1 · R$ 1.500,00 · 30 min', 'QA Preco 2 · R$ 1.500,50 · 30 min', 'QA Preco 3 · R$ 12,50 · 30 min', 'QA Preco 4 · R$ 80,00 · 30 min', 'QA Preco 5 · R$ 0,99 · 30 min', 'QA Preco 6 · R$ 1.234.567,89 · 30 min', 'Design + Buço - COMBO · R$ 70,00 · 60 min', 'Design de sobrancelha · R$ 50,00 · 40 min', 'Esmaltação tradicional · R$ 25,00 · 30 min', 'Mão · R$ 40,00 · 30 min', 'Mão · R$ 40,00 · 30 min', 'Mão & Pé - COMBO · R$ 75,00 · 90 min', 'Pé · R$ 45,00 · 30 min']"
+ },
+ {
+  "id": "SRV-18",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "reativar serviço funciona",
+  "obtido": "QA Limpeza premium | R$ 99,90 | 1h"
+ },
+ {
+  "id": "SRV-19",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "existe ação de excluir serviço sem uso (RN-47 só proíbe se usado em agendamento)? hoje só há inativar",
+  "obtido": "['', 'Salvar']"
+ },
+ {
+  "id": "SRV-20",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "sheet lista os profissionais que atendem como opções de \"quem executa\"",
+  "obtido": "['Bianca Lopes', 'Camila Rocha', 'Patrícia Souza']"
+ },
+ {
+  "id": "SRV-21",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "profissional marcado em \"executa\" persiste",
+  "obtido": "['Bianca Lopes']"
+ },
+ {
+  "id": "PRO-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "lista inicial mostra os 4 profissionais de exemplo",
+  "obtido": "4"
+ },
+ {
+  "id": "PRO-02",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria profissional (comissão 35,5) e aparece na lista",
+  "obtido": "QT | QA Teresa Prado | Outros · comissão 35.5% | Sem acesso"
+ },
+ {
+  "id": "PRO-03",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "sigla automática = iniciais do nome (\"QT\")",
+  "obtido": "QT | QA Teresa Prado | Outros · comissão 35.5% | Sem acesso"
+ },
+ {
+  "id": "PRO-04",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "profissional persiste após recarregar",
+  "obtido": "QT | QA Teresa Prado | Outros · comissão 35.5% | Sem acesso"
+ },
+ {
+  "id": "PRO-05",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome vazio é recusado",
+  "obtido": "False 'Informe o nome do profissional.'"
+ },
+ {
+  "id": "PRO-06.101",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "comissão 101% recusada",
+  "obtido": "fechou=False 'A comissão deve estar entre 0 e 100%.'"
+ },
+ {
+  "id": "PRO-06.-1",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "comissão -1% recusada",
+  "obtido": "fechou=False 'A comissão deve estar entre 0 e 100%.'"
+ },
+ {
+  "id": "PRO-06.100",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "comissão 100% aceita",
+  "obtido": "fechou=True 'Profissional salvo'"
+ },
+ {
+  "id": "PRO-06.0",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "comissão 0% aceita",
+  "obtido": "fechou=True 'Profissional salvo'"
+ },
+ {
+  "id": "PRO-07",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "sigla \"abcde\" vira \"ABC\" (3 letras, maiúscula)",
+  "obtido": "ABC | QA Sigla | Outros · comissão 40% | Sem acesso"
+ },
+ {
+  "id": "PRO-08",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "profissional com nome igual a um existente (\"Camila Rocha\"): aceita? (regra omissa)",
+  "obtido": "aceitou nome duplicado"
+ },
+ {
+  "id": "PRO-09",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "PIN fraco (123456) é recusado e NÃO cria o profissional pela metade",
+  "obtido": "fechou=False toast='Não use sequências como 123456.' linhas 9->9"
+ },
+ {
+  "id": "PRO-10",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "PIN de 5 dígitos é recusado e não cria o profissional",
+  "obtido": "fechou=False toast='O PIN precisa ter exatamente 6 números.' linhas 9->9"
+ },
+ {
+  "id": "PRO-11",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria profissional com PIN válido -> \"Com PIN\"",
+  "obtido": "QC | QA Com Pin | Outros · comissão 40% | Com PIN"
+ },
+ {
+  "id": "PRO-12",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "edita nome, área e comissão e persiste após recarregar",
+  "obtido": "QT | QA Teresa Editada | Cabelos · comissão 50% | Sem acesso"
+ },
+ {
+  "id": "PRO-13",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome antigo não permanece",
+  "obtido": "None"
+ },
+ {
+  "id": "PRO-14",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "\"Remover acesso por PIN\" pede confirmação (2 toques)",
+  "obtido": "Toque de novo para confirmar"
+ },
+ {
+  "id": "PRO-15",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "acesso removido: lista mostra \"Sem acesso\"",
+  "obtido": "QC | QA Com Pin | Outros · comissão 40% | Sem acesso"
+ },
+ {
+  "id": "PRO-16",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "não permite inativar a si mesmo",
+  "obtido": "False 'Você não pode inativar a si mesmo.'"
+ },
+ {
+  "id": "PRO-17",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "inativa profissional sem agendamentos",
+  "obtido": "QC | QA Com Pin | Outros · comissão 40% · inativo | Sem acesso"
+ },
+ {
+  "id": "PRO-18",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "existe ação de excluir profissional sem uso (RN-47)? hoje só há inativar",
+  "obtido": "['', 'Permissões', 'Salvar']"
+ },
+ {
+  "id": "CLI-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "lista inicial mostra os 3 clientes de exemplo",
+  "obtido": "['Ana Paula Prado | (11) 90000-0103', 'Mariana Luz | (11) 90000-0102', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-02",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria cliente válido e abre a ficha",
+  "obtido": "#/cliente?id=48ae8e15-5a36-4feb-a46f-05d0f3343401"
+ },
+ {
+  "id": "CLI-03",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "ficha mostra celular formatado, e-mail e observação",
+  "obtido": "PS\nPatrícia Souza\nGerência\nStudio QA CRUD\nAgenda\nFinanceiro\nClientes\nEquipe\nGestão\nBloquear agora\nStudio Agenda v1.6.1\nQA Cliente Um\nClientes\n\nClientes dos últimos agendamentos (sem clientes avulsos):\n\nSem agendamentos\n4 clientes\nAna Paula Prado\n(11) 90000-0103\nMariana Luz\n(11) 90000-0102\nQA Cliente"
+ },
+ {
+  "id": "CLI-04",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cliente persiste após recarregar e aparece na lista",
+  "obtido": "['Ana Paula Prado | (11) 90000-0103', 'Mariana Luz | (11) 90000-0102', 'QA Cliente Um | (11) 98888-7777 | alérgica a látex', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-05",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome vazio é recusado",
+  "obtido": "False 'Informe o nome do cliente.'"
+ },
+ {
+  "id": "CLI-06",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "celular inválido (\"123\") é recusado",
+  "obtido": "False 'Celular inválido. Use DDD + número.'"
+ },
+ {
+  "id": "CLI-07",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "celular só com letras (\"abcdefghijk\") é recusado",
+  "obtido": "False 'Celular inválido. Use DDD + número.'"
+ },
+ {
+  "id": "CLI-08",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "celular idêntico ao de outro cliente é recusado",
+  "obtido": "False 'Já existe um cliente com este celular.'"
+ },
+ {
+  "id": "CLI-09",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "RN-13: mesmo celular com DDI 55 (\"+55 11 98888-7777\") é reconhecido como duplicado",
+  "obtido": "criou outro cliente com o mesmo número: Já existe um cliente com este celular."
+ },
+ {
+  "id": "CLI-10",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "dois clientes sem celular são permitidos",
+  "obtido": "#/cliente?id=e191ad4f-af19-4c9f-a825-e274917384f9 / #/cliente?id=11697dee-4067-41d5-886a-c56880ef1700"
+ },
+ {
+  "id": "CLI-11",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "homônimo (mesmo nome, outro celular) aceito — regra omissa",
+  "obtido": "aceitou homônimo"
+ },
+ {
+  "id": "CLI-12",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "e-mail inválido (\"isto-nao-e-email\") é recusado",
+  "obtido": "gravou: E-mail inválido."
+ },
+ {
+  "id": "CLI-13",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nome com HTML é exibido como texto (sem injeção)",
+  "obtido": "False"
+ },
+ {
+  "id": "CLI-14",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "busca ignora acento e maiúscula (\"jose angelo\" acha \"José Ângelo\")",
+  "obtido": "['José Ângelo QA\\n(11) 93333-2222']"
+ },
+ {
+  "id": "CLI-15",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "busca por parte do celular acha o cliente",
+  "obtido": "['QA Cliente Um\\n(11) 98888-7777\\nalérgica a látex']"
+ },
+ {
+  "id": "CLI-16",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "edição de nome e celular persiste após recarregar",
+  "obtido": "['<img src=x onerror=window.__xss=1> | (11) 94444-3333', 'Ana Paula Prado | (11) 90000-0103', 'José Ângelo QA | (11) 93333-2222', 'Mariana Luz | (11) 90000-0102', 'QA Cliente Um | (11) 96666-5555', 'QA Cliente Um Editado | (11) 91111-2222 | obs nova', 'QA Sem Celular A', 'QA Sem Celular B', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-17",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "celular antigo (98888-7777) não permanece em nenhum cliente após editar",
+  "obtido": "['<img src=x onerror=window.__xss=1> | (11) 94444-3333', 'Ana Paula Prado | (11) 90000-0103', 'José Ângelo QA | (11) 93333-2222', 'Mariana Luz | (11) 90000-0102', 'QA Cliente Um | (11) 96666-5555', 'QA Cliente Um Editado | (11) 91111-2222 | obs nova', 'QA Sem Celular A', 'QA Sem Celular B', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-18",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar para o celular de outro cliente é recusado",
+  "obtido": "Já existe um cliente com este celular."
+ },
+ {
+  "id": "CLI-19",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "regravar o próprio celular não conta como duplicado",
+  "obtido": "Cliente salvo"
+ },
+ {
+  "id": "CLI-20",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "existe \"Excluir\" para cliente sem histórico (RN-15 só proíbe com histórico)? hoje só \"Inativar\"",
+  "obtido": "['', 'Inativar', 'Salvar']"
+ },
+ {
+  "id": "CLI-21",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "\"Inativar\" pede confirmação (2 toques)",
+  "obtido": "Toque de novo para confirmar"
+ },
+ {
+  "id": "CLI-22",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cliente inativado some da lista",
+  "obtido": "['<img src=x onerror=window.__xss=1> | (11) 94444-3333', 'Ana Paula Prado | (11) 90000-0103', 'José Ângelo QA | (11) 93333-2222', 'Mariana Luz | (11) 90000-0102', 'QA Cliente Um | (11) 96666-5555', 'QA Cliente Um Editado | (11) 91111-2222 | obs nova', 'QA Sem Celular B', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-23",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "inativação persiste após recarregar",
+  "obtido": "['<img src=x onerror=window.__xss=1> | (11) 94444-3333', 'Ana Paula Prado | (11) 90000-0103', 'José Ângelo QA | (11) 93333-2222', 'Mariana Luz | (11) 90000-0102', 'QA Cliente Um | (11) 96666-5555', 'QA Cliente Um Editado | (11) 91111-2222 | obs nova', 'QA Sem Celular B', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-24",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cliente inativado pode ser reativado pela ficha (Reativar, 2 toques) e volta à lista",
+  "obtido": "'Toque de novo para confirmar' ['<img src=x onerror=window.__xss=1> | (11) 94444-3333', 'Ana Paula Prado | (11) 90000-0103', 'José Ângelo QA | (11) 93333-2222', 'Mariana Luz | (11) 90000-0102', 'QA Cliente Um | (11) 96666-5555', 'QA Cliente Um Editado | (11) 91111-2222 | obs nova', 'QA Sem Celular A', 'QA Sem Celular B', 'Renata Oliveira | (11) 90000-1234']"
+ },
+ {
+  "id": "CLI-25",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "celular do cliente editado continua bloqueado para outro cliente",
+  "obtido": "Já existe um cliente com este celular."
+ },
+ {
+  "id": "AGD-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria agendamento válido (Renata, Camila, 10:00, Design de sobrancelha)",
+  "obtido": "'' #/comanda?id=21777fc9-92a1-4606-a9e7-7e4e425e0c15"
+ },
+ {
+  "id": "AGD-02",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "comanda mostra horário 10:00-10:40, serviço, preço R$ 50,00 e profissional",
+  "obtido": "['10:00 - 10:40 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-03",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "comanda está ligada ao cliente Renata",
+  "obtido": "Renata Oliveira\nR$ 0,00"
+ },
+ {
+  "id": "AGD-04",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agenda do dia mostra o bloco 10:00 - 10:40 de Renata",
+  "obtido": "['10:00 - 10:40 | Renata Oliveira | Design de sobrancelha']"
+ },
+ {
+  "id": "AGD-05",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agendamento persiste após recarregar",
+  "obtido": "['10:00 - 10:40 | Renata Oliveira | Design de sobrancelha']"
+ },
+ {
+  "id": "AGD-06",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "ficha da cliente > Agendamentos lista o novo item (vínculo cliente)",
+  "obtido": "['10:00 - 10:40 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha']"
+ },
+ {
+  "id": "AGD-07",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "conflito: Camila 10:30 sobrepõe 10:00-10:40 -> recusado com mensagem",
+  "obtido": "False 'Camila Rocha já tem um atendimento às 10:00 (até 10:40).'"
+ },
+ {
+  "id": "AGD-08",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "conflito: Camila 09:30 (termina 10:10) sobrepõe -> recusado",
+  "obtido": "False 'Camila Rocha já tem um atendimento às 10:00 (até 10:40).'"
+ },
+ {
+  "id": "AGD-09",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "conflito: mesmo horário exato -> recusado",
+  "obtido": "False 'Camila Rocha já tem um atendimento às 10:00 (até 10:40).'"
+ },
+ {
+  "id": "AGD-10",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "encaixe colado: 10:40 (logo depois do fim) é permitido",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-11",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "encaixe colado: 09:20-10:00 (logo antes do início) é permitido",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-12",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "outro profissional no mesmo horário é permitido",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-13",
+  "tipo": "REGRA",
+  "ok": false,
+  "titulo": "mesmo cliente em dois profissionais ao mesmo tempo: Renata está com Camila 10:00-10:40 e agenda Bianca 10:30 (regra omissa; RN-02 só vale por profissional)",
+  "obtido": "aceitou (Renata em 2 lugares ao mesmo tempo)"
+ },
+ {
+  "id": "AGD-14",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "fora do expediente: 07:30 -> recusado (\"Fora do horário\")",
+  "obtido": "False 'Fora do horário de funcionamento (08:00–19:00).'"
+ },
+ {
+  "id": "AGD-15",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "fora do expediente: 18:30 + 40 min passa das 19:00 -> recusado",
+  "obtido": "False 'Fora do horário de funcionamento (08:00–19:00).'"
+ },
+ {
+  "id": "AGD-16",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "termina exatamente às 19:00 (18:20 + 40 min) é permitido",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-17",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "dia fechado (segunda): recusado (\"fechado\")",
+  "obtido": "False 'O estabelecimento está fechado neste dia.'"
+ },
+ {
+  "id": "AGD-18",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "dia fechado (domingo): recusado",
+  "obtido": "False 'O estabelecimento está fechado neste dia.'"
+ },
+ {
+  "id": "AGD-19",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "sábado fecha às 18:00: 17:30 + 40 min -> recusado",
+  "obtido": "False 'Fora do horário de funcionamento (08:00–18:00).'"
+ },
+ {
+  "id": "AGD-20",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "hora vazia não envia o formulário (campo obrigatório)",
+  "obtido": "False '' #/adicionar?d=2026-11-26"
+ },
+ {
+  "id": "AGD-21",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "data vazia não envia o formulário",
+  "obtido": "False '' #/adicionar?d=2026-11-26"
+ },
+ {
+  "id": "AGD-22",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "data passada pede confirmação e não grava sem ela (R5, decidido pelo Celso em 18/11/2026)",
+  "obtido": "ok=False confirmacao=True toast=''"
+ },
+ {
+  "id": "AGD-22b",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "confirmando \"Registrar mesmo assim\", o agendamento passado é gravado",
+  "obtido": "#/comanda?id=2350b594-4f92-42df-8c25-29545e00051f"
+ },
+ {
+  "id": "AGD-23",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço do agendamento \"1.500\" vira R$ 1.500,00",
+  "obtido": "'' ['08:00 - 08:40 | Marcado | Design de sobrancelha | R$ 1.500,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-24",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço do agendamento com texto (\"abc\") é recusado, não grava R$ 0,00",
+  "obtido": "gravou: []"
+ },
+ {
+  "id": "AGD-25",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "preço negativo é recusado",
+  "obtido": "False 'Preço inválido.'"
+ },
+ {
+  "id": "AGD-26",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "novo cliente no fluxo de agendar com celular já usado é recusado",
+  "obtido": "Já existe um cliente com este celular."
+ },
+ {
+  "id": "AGD-27",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agendar com cliente novo cria o cliente junto",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-28",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agendar para cliente avulso funciona e não entra na lista de clientes",
+  "obtido": "'' 'Fulana Avulsa\\nCliente avulso'"
+ },
+ {
+  "id": "AGD-29",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria bloqueio 14:00-15:00 (almoço) para Camila",
+  "obtido": "Bloqueio salvo"
+ },
+ {
+  "id": "AGD-30",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agendar dentro do bloqueio -> recusado com mensagem do bloqueio",
+  "obtido": "False 'Camila Rocha tem um bloqueio (Almoço) das 14:00 às 15:00.'"
+ },
+ {
+  "id": "AGD-31",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "remarcar 10:00 -> 10:30 colide com o item das 10:40 (Mariana): recusado",
+  "obtido": "False 'Camila Rocha já tem um atendimento às 10:40 (até 11:20).'"
+ },
+ {
+  "id": "AGD-32",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar só a nota (mesmo horário) não conflita consigo mesmo",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-33",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nota gravada aparece no card",
+  "obtido": "['10:00 - 10:40 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | só mudei a nota | Editar | Excluir', '10:30 - 11:00 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | Editar | Excluir', '18:20 - 19:00 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-34",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "mudar status para Confirmado",
+  "obtido": "'Status: Confirmado' ['10:00 - 10:40 | Confirmado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | só mudei a nota | Editar | Excluir', '10:30 - 11:00 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | Editar | Excluir', '18:20 - 19:00 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-35",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "remarcar para 15:00 (livre, depois do bloqueio) funciona e mostra 15:00-15:40",
+  "obtido": "'' ['10:30 - 11:00 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | Editar | Excluir', '15:00 - 15:40 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | só mudei a nota | Editar | Excluir', '18:20 - 19:00 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-36",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "RN-07: remarcar item Confirmado volta a \"Marcado\"",
+  "obtido": "['10:30 - 11:00 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | Editar | Excluir', '15:00 - 15:40 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | só mudei a nota | Editar | Excluir', '18:20 - 19:00 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-37",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "remarcação persiste após recarregar",
+  "obtido": "['10:00 - 10:30 | Mariana Luz | Mão', '10:30 - 11:00 | Renata Oliveira | Mão', '18:20 - 19:00 | Renata Oliveira | Design de sobrancelha', '10:40 - 11:20 | Mariana Luz | Design de sobrancelha', '15:00 - 15:40 | Renata Oliveira | Design de sobrancelha', '09:20 - 10:00 | Ana Paula Prado | Design de sobrancelha']"
+ },
+ {
+  "id": "AGD-38",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "o horário antigo (10:00) ficou livre depois de remarcar",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-39",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "remarcar para outro dia (sexta 15:00) funciona",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-40",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "item some do dia antigo (15:00) e aparece no novo",
+  "obtido": "(['10:00 - 10:30 | Mariana Luz | Mão', '10:30 - 11:00 | Renata Oliveira | Mão', '18:20 - 19:00 | Renata Oliveira | Design de sobrancelha', '10:40 - 11:20 | Mariana Luz | Design de sobrancelha', '09:20 - 10:00 | Ana Paula Prado | Design de sobrancelha', '10:00 - 10:40 | Ana Paula Prado | Design de sobrancelha'], ['12:00 - 12:40 | Fulana Avulsa | Design de sobrancelha', '15:00 - 15:40 | Renata Oliveira | Design de sobrancelha', '11:00 - 11:40 | QA Fluxo Novo | Design de sobrancelha', '08:00 - 08:40 | Renata Oliveira | Design de sobrancelha'])"
+ },
+ {
+  "id": "AGD-41",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "trocar serviço por um mais longo (120 min) recalcula fim e checa conflito (10:40 -> 12:40 livre)",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-42",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "card mostra 10:40-12:40 e preço do novo serviço",
+  "obtido": "['10:00 - 10:30 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | Editar | Excluir', '10:40 - 12:40 | Marcado | Lash lifting | R$ 150,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "AGD-43",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cancelar item (Ana Paula 09:20) tira o bloco da agenda",
+  "obtido": "'Status: Cancelado' ['10:00 - 10:30 | Mariana Luz | Mão', '10:30 - 11:00 | Renata Oliveira | Mão', '18:20 - 19:00 | Renata Oliveira | Design de sobrancelha', '10:40 - 12:40 | Mariana Luz | Lash lifting', '10:00 - 10:40 | Ana Paula Prado | Design de sobrancelha']"
+ },
+ {
+  "id": "AGD-44",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "horário do item cancelado fica livre para outro cliente",
+  "obtido": "''"
+ },
+ {
+  "id": "AGD-45",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "reativar item cancelado em horário agora ocupado é recusado",
+  "obtido": "True 'Camila Rocha já tem um atendimento às 09:20 (até 10:00).'"
+ },
+ {
+  "id": "AGD-46",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "mudar para Iniciado",
+  "obtido": "'Status: Iniciado'"
+ },
+ {
+  "id": "AGD-47",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "concluir: fechamento + pagamento integral dá \"Pago\"",
+  "obtido": "Pago · Fechamento nº 000001R$ 240,00"
+ },
+ {
+  "id": "AGD-48",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "item pago não pode ser editado, excluído nem mudar de status na tela",
+  "obtido": "['09:20 - 10:00 | Pago | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha', '10:00 - 10:30 | Pago | Mão | R$ 40,00 | BL | Bianca Lopes', '10:40 - 12:40 | Pago | Lash lifting | R$ 150,00 | CR | Camila Rocha']"
+ },
+ {
+  "id": "AGD-49",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "\"Excluir\" agendamento pede confirmação (2 toques)",
+  "obtido": "Toque de novo para confirmar"
+ },
+ {
+  "id": "AGD-50",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "excluído (Renata 08:00) some da agenda e os outros itens permanecem",
+  "obtido": "['12:00 - 12:40 | Fulana Avulsa | Design de sobrancelha', '15:00 - 15:40 | Renata Oliveira | Design de sobrancelha', '11:00 - 11:40 | QA Fluxo Novo | Design de sobrancelha']"
+ },
+ {
+  "id": "AGD-51",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "exclusão persiste após recarregar",
+  "obtido": "['12:00 - 12:40 | Fulana Avulsa | Design de sobrancelha', '15:00 - 15:40 | Renata Oliveira | Design de sobrancelha', '11:00 - 11:40 | QA Fluxo Novo | Design de sobrancelha']"
+ },
+ {
+  "id": "AGD-52",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "excluir o único item da comanda volta para a agenda e a comanda some",
+  "obtido": "#/agenda?d=2026-11-27"
+ },
+ {
+  "id": "VIN-00",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agenda serviço recém-criado (QA Servico Vinc, 30 min, R$ 30,00)",
+  "obtido": ""
+ },
+ {
+  "id": "VIN-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "RN-19: mudar preço/duração do serviço não altera agendamento já existente (R$ 30,00, 30 min)",
+  "obtido": "['09:00 - 09:30 | Marcado | QA Servico Vinc | R$ 30,00 | CR | Camila Rocha | Editar | Excluir']"
+ },
+ {
+  "id": "VIN-02",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "RN-47: serviço usado em agendamento pode ser inativado (não excluído)",
+  "obtido": "Serviço salvo"
+ },
+ {
+  "id": "VIN-03",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar a nota de agendamento cujo serviço foi inativado não troca o serviço em silêncio",
+  "obtido": "ok=True toast='' cards=['09:00 - 10:00 | Marcado | QA Servico Vinc | R$ 30,00 | CR | Camila Rocha | editando com serviço inativo | Editar | Excluir']"
+ },
+ {
+  "id": "VIN-03b",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar agendamento cujo serviço foi inativado funciona (mantém o serviço) ou avisa claramente",
+  "obtido": "ok=True toast='' cards=['09:00 - 10:00 | Marcado | QA Servico Vinc | R$ 30,00 | CR | Camila Rocha | editando com serviço inativo | Editar | Excluir']"
+ },
+ {
+  "id": "VIN-04",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agenda Ana Paula com Bianca às 09:00",
+  "obtido": ""
+ },
+ {
+  "id": "VIN-05",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "RN-47: profissional com agendamento futuro pode ser inativado",
+  "obtido": "Profissional salvo"
+ },
+ {
+  "id": "VIN-06",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agendamento futuro de profissional inativado continua visível em algum lugar da agenda (grade)",
+  "obtido": "grade do dia: ['09:00 - 09:30 | Ana Paula Prado | Mão', '09:00 - 10:00 | Mariana Luz | QA Servico Vinc']"
+ },
+ {
+  "id": "VIN-07",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "lista de comandas do dia ainda mostra a comanda da Ana Paula (profissional inativado)",
+  "obtido": "['Mariana Luz\\n09:00 - 10:00\\nQA Servico Vinc\\nCR', 'Ana Paula Prado\\n09:00 - 09:30\\nMão\\nBL']"
+ },
+ {
+  "id": "VIN-08",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "a ficha da cliente ainda lista o agendamento (dados não se perdem)",
+  "obtido": "['09:00 - 09:30 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes', '09:20 - 10:00 | Cancelado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha', '10:00 - 10:40 | Marcado | Design de sobrancelha | R$ 50,00 | CR | Camila Rocha']"
+ },
+ {
+  "id": "VIN-09",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar nota de agendamento de profissional inativado mantém o profissional (Bianca) e não troca por outro em silêncio",
+  "obtido": "ok=True toast='' cards=['09:00 - 09:30 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | com profissional inativo | Editar | Excluir']"
+ },
+ {
+  "id": "VIN-09b",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar agendamento de profissional inativado funciona ou avisa",
+  "obtido": "ok=True toast='' cards=['09:00 - 09:30 | Marcado | Mão | R$ 40,00 | BL | Bianca Lopes | com profissional inativo | Editar | Excluir']"
+ },
+ {
+  "id": "VIN-10",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cliente inativado: agendamentos dela seguem na agenda",
+  "obtido": "['09:00 - 09:30 | Ana Paula Prado | Mão', '09:00 - 10:00 | Mariana Luz | QA Servico Vinc']"
+ },
+ {
+  "id": "VIN-11",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "editar/remarcar agendamento de cliente inativado funciona (ou avisa claramente)",
+  "obtido": "ok=True toast=''"
+ },
+ {
+  "id": "VOL-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "cria 22 agendamentos seguidos pela interface",
+  "obtido": "22/22"
+ },
+ {
+  "id": "VOL-02",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "agenda renderiza todos os blocos do dia",
+  "obtido": "22 blocos"
+ },
+ {
+  "id": "VOL-03",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "todos persistem após recarregar",
+  "obtido": "22 blocos"
+ },
+ {
+  "id": "VOL-04",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "lista de clientes com 25+ itens carrega e todos aparecem",
+  "obtido": "30"
+ },
+ {
+  "id": "VOL-05",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "sem rolagem horizontal na página",
+  "obtido": "[1351, 1366]"
+ },
+ {
+  "id": "GER-01",
+  "tipo": "BUG",
+  "ok": true,
+  "titulo": "nenhum erro de console/exceção durante todo o fluxo",
+  "obtido": "[]"
+ }
+]
