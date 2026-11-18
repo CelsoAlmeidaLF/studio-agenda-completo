@@ -19,7 +19,7 @@ import { registerFinanceiro } from './adapters/in/ui/telas/financeiro.js';
 import { registerGestao } from './adapters/in/ui/telas/gestao.js';
 import { registerProdutos } from './adapters/in/ui/telas/produtos.js';
 
-const VERSAO = '1.6.0';
+const VERSAO = '1.6.1';
 const PUBLIC = new Set(['setup', 'login']);
 
 const app = createApp({ cofre: createCofreCifrado({ db }), relogio: relogioDoSistema, ids: idsAleatorios, biometria: createBiometriaWebAuthn({ nomeApp: 'Studio Agenda' }) });
