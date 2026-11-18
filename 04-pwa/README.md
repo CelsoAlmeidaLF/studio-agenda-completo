@@ -1,4 +1,4 @@
-# Studio Agenda — PWA (v1.6.0)
+# Studio Agenda — PWA (v1.6.1)
 
 Sistema de agenda, comandas, caixa e comissões para salões e estúdios.
 HTML + CSS + JavaScript puro (módulos ES), sem framework e sem dependências externas.
@@ -101,7 +101,19 @@ As regras ficam no template Studio Claro 1.3 (parte `12-telas-e-orientacao`).
 | Gestão | Estabelecimento, horário com vários intervalos, intervalo da agenda, fechamento de caixa, serviços, profissionais, PIN, permissões |
 | Segurança | Meu PIN e biometria, bloqueio automático, armazenamento persistente, backup criptografado, restauração, auditoria, apagar dados |
 
-## Testado (v1.6.0)
+## Versões
+
+### 1.6.1 (18/11/2026)
+
+Correções do e2e de CRUD e agendamentos (branch `fix/testes-crud-agendamentos`):
+
+- Editar agendamento mantém o serviço, o profissional e o cliente que já estavam nele mesmo se foram inativados; o select mostra "(inativo)". Ativo só é exigido para escolher outro (B1, B3, B4).
+- Agendamento de profissional inativado ou sem "Atende clientes" continua na grade e na lista de comandas, com a coluna rotulada, até ser cancelado (B2).
+- Celular normalizado sem DDI 55 e duplicado (RN-13) detectado também com "+55", inclusive em clientes gravados antes (B5). Celular com letras dá "Celular inválido" (B7). E-mail com formato inválido é recusado (B8).
+- Preço com texto sem número ("abc") dá "Preço inválido" (B6). Promises sem tratamento nos botões de status, exclusão, bloqueio e lembrete (B9).
+- Decisões do Celso: preço do serviço obrigatório, 0 só digitado (R1); botão Reativar no cliente inativo (R4); agendar em horário passado pede confirmação (R5). Detalhes em `03-documentacao/01-regras-de-negocio.md`, seção 12.
+
+## Testado (v1.6.1)
 
 - **Unitários (`05-testes/unit/`):**
   - a aplicação não expõe o cofre;
