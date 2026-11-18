@@ -66,19 +66,23 @@ export function registerComanda(app) {
     const cli = selecao.cliId ? S.cliente(selecao.cliId) : null;
     const nomeCli = cli?.nome || selecao.novoNome || selecao.avulso;
     const favs = new Set(cli?.favoritos || []);
-    const profsOk = S.profs().filter((x) => x.atende !== false && can(me, 'agenda.editar', { profId: x.id }))
+    // O profissional que já está no agendamento fica na lista mesmo inativo ou sem "Atende clientes" (senão o select
+    // trocaria de profissional em silêncio); para os demais vale só quem está ativo e atende.
+    const profsOk = S.profs(true).filter((x) => (x.id === atual?.profId || (x.ativo !== false && x.atende !== false)) && can(me, 'agenda.editar', { profId: x.id }))
       .sort((a, b) => (favs.has(b.id) - favs.has(a.id)) || a.nome.localeCompare(b.nome));
     if (!profsOk.length) return { title: 'Adicionar à comanda', back: true, body: emptyState('lock', 'Sem permissão para agendar', '') };
     const di = input({ type: 'date', value: atual?.data || d, required: true });
     const hi = input({ type: 'time', value: atual?.hora || hora || '09:00', step: 300, required: true });
-    const ps = select(profsOk.map((x) => [x.id, `${x.nome} · ${x.area}${favs.has(x.id) ? ' · favorito' : ''}`]), atual?.profId || p || (profsOk.find((x) => x.id === me.id) || profsOk[0]).id);
+    const ps = select(profsOk.map((x) => [x.id, `${x.nome} · ${x.area}${favs.has(x.id) ? ' · favorito' : ''}${x.ativo === false ? ' (inativo)' : x.atende === false ? ' (não atende)' : ''}`]), atual?.profId || p || (profsOk.find((x) => x.id === me.id) || profsOk[0]).id);
     const soDoProf = h('input', { type: 'checkbox', id: 'sdp', checked: true });
     const ss = select([], '');
     const precoI = can(me, 'preco.editar') ? input({ inputmode: 'decimal', placeholder: 'Preço do serviço' }) : null;
     const nota = h('textarea', { class: 'inp', maxlength: 300, rows: 2, placeholder: 'Notas internas (não aparecem para o cliente)' }, atual?.nota || '');
     const resumo = h('p', { class: 'muted small' });
     const fillSrv = () => {
-      const lista = S.servicos().filter((s) => !soDoProf.checked || !s.profs?.length || s.profs.includes(ps.value));
+      // O serviço atual do agendamento fica na lista mesmo inativo (marcado "(inativo)"); só os demais exigem ativo.
+      const lista = S.servicos(true).filter((s) => (s.id === atual?.srvId && s.ativo === false) || (s.ativo !== false && (!soDoProf.checked || !s.profs?.length || s.profs.includes(ps.value))))
+        .map((s) => (s.ativo === false ? { ...s, nome: `${s.nome} (inativo)` } : s));
       const prev = ss.value || atual?.srvId;
       ss.replaceChildren(...groupOptions(lista));
       if (prev && lista.some((s) => s.id === prev)) ss.value = prev;
@@ -333,9 +337,10 @@ function novoClienteSheet(nome, cel, seguir) {
     h('button', { class: 'btn pri', onclick: () => {
       if (!n.value.trim()) return toast('Informe o nome.');
       const d = onlyDigits(t.value);
+      if (t.value.trim() && !d) return toast('Celular inválido. Use DDD + número.');
       if (d && !isCelular(d)) return toast('Celular inválido. Use DDD + número.');
       if (d && S.celularEmUso(d)) return toast('Já existe um cliente com este celular.');
-      closeSheet(); seguir({ novoNome: n.value.trim(), novoCel: d });
+      closeSheet(); seguir({ novoNome: n.value.trim(), novoCel: t.value }); // o caso de uso valida e normaliza (letras, DDI)
     } }, 'Continuar'));
 }
 
