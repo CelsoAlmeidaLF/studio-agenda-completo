@@ -164,7 +164,7 @@ export function registerComanda(app) {
         it.nota ? h('div', { class: 'item-r note-i' }, icon('edit', 18), h('i', null, it.nota)) : null,
         podeEd && it.status !== 'pago' ? h('div', { class: 'acts-row end' },
           h('button', { class: 'btn sm', onclick: () => go('adicionar', { item: it.id }) }, icon('edit', 16), 'Editar'),
-          dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Item excluído').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))), 'btn sm danger')) : null);
+          dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Item excluído').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))).catch(() => {}), 'btn sm danger')) : null);
     });
     let footer = null;
     if (c.status === 'aberta' && S.podeFechar(id)) footer = h('button', { class: 'bar pri', onclick: () => go('fechamento', { id }) }, h('span', null, 'Fechamento'), h('b', null, money(total)));
@@ -287,7 +287,7 @@ function produtoCard(it, c, id) {
     it.nota ? h('div', { class: 'item-r note-i' }, icon('edit', 18), h('i', null, it.nota)) : null,
     podeEd ? h('div', { class: 'acts-row end' },
       h('button', { class: 'btn sm', onclick: () => go('adicionar', { item: it.id }) }, icon('edit', 16), 'Editar'),
-      dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Produto removido').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))), 'btn sm danger')) : null);
+      dangerBtn('Excluir', () => run(() => S.removerItem(it.id), 'Produto removido').then(() => (aindaVisivel(id) ? rerender() : go('agenda', { d: c.data }))).catch(() => {}), 'btn sm danger')) : null);
 }
 
 // ---------- Abas Serviço / Produto de "Adicionar à comanda" ----------
@@ -341,7 +341,7 @@ function statusSheet(it) {
   const opts = nextStatuses(it.status);
   sheet(`${it.hora} · ${it.nome}`, h('div', { class: 'opts' },
     h('div', { class: 'opt cur' }, h('i', { class: 'dot', style: { '--sc': STATUS[it.status].cor } }), h('b', null, STATUS[it.status].nome), icon('check', 20)),
-    opts.map((s) => h('button', { class: 'opt', onclick: () => run(() => S.mudarStatus(it.id, s), `Status: ${STATUS[s].nome}`).then(() => { closeSheet(); rerender(); }) }, h('i', { class: 'dot', style: { '--sc': STATUS[s].cor } }), h('span', null, STATUS[s].nome)))));
+    opts.map((s) => h('button', { class: 'opt', onclick: () => run(() => S.mudarStatus(it.id, s), `Status: ${STATUS[s].nome}`).then(() => { closeSheet(); rerender(); }).catch(() => {}) }, h('i', { class: 'dot', style: { '--sc': STATUS[s].cor } }), h('span', null, STATUS[s].nome)))));
 }
 
 function novoClienteSheet(nome, cel, seguir) {
