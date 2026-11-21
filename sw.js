@@ -44,6 +44,11 @@ const SHELL = [
   './js/shared/money.js',
   './js/shared/texto.js',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png',
+  './apoio/apoio.css',
+  './apoio/stk-pkt-doacao.js',
+  './apoio/stk-pkt-feedback.js',
+  './apoio/stk-pkt-qrcode.js',
+  './apoio/stk-pkt-ponte.js'
 ];
 
 self.addEventListener('install', (e) => {
