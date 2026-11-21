@@ -2540,3 +2540,26 @@ button.prow:hover, button.srow:hover {
   background: var(--accent-soft);
   box-shadow: inset 3px 0 0 var(--accent);
 }
+
+/* ===================== RESPONSIVIDADE MOBILE PEQUENO (< 360px) ===================== */
+@media (max-width: 360px) {
+  :root {
+    --colmin: 96px;
+    --h-hour: 58px;
+    --w-gutter: 38px;
+  }
+  .appbar {
+    padding: 0 6px;
+  }
+  .ttl h1 {
+    font-size: 16px;
+  }
+  .ibtn {
+    width: 38px;
+    height: 38px;
+  }
+  .wrap {
+    padding: 8px;
+  }
+}
+
