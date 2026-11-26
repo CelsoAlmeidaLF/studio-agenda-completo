@@ -1,6 +1,6 @@
 # Studio Agenda — Pacote completo do projeto
 
-**No ar:** https://celsoalmeidalf.github.io/studio-agenda-completo/ · **Código:** https://github.com/CelsoAlmeidaLF/studio-agenda-completo
+**No ar:** https://celsoalmeidalf.github.io/agenda/ · **Código:** https://github.com/CelsoAlmeidaLF/agenda
 
 > Gerado em 22/10/2026. Contém todo o código e a documentação produzidos no projeto.
 
