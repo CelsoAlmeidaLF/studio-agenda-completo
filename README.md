@@ -6,7 +6,7 @@ Funciona offline e guarda os dados **criptografados** no banco do navegador (Ind
 
 ## No ar
 
-**https://celsoalmeidalf.github.io/studio-agenda-completo/** (GitHub Pages, branch `gh-pages` = conteúdo desta pasta).
+**https://celsoalmeidalf.github.io/agenda/** (GitHub Pages, branch `gh-pages` = conteúdo desta pasta).
 
 O endereço `celsoalmeidalf.github.io` é dividido com outros apps (FINANC, BarGestão e a versão antiga `studio-agenda`). Por isso o service worker só apaga caches com o prefixo `studio-agenda-completo-`.
 
