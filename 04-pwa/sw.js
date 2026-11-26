@@ -3,7 +3,7 @@
 // Prefixo próprio: o site divide o endereço (celsoalmeidalf.github.io) com outros apps e com a versão antiga
 // do Studio Agenda; a limpeza só pode apagar os caches deste app.
 const PREFIXO = 'studio-agenda-completo-';
-const VERSION = PREFIXO + 'v1.6.1';
+const VERSION = PREFIXO + 'v1.6.2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/adapters/in/ui/base.js',
@@ -44,11 +44,6 @@ const SHELL = [
   './js/shared/money.js',
   './js/shared/texto.js',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png',
-  './apoio/apoio.css',
-  './apoio/stk-pkt-doacao.js',
-  './apoio/stk-pkt-feedback.js',
-  './apoio/stk-pkt-qrcode.js',
-  './apoio/stk-pkt-ponte.js'
 ];
 
 self.addEventListener('install', (e) => {

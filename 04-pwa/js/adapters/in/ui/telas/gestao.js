@@ -21,12 +21,7 @@ export function registerGestao(app) {
       grp('Produtos', can(me, 'gestao.itens') && navRow('Lista de produtos', () => go('produtos'))),
       grp('Equipe', can(me, 'gestao.equipe') && navRow('Lista de profissionais', () => go('profissionais'))),
       h('p', { class: 'divider span-2' }, 'SISTEMA'),
-      grp('Segurança', navRow('Meu PIN e biometria', () => go('meupin')), can(me, 'seguranca') && navRow('Bloqueio, backup e dados', () => go('seguranca')), can(me, 'seguranca') && navRow('Auditoria', () => go('auditoria'))),
-      grp('Apoio e Avaliação',
-        navRow('Apoiar com PIX ou Bitcoin', () => { if (window.Doacao) window.Doacao.abrir(); }),
-        navRow('Avaliar o Studio Agenda', () => { if (window.Doacao) window.Doacao.abrir('avaliar'); }),
-        navRow('Enviar sugestão ou problema', () => { if (window.Doacao) window.Doacao.abrir('sugerir'); })
-      ));
+      grp('Segurança', navRow('Meu PIN e biometria', () => go('meupin')), can(me, 'seguranca') && navRow('Bloqueio, backup e dados', () => go('seguranca')), can(me, 'seguranca') && navRow('Auditoria', () => go('auditoria'))));
     return { title: 'Gestão', sub: S.est().nome, layout: 'largo', body };
   });
 
